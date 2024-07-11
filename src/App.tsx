@@ -1,9 +1,9 @@
-const App: React.FC = () => {
-  return (
-    <div className="app">
-      <h1>Hello, Serge! 👋</h1>
-    </div>
-  );
-};
+import React from 'react';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './routes';
+
+export function App() {
+  return <RouterProvider router={router} />;
+}
 
 export default App;
