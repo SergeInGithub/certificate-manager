@@ -1,1 +1,1 @@
-// export * from './checkEnv';
+export * from './handleNavigate';

@@ -1,27 +1,27 @@
 export const menuItems = [
   {
-    id: 'start',
-    // icon:
+    url: '/',
+    icon: { type: 'home', color: '#000000' },
     name: 'Start',
     content: 'Start',
   },
   {
-    id: 'ml',
-    // icon:
+    url: 'ml',
+    icon: { type: 'hamburger', color: '#000000' },
     name: 'Machine Learning',
     subItems: [
       {
-        id: 'example1',
+        url: '/example1',
         name: 'Example 1',
         content: 'Example 1',
       },
       {
-        id: 'example2',
+        url: '/example2',
         name: 'Example 2',
         content: 'Example 2',
       },
       {
-        id: 'example3',
+        url: '/example3',
         name: 'Example 3',
         content: 'Example 3',
       },

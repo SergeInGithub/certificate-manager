@@ -1,3 +1,15 @@
 .root-layout {
   padding: 2px;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+main {
+  display: flex;
+  flex-direction: row;
+}
+
+main .outlet {
+  margin-top: 30px;
+  margin-left: 300px;
 }
