@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { menuItems } from '@data';
 import { MenuItem } from '@types';
 import { handleNavigate } from '@utils';
 import '../assets/styles/components/sidebar.css';
 import { SvgComponent } from './Svg';
+import { HamburgerButton } from './HamburgerButton';
 
 export const Sidebar: React.FC = () => {
   const [openDropdown, setOpenDropdown] = useState<{ [key: string]: boolean }>(
@@ -16,8 +17,22 @@ export const Sidebar: React.FC = () => {
   const [selectedSubItemUrl, setSelectedSubItemUrl] = useState<string | null>(
     null,
   );
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLargeScreen, setIsLargeScreen] = useState<boolean>(
+    window.innerWidth > 834,
+  );
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth > 834);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [window]);
 
   const handleClick = (
     item: MenuItem,
@@ -41,9 +56,30 @@ export const Sidebar: React.FC = () => {
     }
   };
 
+  const handleSidebarOpen = () => {
+    setIsSidebarOpen((prevSidebar) => !prevSidebar);
+  };
+
   return (
-    <aside className="sidebar">
-      <div>
+    <React.Fragment>
+      <div className="sidebar-button-container">
+        <HamburgerButton
+          handleSidebarOpen={handleSidebarOpen}
+          isSidebarOpen={isSidebarOpen}
+        />
+      </div>
+
+      {isSidebarOpen && (
+        <div
+          className="sidebarOverlay"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      <aside
+        className={`sidebar ${isSidebarOpen ? 'visible' : ''} ${isLargeScreen ? 'large' : ''}`}
+        ref={sidebarRef}
+      >
         {menuItems.map((item) => (
           <React.Fragment key={item.url}>
             <div onClick={(e) => handleClick(item, e)} className="sub-items">
@@ -68,6 +104,7 @@ export const Sidebar: React.FC = () => {
                       ? '#3f9ac9'
                       : '#275c79',
                 }}
+                className="itemName"
               >
                 {item.name}
               </span>
@@ -102,7 +139,7 @@ export const Sidebar: React.FC = () => {
             )}
           </React.Fragment>
         ))}
-      </div>
-    </aside>
+      </aside>
+    </React.Fragment>
   );
 };

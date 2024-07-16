@@ -6,10 +6,12 @@ nav {
   z-index: 1000;
   position: fixed;
   background-color: white;
+  left: 50%; /* Move the nav to the center of the screen */
+  transform: translateX(-50%);
 }
 
 .tuzla {
-  width: 300px;
+  width: 21.25%;
   height: 100%;
   display: flex;
   align-items: center;
@@ -23,4 +25,33 @@ nav {
   font-size: xx-large;
   font-weight: 100;
   color: white;
+}
+
+@media (max-width: 834px) {
+  nav {
+    width: 98%;
+  }
+
+  .tuzla {
+    width: 30.25%;
+  }
+
+  .tuzla h1 {
+    font-size: x-large;
+  }
+}
+
+@media (max-width: 430px) {
+  nav {
+    width: 98%;
+    height: 32px;
+  }
+
+  .tuzla {
+    width: 43.4%;
+  }
+
+  .tuzla h1 {
+    font-size: small;
+  }
 }

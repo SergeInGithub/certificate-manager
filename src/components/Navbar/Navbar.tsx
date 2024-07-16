@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../assets/styles/components/navbar.css';
 
-export const Navbar = () => {
+export const Navbar: React.FC = () => {
   return (
     <>
       <nav>

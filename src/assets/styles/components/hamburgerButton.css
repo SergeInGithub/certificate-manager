@@ -1,0 +1,9 @@
+.sidebar-button {
+  display: inline-flex;
+  justify-content: center;
+  align-content: center;
+  border-radius: 0.5rem;
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+}
