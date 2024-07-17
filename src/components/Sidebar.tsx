@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { menuItems } from '@data';
 import { MenuItem } from '@types';
 import { handleNavigate } from '@utils';
 import '../assets/styles/components/sidebar.css';
-import { SVG_COMPONENT_TYPE, SvgComponent } from './Svg';
 import { HamburgerButton } from './HamburgerButton';
+import { MenuItemComponent } from './MenuItem';
+import '../assets/styles/components/sidebar.css';
 
 export const Sidebar: React.FC = () => {
   const [openDropdown, setOpenDropdown] = useState<{ [key: string]: boolean }>(
@@ -25,6 +26,7 @@ export const Sidebar: React.FC = () => {
   );
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleResize = () => {
@@ -33,7 +35,34 @@ export const Sidebar: React.FC = () => {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [window]);
+  }, []);
+
+  const updateSelectedItems = (path: string) => {
+    menuItems.forEach((item) => {
+      if (item.url === path) {
+        setSelectedMenuItem(item.icon?.type ?? null);
+        setOpenDropdown((prev) => ({
+          ...prev,
+          [item.url]: true,
+        }));
+      } else if (item.subItems) {
+        item.subItems.forEach((subItem) => {
+          if (subItem.url === path) {
+            setSelectedMenuItem(item.icon?.type ?? null);
+            setSelectedSubItemUrl(subItem.url);
+            setOpenDropdown((prev) => ({
+              ...prev,
+              [item.url]: true,
+            }));
+          }
+        });
+      }
+    });
+  };
+
+  useEffect(() => {
+    updateSelectedItems(location.pathname);
+  }, [location.pathname]);
 
   const handleClick = (
     item: MenuItem,
@@ -61,14 +90,6 @@ export const Sidebar: React.FC = () => {
     setIsSidebarOpen((prevSidebar) => !prevSidebar);
   };
 
-  const isValidSvgType = (
-    type: string | undefined,
-  ): type is SVG_COMPONENT_TYPE => {
-    return Object.values(SVG_COMPONENT_TYPE).includes(
-      type as SVG_COMPONENT_TYPE,
-    );
-  };
-
   return (
     <React.Fragment>
       <div className="sidebar-button-container">
@@ -90,70 +111,14 @@ export const Sidebar: React.FC = () => {
         ref={sidebarRef}
       >
         {menuItems.map((item) => (
-          <React.Fragment key={item.url}>
-            <div
-              onClick={(e) => handleClick(item, e)}
-              className="sub-items"
-            >
-              <div
-                className="selection-box"
-                style={{
-                  backgroundColor:
-                    item.icon?.type === selectedMenuItem
-                      ? '#3f9ac9'
-                      : 'transparent',
-                }}
-              />
-              <SvgComponent
-                type={
-                  isValidSvgType(item.icon?.type)
-                    ? item.icon.type
-                    : SVG_COMPONENT_TYPE.HAMBURGER
-                }
-                color={`${item.icon?.type === selectedMenuItem ? '#3f9ac9' : '#275c79'}`}
-                className="icon"
-              />
-              <span
-                style={{
-                  color:
-                    item.icon?.type === selectedMenuItem
-                      ? '#3f9ac9'
-                      : '#275c79',
-                }}
-                className="itemName"
-              >
-                {item.name}
-              </span>
-              {item.subItems && (
-                <SvgComponent
-                  type={SVG_COMPONENT_TYPE.ARROW_DOWN}
-                  color={`${item.icon?.type === selectedMenuItem ? '#3f9ac9' : '#275c79'}`}
-                  className="arrowDown"
-                />
-              )}
-            </div>
-            {item.subItems && (
-              <div
-                style={{ display: openDropdown[item.url] ? 'flex' : 'none' }}
-                className="subItem"
-              >
-                {item.subItems.map((subItem) => (
-                  <span
-                    key={subItem.url}
-                    onClick={(e) => handleClick(subItem, e, item.icon?.type)}
-                    style={{
-                      color:
-                        subItem.url === selectedSubItemUrl
-                          ? '#3f9ac9'
-                          : '#275c79',
-                    }}
-                  >
-                    {subItem.name}
-                  </span>
-                ))}
-              </div>
-            )}
-          </React.Fragment>
+          <MenuItemComponent
+            key={item.url}
+            item={item}
+            openDropdown={openDropdown}
+            selectedMenuItem={selectedMenuItem}
+            selectedSubItemUrl={selectedSubItemUrl}
+            handleClick={handleClick}
+          />
         ))}
       </aside>
     </React.Fragment>
