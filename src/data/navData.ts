@@ -11,7 +11,7 @@ export const menuItems = [
     name: 'Machine Learning',
     subItems: [
       {
-        url: '/example1',
+        url: '/example-one',
         name: 'Example 1',
         content: 'Example 1',
       },
