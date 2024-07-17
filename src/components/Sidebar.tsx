@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { menuItems } from '@data';
 import { MenuItem } from '@types';
 import { handleNavigate } from '@utils';
-import '../assets/styles/components/sidebar.css';
 import { HamburgerButton } from './HamburgerButton';
 import { MenuItemComponent } from './MenuItem';
 import '../assets/styles/components/sidebar.css';
