@@ -5,7 +5,7 @@ import {
   createRoutesFromElements,
 } from 'react-router-dom';
 import { RootLayout } from '../layouts';
-import { ExampleOne, Home, NotFound } from '@pages';
+import { AddCertificate, ExampleOne, Home, NotFound } from '@pages';
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -21,6 +21,10 @@ export const router = createBrowserRouter(
         <Route
           path="example-one"
           element={<ExampleOne />}
+        />
+        <Route
+          path="add-certificate"
+          element={<AddCertificate />}
         />
       </Route>
       <Route

@@ -119,6 +119,65 @@ const ArrowDown: React.FC<{ color?: string; className: string }> = ({
   </svg>
 );
 
+const Search: React.FC<{ color?: string; className: string }> = ({
+  color,
+  className,
+}) => (
+  <svg
+    width="800px"
+    height="800px"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <path
+      d="M15.7955 15.8111L21 21M18 10.5C18 14.6421 14.6421 18 10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5Z"
+      stroke={color}
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+);
+
+const Close: React.FC<{ color?: string; className: string }> = ({
+  color,
+  className,
+}) => (
+  <svg
+    width="800px"
+    height="800px"
+    viewBox="0 0 1024 1024"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <path
+      fill={color}
+      d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"
+    />
+  </svg>
+);
+
+const SelectDownArrow: React.FC<{ color?: string; className: string }> = ({
+  color,
+  className,
+}) => (
+  <svg
+    width="800px"
+    height="800px"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <path
+      d="M17.9188 8.17969H11.6888H6.07877C5.11877 8.17969 4.63877 9.33969 5.31877 10.0197L10.4988 15.1997C11.3288 16.0297 12.6788 16.0297 13.5088 15.1997L15.4788 13.2297L18.6888 10.0197C19.3588 9.33969 18.8788 8.17969 17.9188 8.17969Z"
+      fill={color}
+    />
+  </svg>
+);
+
 export const SvgComponent: React.FC<SvgComponentProps> = ({
   color = '#000000',
   className,
@@ -142,6 +201,27 @@ export const SvgComponent: React.FC<SvgComponentProps> = ({
     case 'arrowDown':
       return (
         <ArrowDown
+          color={color}
+          className={className}
+        />
+      );
+    case 'search':
+      return (
+        <Search
+          color={color}
+          className={className}
+        />
+      );
+    case 'close':
+      return (
+        <Close
+          color={color}
+          className={className}
+        />
+      );
+    case 'selectDownArrow':
+      return (
+        <SelectDownArrow
           color={color}
           className={className}
         />
