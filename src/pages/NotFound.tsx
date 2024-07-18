@@ -9,7 +9,12 @@ export function NotFound() {
   return (
     <div className="notFound">
       <h2>Page NotFound 🙃. Please head back </h2>
-      <button onClick={() => navigate('/')}>HOME</button>
+      <button
+        onClick={() => navigate('/')}
+        className="not-found"
+      >
+        HOME
+      </button>
     </div>
   );
 }

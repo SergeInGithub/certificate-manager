@@ -17,10 +17,12 @@ export const router = createBrowserRouter(
         index
         element={<Home />}
       />
-      <Route
-        path="example-one"
-        element={<ExampleOne />}
-      />
+      <Route path="ml">
+        <Route
+          path="example-one"
+          element={<ExampleOne />}
+        />
+      </Route>
       <Route
         path="*"
         element={<NotFound />}

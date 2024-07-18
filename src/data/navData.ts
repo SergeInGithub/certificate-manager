@@ -13,17 +13,17 @@ export const menuItems = [
     name: 'Machine Learning',
     subItems: [
       {
-        url: '/example-one',
+        url: '/ml/example-one',
         name: 'Example 1',
         content: 'Example 1',
       },
       {
-        url: '/example2',
+        url: '/ml/example2',
         name: 'Example 2',
         content: 'Example 2',
       },
       {
-        url: '/example3',
+        url: '/ml/example3',
         name: 'Example 3',
         content: 'Example 3',
       },
