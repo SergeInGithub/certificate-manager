@@ -3,3 +3,10 @@
   width: 30vw;
   border: 1px solid #c9c9c9;
 }
+
+@media (max-width: 834px) {
+  .preview-file {
+    height: 55vh;
+    width: 50vw;
+  }
+}
