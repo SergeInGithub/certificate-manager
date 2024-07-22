@@ -1,7 +1,17 @@
 .preview-file {
+  position: relative;
   height: 55vh;
   width: 30vw;
   border: 1px solid #c9c9c9;
+  border-radius: 5px;
+}
+
+.uploadedFile {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  border-radius: 5px;
+  border: none;
 }
 
 @media (max-width: 834px) {

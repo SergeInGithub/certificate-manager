@@ -10,3 +10,4 @@ export * from './Forms';
 export * from './Input';
 export * from './Label';
 export * from './Select';
+export * from './FileUpload';

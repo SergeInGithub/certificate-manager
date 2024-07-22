@@ -1,155 +1,218 @@
-import React, { useRef, useState } from 'react';
+import React, {
+  useRef,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
 import '../../assets/styles/components/certificateForm.css';
 import { Input } from '@components/Input';
 import { Label } from '@components/Label';
+import { Select } from '@components/Select';
 import { Button } from '@components/Button';
 import { SvgComponent } from '@components/Svg';
-import { Select } from '@components/Select';
+import { CERTIFICATE_TYPE } from '@types';
 
-export const CertificateForm: React.FC = () => {
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
-  const [certificateType, setCertificateType] = useState('');
-  const dateFromRef = useRef<HTMLInputElement | null>(null);
-  const dateToRef = useRef<HTMLInputElement | null>(null);
+interface CertificateFormProps {
+  pdfDataUrl: string | null;
+  onReset?: () => void;
+}
 
-  const handleFocusFrom = () => {
-    if (dateFromRef.current) {
-      dateFromRef.current.type = 'date';
-    }
-  };
+export const CertificateForm = forwardRef(
+  ({ pdfDataUrl, onReset }: CertificateFormProps, ref) => {
+    const [dateFrom, setDateFrom] = useState('');
+    const [dateTo, setDateTo] = useState('');
+    const [certificateType, setCertificateType] = useState('');
+    const [supplier, setSupplier] = useState('');
 
-  const handleBlurFrom = () => {
-    if (dateFromRef.current && !dateFrom) {
-      dateFromRef.current.type = 'text';
-    }
-  };
+    const dateFromRef = useRef<HTMLInputElement | null>(null);
+    const dateToRef = useRef<HTMLInputElement | null>(null);
+    const formRef = useRef<HTMLFormElement | null>(null);
 
-  const handleChangeFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDateFrom(e.target.value);
-  };
+    useImperativeHandle(ref, () => ({
+      submit: () => {
+        if (formRef.current) {
+          formRef.current.dispatchEvent(
+            new Event('submit', { cancelable: true, bubbles: true }),
+          );
+        }
+      },
+      reset: () => {
+        setDateFrom('');
+        setDateTo('');
+        setCertificateType('');
+        setSupplier('');
+        if (onReset) {
+          onReset();
+        }
+      },
+    }));
 
-  const handleFocusTo = () => {
-    if (dateToRef.current) {
-      dateToRef.current.type = 'date';
-    }
-  };
+    const handleFocusFrom = () => {
+      if (dateFromRef.current) {
+        dateFromRef.current.type = 'date';
+      }
+    };
 
-  const handleBlurTo = () => {
-    if (dateToRef.current && !dateTo) {
-      dateToRef.current.type = 'text';
-    }
-  };
+    const handleBlurFrom = () => {
+      if (dateFromRef.current && !dateFrom) {
+        dateFromRef.current.type = 'text';
+      }
+    };
 
-  const handleChangeTo = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDateTo(e.target.value);
-  };
+    const handleChangeFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setDateFrom(e.target.value);
+    };
 
-  const handleChangeCertificateType = (
-    e: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    setCertificateType(e.target.value);
-  };
+    const handleFocusTo = () => {
+      if (dateToRef.current) {
+        dateToRef.current.type = 'date';
+      }
+    };
 
-  const certificateOptions = [
-    { value: '', label: 'Select your option', isPlaceholder: true },
-    { value: 'cert1', label: 'Certificate 1' },
-    { value: 'cert2', label: 'Certificate 2' },
-    { value: 'cert3', label: 'Certificate 3' },
-  ];
+    const handleBlurTo = () => {
+      if (dateToRef.current && !dateTo) {
+        dateToRef.current.type = 'text';
+      }
+    };
 
-  return (
-    <form className="certificate-form">
-      <div className="label-input-container">
-        <Label
-          children="Supplier"
-          className="supplier-label"
-        />
-        <Input
-          type="text"
-          className="supplier-input"
-        />
+    const handleChangeTo = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setDateTo(e.target.value);
+    };
 
-        <div className="input-buttons">
-          <Button
-            type="button"
-            children={
-              <SvgComponent
-                type="search"
-                className="search-icon"
-              />
-            }
-            className="search-button"
+    const handleChangeCertificateType = (
+      e: React.ChangeEvent<HTMLSelectElement>,
+    ) => {
+      setCertificateType(e.target.value);
+    };
+
+    const handleChangeSupplier = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSupplier(e.target.value);
+    };
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const formData = {
+        supplier,
+        certificateType,
+        dateFrom,
+        dateTo,
+        // pdfDataUrl,
+      };
+      const storedData = JSON.parse(localStorage.getItem('formData') || '[]');
+      storedData.push(formData);
+      localStorage.setItem('formData', JSON.stringify(storedData));
+      console.log(formData);
+      if (formRef.current) {
+        formRef.current.reset();
+      }
+      setDateFrom('');
+      setDateTo('');
+      setCertificateType('');
+      setSupplier('');
+      if (onReset) {
+        onReset();
+      }
+    };
+
+    return (
+      <form
+        className="certificate-form"
+        onSubmit={handleSubmit}
+        ref={formRef}
+      >
+        <div className="label-input-container">
+          <Label
+            children="Supplier"
+            className="supplier-label"
           />
-          <Button
-            type="button"
-            children={
-              <SvgComponent
-                type="close"
-                className="close-icon"
-              />
-            }
-            className="close-button"
+          <Input
+            type="text"
+            className="supplier-input"
+            value={supplier}
+            onChange={handleChangeSupplier}
           />
-        </div>
-      </div>
 
-      <div className="label-input-container">
-        <Label
-          children="Certificate type"
-          className="certificate-type-label"
-        />
-
-        <div className="custom-select-container">
-          <Select
-            options={certificateOptions}
-            className="certificate-type-select"
-            placeholder="Select your option"
-            value={certificateType}
-            onChange={handleChangeCertificateType}
-          />
-          <div className="custom-select-icon">
-            <SvgComponent
-              type="selectDownArrow"
-              className="custom-select-arrow-icon"
+          <div className="input-buttons">
+            <Button
+              type="button"
+              children={
+                <SvgComponent
+                  type="search"
+                  className="search-icon"
+                />
+              }
+              className="search-button"
+            />
+            <Button
+              type="button"
+              children={
+                <SvgComponent
+                  type="close"
+                  className="close-icon"
+                />
+              }
+              className="close-button"
             />
           </div>
         </div>
-      </div>
 
-      <div className="label-input-container">
-        <Label
-          children="Valid from"
-          className="valid-from-label"
-        />
-        <Input
-          ref={dateFromRef}
-          type="text"
-          value={dateFrom}
-          onChange={handleChangeFrom}
-          placeholder="Click to select date"
-          onFocus={handleFocusFrom}
-          onBlur={handleBlurFrom}
-          className="valid-from-input"
-        />
-      </div>
+        <div className="label-input-container">
+          <Label
+            children="Certificate type"
+            className="certificate-type-label"
+          />
 
-      <div className="label-input-container">
-        <Label
-          children="Valid to"
-          className="valid-to-label"
-        />
-        <Input
-          ref={dateToRef}
-          type="text"
-          value={dateTo}
-          onChange={handleChangeTo}
-          placeholder="Click to select date"
-          onFocus={handleFocusTo}
-          onBlur={handleBlurTo}
-          className="valid-to-input"
-        />
-      </div>
-    </form>
-  );
-};
+          <div className="custom-select-container">
+            <Select
+              options={CERTIFICATE_TYPE}
+              className="certificate-type-select"
+              placeholder="Select your option"
+              value={certificateType}
+              onChange={handleChangeCertificateType}
+            />
+            <div className="custom-select-icon">
+              <SvgComponent
+                type="selectDownArrow"
+                className="custom-select-arrow-icon"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="label-input-container">
+          <Label
+            children="Valid from"
+            className="valid-from-label"
+          />
+          <Input
+            ref={dateFromRef}
+            type="text"
+            value={dateFrom}
+            onChange={handleChangeFrom}
+            placeholder="Click to select date"
+            onFocus={handleFocusFrom}
+            onBlur={handleBlurFrom}
+            className="valid-from-input"
+          />
+        </div>
+
+        <div className="label-input-container">
+          <Label
+            children="Valid to"
+            className="valid-to-label"
+          />
+          <Input
+            ref={dateToRef}
+            type="text"
+            value={dateTo}
+            onChange={handleChangeTo}
+            placeholder="Click to select date"
+            onFocus={handleFocusTo}
+            onBlur={handleBlurTo}
+            className="valid-to-input"
+          />
+        </div>
+      </form>
+    );
+  },
+);

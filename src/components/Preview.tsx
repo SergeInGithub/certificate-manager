@@ -1,6 +1,22 @@
 import React from 'react';
 import '../assets/styles/components/preview.css';
 
-export const Preview: React.FC = () => {
-  return <div className="preview-file"></div>;
+interface IPreviewProps {
+  pdfDataUrl: string | null;
+}
+
+export const Preview: React.FC<IPreviewProps> = ({
+  pdfDataUrl,
+}: IPreviewProps) => {
+  return (
+    <div className="preview-file">
+      {pdfDataUrl && (
+        <iframe
+          src={pdfDataUrl}
+          title="PDF Preview"
+          className="uploadedFile"
+        />
+      )}
+    </div>
+  );
 };

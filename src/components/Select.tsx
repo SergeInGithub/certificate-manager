@@ -1,7 +1,8 @@
+import { CERTIFICATE_TYPE } from '@types';
 import React from 'react';
 
 interface SelectProps {
-  options: { value: string; label: string }[];
+  options: typeof CERTIFICATE_TYPE;
   className?: string;
   placeholder?: string;
   value?: string;
@@ -26,12 +27,12 @@ export const Select: React.FC<SelectProps> = ({
     >
       {placeholder}
     </option>
-    {options.map((option) => (
+    {Object.values(options).map((option) => (
       <option
-        key={option.value}
-        value={option.value}
+        key={option}
+        value={option}
       >
-        {option.label}
+        {option}
       </option>
     ))}
   </select>
