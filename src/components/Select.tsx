@@ -1,3 +1,4 @@
+import { CERTIFICATE_TYPE } from '@types';
 import React from 'react';
 import { useLanguage } from '@hooks';
 
