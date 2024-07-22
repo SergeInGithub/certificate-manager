@@ -5,7 +5,7 @@ export const Navbar: React.FC = () => {
   return (
     <>
       <nav>
-        <div className="tuzla">
+        <div className="nav-header-container">
           <h1>DCCS Tuzla</h1>
         </div>
       </nav>

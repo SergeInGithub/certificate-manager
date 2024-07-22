@@ -10,7 +10,7 @@ nav {
   transform: translateX(-50%);
 }
 
-.tuzla {
+.nav-header-container {
   width: 21.25%;
   height: 100%;
   display: flex;
@@ -21,7 +21,7 @@ nav {
   box-shadow: 0px 0px 8px 4px rgba(0, 0, 0, 0.1);
 }
 
-.tuzla h1 {
+.nav-header-container h1 {
   font-size: xx-large;
   font-weight: 100;
   color: white;
@@ -32,11 +32,11 @@ nav {
     width: 98%;
   }
 
-  .tuzla {
+  .nav-header-container {
     width: 30.25%;
   }
 
-  .tuzla h1 {
+  .nav-header-container h1 {
     font-size: x-large;
   }
 }
@@ -47,11 +47,11 @@ nav {
     height: 32px;
   }
 
-  .tuzla {
+  .nav-header-container {
     width: 43.4%;
   }
 
-  .tuzla h1 {
+  .nav-header-container h1 {
     font-size: small;
   }
 }

@@ -4,7 +4,7 @@ import { menuItems } from '@data';
 import { MenuItem } from '@types';
 import { handleNavigate } from '@utils';
 import '../assets/styles/components/sidebar.css';
-import { SvgComponent } from './Svg';
+import { SVG_COMPONENT_TYPE, SvgComponent } from './Svg';
 import { HamburgerButton } from './HamburgerButton';
 
 export const Sidebar: React.FC = () => {
@@ -17,10 +17,11 @@ export const Sidebar: React.FC = () => {
   const [selectedSubItemUrl, setSelectedSubItemUrl] = useState<string | null>(
     null,
   );
+  const mobileScreenWidthPx = 834;
   const sidebarRef = useRef<HTMLDivElement | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState<boolean>(
-    window.innerWidth > 834,
+    window.innerWidth > mobileScreenWidthPx,
   );
 
   const navigate = useNavigate();
@@ -60,6 +61,14 @@ export const Sidebar: React.FC = () => {
     setIsSidebarOpen((prevSidebar) => !prevSidebar);
   };
 
+  const isValidSvgType = (
+    type: string | undefined,
+  ): type is SVG_COMPONENT_TYPE => {
+    return Object.values(SVG_COMPONENT_TYPE).includes(
+      type as SVG_COMPONENT_TYPE,
+    );
+  };
+
   return (
     <React.Fragment>
       <div className="sidebar-button-container">
@@ -82,7 +91,10 @@ export const Sidebar: React.FC = () => {
       >
         {menuItems.map((item) => (
           <React.Fragment key={item.url}>
-            <div onClick={(e) => handleClick(item, e)} className="sub-items">
+            <div
+              onClick={(e) => handleClick(item, e)}
+              className="sub-items"
+            >
               <div
                 className="selection-box"
                 style={{
@@ -93,7 +105,11 @@ export const Sidebar: React.FC = () => {
                 }}
               />
               <SvgComponent
-                type={item.icon?.type ?? ''}
+                type={
+                  isValidSvgType(item.icon?.type)
+                    ? item.icon.type
+                    : SVG_COMPONENT_TYPE.HAMBURGER
+                }
                 color={`${item.icon?.type === selectedMenuItem ? '#3f9ac9' : '#275c79'}`}
                 className="icon"
               />
@@ -110,7 +126,7 @@ export const Sidebar: React.FC = () => {
               </span>
               {item.subItems && (
                 <SvgComponent
-                  type="arrowDown"
+                  type={SVG_COMPONENT_TYPE.ARROW_DOWN}
                   color={`${item.icon?.type === selectedMenuItem ? '#3f9ac9' : '#275c79'}`}
                   className="arrowDown"
                 />
