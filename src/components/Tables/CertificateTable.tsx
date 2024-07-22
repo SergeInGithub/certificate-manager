@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TCertificate } from '@types';
 import TableHeader from './TableHeader';
 import { TableBody } from './TableBody';
