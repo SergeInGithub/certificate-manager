@@ -1,0 +1,19 @@
+.notFound {
+  display: flex;
+  flex-direction: row;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+button {
+  width: 80px;
+  height: 25px;
+  padding: 5px;
+  background-color: #3f9ac9;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  margin-top: 25px;
+  margin-left: 20px;
+  color: white;
+}

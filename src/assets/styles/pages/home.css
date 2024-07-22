@@ -1,0 +1,10 @@
+.home {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  height: 140vh;
+  padding: 40px;
+}
+
+.content h1 {
+  font-weight: 100;
+}
