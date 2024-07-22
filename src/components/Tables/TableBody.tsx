@@ -6,10 +6,11 @@ export const TableBody: React.FC<CertificateTableProps> = ({
   certificates,
 }: CertificateTableProps) => (
   <tbody>
-    {certificates?.map((certificate) => (
+    {certificates?.map((certificate, index) => (
       <CertificateRow
         key={certificate.id}
         certificate={certificate}
+        isLastRow={index === certificates.length - 1}
       />
     ))}
   </tbody>

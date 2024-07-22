@@ -2,6 +2,7 @@ import { CertificateType, TCertificate, TableHeaderItem } from '@types';
 import { parseCertificate } from '@utils';
 
 export const tableHeaderItems: TableHeaderItem[] = [
+  { id: 'editAndDelete', label: '' },
   { id: 'supplier', label: 'Supplier' },
   { id: 'type', label: 'Certificate type' },
   { id: 'dateFrom', label: 'Valid from' },

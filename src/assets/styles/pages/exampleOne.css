@@ -52,4 +52,8 @@
   .example-one h1 {
     font-size: x-large;
   }
+
+  .certificate-button {
+    width: 30%;
+  }
 }
