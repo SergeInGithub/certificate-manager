@@ -15,3 +15,8 @@ export type TCertificate = {
   dateFrom: Date | null;
   dateTo: Date | null;
 };
+
+export enum CERTIFICATE_TYPE {
+  PERMISSION_OF_PRINTING = 'Permission of Printing',
+  OHSAS_18001 = 'OHSAS 18001',
+}
