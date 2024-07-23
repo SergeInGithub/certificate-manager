@@ -10,17 +10,22 @@ import { Input } from '@components/Input';
 import { Label } from '@components/Label';
 import { Select } from '@components/Select';
 import { Button } from '@components/Button';
-import { SVG_COMPONENT_TYPE, SvgComponent } from '@components/Svg';
+import { SvgComponentType, SvgComponent } from '@components/Svg';
 import { CertificateType, TCertificate } from '@types';
-import { addCertificate } from '@utils';
+import { addCertificate, editCertificate } from '@utils';
 
 interface CertificateFormProps {
   pdfDataUrl: string | null;
   onReset?: () => void;
+  isEdit?: boolean;
+  certificateId?: number;
 }
 
 export const CertificateForm = forwardRef(
-  ({ pdfDataUrl, onReset }: CertificateFormProps, ref) => {
+  (
+    { pdfDataUrl, onReset, isEdit, certificateId }: CertificateFormProps,
+    ref,
+  ) => {
     const [formData, setFormData] = useState<TCertificate>({
       dateFrom: null,
       dateTo: null,
@@ -50,6 +55,19 @@ export const CertificateForm = forwardRef(
         if (onReset) {
           onReset();
         }
+      },
+      setValues: (values: {
+        dateFrom: string;
+        dateTo: string;
+        certificateType: string;
+        supplier: string;
+      }) => {
+        setFormData({
+          dateFrom: new Date(values.dateFrom),
+          dateTo: new Date(values.dateTo),
+          certificateType: values.certificateType as CertificateType,
+          supplier: values.supplier,
+        });
       },
     }));
 
@@ -128,7 +146,11 @@ export const CertificateForm = forwardRef(
         };
 
         try {
-          await addCertificate('CertificatesDB', 1, formDataToSend);
+          if (isEdit && certificateId) {
+            await editCertificate('CertificatesDB', 1, certificateId, formData);
+          } else {
+            await addCertificate('CertificatesDB', 1, formDataToSend);
+          }
           if (formRef.current) {
             formRef.current.reset();
           }
@@ -171,7 +193,7 @@ export const CertificateForm = forwardRef(
               type="button"
               children={
                 <SvgComponent
-                  type={SVG_COMPONENT_TYPE.SEARCH}
+                  type={SvgComponentType.SEARCH}
                   className="search-icon"
                 />
               }
@@ -181,7 +203,7 @@ export const CertificateForm = forwardRef(
               type="button"
               children={
                 <SvgComponent
-                  type={SVG_COMPONENT_TYPE.CLOSE}
+                  type={SvgComponentType.CLOSE}
                   className="close-icon"
                 />
               }
@@ -206,7 +228,7 @@ export const CertificateForm = forwardRef(
             />
             <div className="custom-select-icon">
               <SvgComponent
-                type={SVG_COMPONENT_TYPE.SELECTED_DOWN_ARROW}
+                type={SvgComponentType.SELECTED_DOWN_ARROW}
                 className="custom-select-arrow-icon"
               />
             </div>

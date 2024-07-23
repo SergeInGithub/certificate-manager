@@ -5,7 +5,13 @@ import {
   createRoutesFromElements,
 } from 'react-router-dom';
 import { RootLayout } from '../layouts';
-import { AddCertificate, ExampleOne, Home, NotFound } from '@pages';
+import {
+  AddCertificate,
+  EditCertificate,
+  ExampleOne,
+  Home,
+  NotFound,
+} from '@pages';
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,6 +31,10 @@ export const router = createBrowserRouter(
         <Route
           path="add-certificate"
           element={<AddCertificate />}
+        />
+        <Route
+          path="edit-certificate/:id"
+          element={<EditCertificate />}
         />
       </Route>
       <Route

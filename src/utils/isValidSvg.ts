@@ -1,7 +1,7 @@
-import { SVG_COMPONENT_TYPE } from '@components';
+import { SvgComponentType } from '@components';
 
 export const isValidSvgType = (
   type: string | undefined,
-): type is SVG_COMPONENT_TYPE => {
-  return Object.values(SVG_COMPONENT_TYPE).includes(type as SVG_COMPONENT_TYPE);
+): type is SvgComponentType => {
+  return Object.values(SvgComponentType).includes(type as SvgComponentType);
 };

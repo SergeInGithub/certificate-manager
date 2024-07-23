@@ -1,4 +1,3 @@
-import { CERTIFICATE_TYPE } from '@types';
 import React from 'react';
 
 interface SelectProps<T> {

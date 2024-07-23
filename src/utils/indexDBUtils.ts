@@ -22,40 +22,52 @@ export const openDB = (dbName: string, version: number) => {
   });
 };
 
+export const getTransactionAndStore = async (
+  dbName: string,
+  version: number,
+  mode: 'readwrite' | 'readonly' = 'readwrite',
+): Promise<{ transaction: IDBTransaction; store: IDBObjectStore }> => {
+  const db = await openDB(dbName, version);
+  const transaction = db.transaction('certificates', mode);
+  const store = transaction.objectStore('certificates');
+  return { transaction, store };
+};
+
 export const addCertificate = async (
   dbName: string,
   version: number,
   data: any,
 ) => {
-  const db = await openDB(dbName, version);
+  const { store } = await getTransactionAndStore(dbName, version);
+
   return new Promise<void>((resolve, reject) => {
-    const transaction = db.transaction('certificates', 'readwrite');
-    const store = transaction.objectStore('certificates');
     const request = store.add(data);
-
-    request.onsuccess = () => {
-      resolve();
-    };
-
-    request.onerror = () => {
-      reject(request.error);
-    };
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
   });
 };
 
 export const fetchCertificates = async (dbName: string, version: number) => {
-  const db = await openDB(dbName, version);
+  const { store } = await getTransactionAndStore(dbName, version, 'readonly');
+
   return new Promise<any[]>((resolve, reject) => {
-    const transaction = db.transaction('certificates', 'readonly');
-    const store = transaction.objectStore('certificates');
     const request = store.getAll();
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+};
 
-    request.onsuccess = () => {
-      resolve(request.result);
-    };
+export const editCertificate = async (
+  dbName: string,
+  version: number,
+  id: number,
+  data: any,
+) => {
+  const { store } = await getTransactionAndStore(dbName, version);
 
-    request.onerror = () => {
-      reject(request.error);
-    };
+  return new Promise<void>((resolve, reject) => {
+    const request = store.put({ ...data, id });
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
   });
 };

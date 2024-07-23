@@ -1,15 +1,15 @@
-import { SVG_COMPONENT_TYPE } from '../components/Svg';
+import { SvgComponentType } from '../components/Svg';
 
 export const menuItems = [
   {
     url: '/',
-    icon: { type: SVG_COMPONENT_TYPE.HOME, color: '#000000' },
+    icon: { type: SvgComponentType.HOME, color: '#000000' },
     name: 'Start',
     content: 'Start',
   },
   {
     url: 'ml',
-    icon: { type: SVG_COMPONENT_TYPE.HAMBURGER, color: '#000000' },
+    icon: { type: SvgComponentType.HAMBURGER, color: '#000000' },
     name: 'Machine Learning',
     subItems: [
       {

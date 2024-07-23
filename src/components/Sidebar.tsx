@@ -6,7 +6,7 @@ import { handleNavigate } from '@utils';
 import { HamburgerButton } from './HamburgerButton';
 import { MenuItemComponent } from './MenuItem';
 import '../assets/styles/components/sidebar.css';
-import { SVG_COMPONENT_TYPE } from './Svg';
+import { SvgComponentType } from './Svg';
 
 export const Sidebar: React.FC = () => {
   const [openDropdown, setOpenDropdown] = useState<{ [key: string]: boolean }>(
@@ -77,7 +77,7 @@ export const Sidebar: React.FC = () => {
         setSelectedMenuItem(parentItemType ?? item.icon?.type ?? null);
         setSelectedSubItemUrl(item.url);
         handleNavigate(item.url, navigate);
-        if (item.icon?.type === SVG_COMPONENT_TYPE.HOME) {
+        if (item.icon?.type === SvgComponentType.HOME) {
           setOpenDropdown({});
         }
       }

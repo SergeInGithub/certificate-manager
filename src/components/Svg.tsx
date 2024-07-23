@@ -1,17 +1,18 @@
 import React from 'react';
 
-export enum SVG_COMPONENT_TYPE {
+export enum SvgComponentType {
   HAMBURGER = 'hamburger',
   HOME = 'home',
   ARROW_DOWN = 'arrowDown',
   SEARCH = 'search',
   CLOSE = 'close',
   SELECTED_DOWN_ARROW = 'selectDownArrow',
+  GEAR = 'gear',
 }
 
 type SvgComponentProps = {
   color?: string;
-  type: SVG_COMPONENT_TYPE;
+  type: SvgComponentType;
   className: string;
   onClick?: () => void;
 };
