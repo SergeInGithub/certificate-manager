@@ -1,3 +1,10 @@
+.primary-color {
+  color: #3f9ac9;
+}
+.secondary-color {
+  color: #275c79;
+}
+
 .sidebar {
   border: 1px solid transparent;
   background-color: #e7e9ea;
@@ -18,6 +25,13 @@
   flex-direction: column;
   margin-left: 65px;
   cursor: pointer;
+}
+
+.subItem.subItem-flex {
+  display: flex;
+}
+.subItem.subItem-none {
+  display: none;
 }
 
 .icon {
@@ -46,6 +60,13 @@
   border-radius: 0px 2px 2px 0;
   left: 0px;
   margin-right: 15px;
+}
+
+.selection-box.primaryColor {
+  background-color: #3f9ac9;
+}
+.selection-box .transparent {
+  background-color: transparent;
 }
 
 .sidebar.large {
