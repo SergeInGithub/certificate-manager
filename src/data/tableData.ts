@@ -1,4 +1,5 @@
-import { TCertificate, TableHeaderItem } from '@types';
+import { CERTIFICATE_TYPE, TCertificate, TableHeaderItem } from '@types';
+import { parseCertificate } from '@utils';
 
 export const tableHeaderItems: TableHeaderItem[] = [
   { id: 'supplier', label: 'Supplier' },
@@ -8,25 +9,25 @@ export const tableHeaderItems: TableHeaderItem[] = [
 ];
 
 export const certificates: TCertificate[] = [
-  {
+  parseCertificate({
     id: 1,
     supplier: 'DAIMLER AG, 1, Berlin',
-    certificateType: 'Permission of Printing',
-    validFrom: '21.08.2017',
-    validTo: '26.08.2017',
-  },
-  {
+    certificateType: CERTIFICATE_TYPE.PERMISSION_OF_PRINTING,
+    validFrom: '2017-08-21',
+    validTo: '2017-08-26',
+  }),
+  parseCertificate({
     id: 2,
     supplier: 'ANDEMIS GmbH, 1, Stuttgart',
-    certificateType: 'OHSAS 18001',
-    validFrom: '18.08.2017',
-    validTo: '24.08.2017',
-  },
-  {
+    certificateType: CERTIFICATE_TYPE.OHSAS_18001,
+    validFrom: '2017-08-18',
+    validTo: '2017-08-24',
+  }),
+  parseCertificate({
     id: 2,
     supplier: 'ANDEMIS GmbH, 1, Stuttgart',
-    certificateType: 'Permission of Printing',
-    validFrom: '04.10.2017',
-    validTo: '10.10.2017',
-  },
+    certificateType: CERTIFICATE_TYPE.PERMISSION_OF_PRINTING,
+    validFrom: '2017-10-04',
+    validTo: '2017-10-10',
+  }),
 ];

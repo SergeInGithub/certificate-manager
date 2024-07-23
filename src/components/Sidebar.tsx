@@ -7,6 +7,7 @@ import '../assets/styles/components/sidebar.css';
 import { HamburgerButton } from './HamburgerButton';
 import { MenuItemComponent } from './MenuItem';
 import '../assets/styles/components/sidebar.css';
+import { SVG_COMPONENT_TYPE } from './Svg';
 
 export const Sidebar: React.FC = () => {
   const [openDropdown, setOpenDropdown] = useState<{ [key: string]: boolean }>(
@@ -77,7 +78,7 @@ export const Sidebar: React.FC = () => {
         setSelectedMenuItem(parentItemType ?? item.icon?.type ?? null);
         setSelectedSubItemUrl(item.url);
         handleNavigate(item.url, navigate);
-        if (item.icon?.type === 'home') {
+        if (item.icon?.type === SVG_COMPONENT_TYPE.HOME) {
           setOpenDropdown({});
         }
       }
@@ -85,13 +86,14 @@ export const Sidebar: React.FC = () => {
     [navigate],
   );
 
-  const handleSidebarOpen = () => {
+  const handleSidebarOpen = useCallback(() => {
     setIsSidebarOpen((prevSidebar) => !prevSidebar);
-  };
+  }, []);
 
-  const handleSidebarClose = () => {
+  const handleSidebarClose = useCallback(() => {
     setIsSidebarOpen(false);
-  };
+  }, []);
+
   return (
     <React.Fragment>
       <div className="sidebar-button-container">

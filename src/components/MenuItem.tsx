@@ -2,6 +2,7 @@ import { MenuItem, TMenuItemComponentProps } from '@types';
 import React, { useCallback } from 'react';
 import { SVG_COMPONENT_TYPE, SvgComponent } from './Svg';
 import { isValidSvgType } from '@utils';
+import { useGetColorOnSelection } from '@hooks';
 
 export const MenuItemComponent: React.FC<TMenuItemComponentProps> = ({
   item,
@@ -10,18 +11,21 @@ export const MenuItemComponent: React.FC<TMenuItemComponentProps> = ({
   selectedSubItemUrl,
   handleClick,
 }) => {
-  const handleItemClick = (e: React.MouseEvent) => handleClick(item, e);
-
-  const handleSubItemClick = (subItem: MenuItem) => (e: React.MouseEvent) => {
-    handleClick(subItem, e, item.icon?.type);
-  };
-
-  const getColorBasedOnSelection = useCallback(
-    (iconType: string | undefined, selectedMenuItem: string | null) => {
-      return iconType === selectedMenuItem ? '#3f9ac9' : '#275c79';
+  const handleItemClick = useCallback(
+    (e: React.MouseEvent) => {
+      handleClick(item, e);
     },
-    [],
+    [handleClick, item],
   );
+
+  const handleSubItemClick = useCallback(
+    (subItem: MenuItem) => (e: React.MouseEvent) => {
+      handleClick(subItem, e, item.icon?.type);
+    },
+    [handleClick, item.icon?.type],
+  );
+
+  const getColorOnSelection = useGetColorOnSelection();
 
   return (
     <React.Fragment>
@@ -38,7 +42,7 @@ export const MenuItemComponent: React.FC<TMenuItemComponentProps> = ({
               ? item.icon.type
               : SVG_COMPONENT_TYPE.HAMBURGER
           }
-          color={getColorBasedOnSelection(item.icon?.type, selectedMenuItem)}
+          color={getColorOnSelection(item.icon?.type, selectedMenuItem)}
           className="icon"
         />
         <span
@@ -49,7 +53,7 @@ export const MenuItemComponent: React.FC<TMenuItemComponentProps> = ({
         {item.subItems && (
           <SvgComponent
             type={SVG_COMPONENT_TYPE.ARROW_DOWN}
-            color={getColorBasedOnSelection(item.icon?.type, selectedMenuItem)}
+            color={getColorOnSelection(item.icon?.type, selectedMenuItem)}
             className="arrowDown"
           />
         )}

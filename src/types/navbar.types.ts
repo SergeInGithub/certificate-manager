@@ -1,7 +1,9 @@
+import { SVG_COMPONENT_TYPE } from '@components';
+
 export type MenuItem = {
   url: string;
   icon?: {
-    type: string;
+    type: SVG_COMPONENT_TYPE;
     color: string;
   };
   name: string;

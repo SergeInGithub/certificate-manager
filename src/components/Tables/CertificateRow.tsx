@@ -11,7 +11,7 @@ export const CertificateRow: React.FC<ICertificateRowProps> = ({
   <tr>
     <td>{certificate.supplier}</td>
     <td>{certificate.certificateType}</td>
-    <td>{certificate.validFrom}</td>
-    <td>{certificate.validTo}</td>
+    <td>{certificate.validFrom.toLocaleDateString()}</td>
+    <td>{certificate.validTo.toLocaleDateString()}</td>
   </tr>
 );
