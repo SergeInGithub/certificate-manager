@@ -35,6 +35,7 @@ export const CertificateForm = forwardRef(
     ref,
   ) => {
     const [formData, setFormData] = useState<TCertificate>(defaultFormData);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const dateFromRef = useRef<HTMLInputElement | null>(null);
     const dateToRef = useRef<HTMLInputElement | null>(null);
@@ -156,109 +157,121 @@ export const CertificateForm = forwardRef(
       [formData, pdfDataUrl, isEdit, certificateId, onReset],
     );
 
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+
     return (
-      <form
-        className="certificate-form"
-        onSubmit={handleSubmit}
-        ref={formRef}
-      >
-        <div className="label-input-container">
-          <Label
-            children="Supplier"
-            className="supplier-label"
-          />
-          <Input
-            type="text"
-            className="supplier-input"
-            value={formData.supplier}
-            onChange={handleChangeSupplier}
-          />
-
-          <div className="input-buttons">
-            <Button
-              type="button"
-              className="search-button"
-            >
-              <SvgComponent
-                type={SvgComponentType.SEARCH}
-                className="search-icon"
-              />
-            </Button>
-            <Button
-              type="button"
-              className="close-button"
-            >
-              <SvgComponent
-                type={SvgComponentType.CLOSE}
-                className="close-icon"
-              />
-            </Button>
-          </div>
-        </div>
-
-        <div className="label-input-container">
-          <Label
-            children="Certificate type"
-            className="certificate-type-label"
-          />
-
-          <div className="custom-select-container">
-            <Select
-              options={Object.values(CertificateType)}
-              className="certificate-type-select"
-              placeholder="Select your option"
-              value={formData.certificateType}
-              onChange={handleChangeCertificateType}
+      <React.Fragment>
+        <form
+          className="certificate-form"
+          onSubmit={handleSubmit}
+          ref={formRef}
+        >
+          <div className="label-input-container">
+            <Label
+              children="Supplier"
+              className="supplier-label"
             />
-            <div className="custom-select-icon">
-              <SvgComponent
-                type={SvgComponentType.SELECTED_DOWN_ARROW}
-                className="custom-select-arrow-icon"
-              />
+            <Input
+              type="text"
+              className="supplier-input"
+              value={formData.supplier}
+              onChange={handleChangeSupplier}
+            />
+
+            <div className="input-buttons">
+              <Button
+                type="button"
+                className="search-button"
+                onClick={openModal}
+              >
+                <SvgComponent
+                  type={SvgComponentType.SEARCH}
+                  className="search-icon"
+                />
+              </Button>
+              <Button
+                type="button"
+                className="close-button"
+              >
+                <SvgComponent
+                  type={SvgComponentType.CLOSE}
+                  className="close-icon"
+                />
+              </Button>
             </div>
           </div>
-        </div>
 
-        <div className="label-input-container">
-          <Label
-            children="Valid from"
-            className="valid-from-label"
-          />
-          <Input
-            ref={dateFromRef}
-            type="text"
-            value={
-              formData.dateFrom
-                ? formData.dateFrom.toISOString().split('T')[0]
-                : ''
-            }
-            onChange={handleChangeFrom}
-            placeholder="Click to select date"
-            onFocus={handleFocusFrom}
-            onBlur={handleBlurFrom}
-            className="valid-from-input"
-          />
-        </div>
+          <div className="label-input-container">
+            <Label
+              children="Certificate type"
+              className="certificate-type-label"
+            />
 
-        <div className="label-input-container">
-          <Label
-            children="Valid to"
-            className="valid-to-label"
-          />
-          <Input
-            ref={dateToRef}
-            type="text"
-            value={
-              formData.dateTo ? formData.dateTo.toISOString().split('T')[0] : ''
-            }
-            onChange={handleChangeTo}
-            placeholder="Click to select date"
-            onFocus={handleFocusTo}
-            onBlur={handleBlurTo}
-            className="valid-to-input"
-          />
-        </div>
-      </form>
+            <div className="custom-select-container">
+              <Select
+                options={Object.values(CertificateType)}
+                className="certificate-type-select"
+                placeholder="Select your option"
+                value={formData.certificateType}
+                onChange={handleChangeCertificateType}
+              />
+              <div className="custom-select-icon">
+                <SvgComponent
+                  type={SvgComponentType.SELECTED_DOWN_ARROW}
+                  className="custom-select-arrow-icon"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="label-input-container">
+            <Label
+              children="Valid from"
+              className="valid-from-label"
+            />
+            <Input
+              ref={dateFromRef}
+              type="text"
+              value={
+                formData.dateFrom
+                  ? formData.dateFrom.toISOString().split('T')[0]
+                  : ''
+              }
+              onChange={handleChangeFrom}
+              placeholder="Click to select date"
+              onFocus={handleFocusFrom}
+              onBlur={handleBlurFrom}
+              className="valid-from-input"
+            />
+          </div>
+
+          <div className="label-input-container">
+            <Label
+              children="Valid to"
+              className="valid-to-label"
+            />
+            <Input
+              ref={dateToRef}
+              type="text"
+              value={
+                formData.dateTo
+                  ? formData.dateTo.toISOString().split('T')[0]
+                  : ''
+              }
+              onChange={handleChangeTo}
+              placeholder="Click to select date"
+              onFocus={handleFocusTo}
+              onBlur={handleBlurTo}
+              className="valid-to-input"
+            />
+          </div>
+        </form>
+        <SupplierLookupModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+        />
+      </React.Fragment>
     );
   },
 );

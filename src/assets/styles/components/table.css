@@ -45,7 +45,9 @@ tbody tr:hover {
   position: relative;
   display: flex;
   align-items: center;
-  border: none;
+  border-top: none;
+  border-bottom: none;
+  border-right: none;
   flex-direction: column;
 }
 
