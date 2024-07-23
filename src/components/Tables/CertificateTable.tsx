@@ -8,7 +8,7 @@ export type CertificateTableProps = {
   certificates: TCertificate[] | undefined;
 };
 
-export const Table: React.FC<CertificateTableProps> = ({
+export const CertificateTable: React.FC<CertificateTableProps> = ({
   certificates,
 }: CertificateTableProps) => {
   return (

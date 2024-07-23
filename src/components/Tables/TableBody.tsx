@@ -1,6 +1,6 @@
 import React from 'react';
 import { CertificateRow } from './CertificateRow';
-import { CertificateTableProps } from './Table';
+import { CertificateTableProps } from './CertificateTable';
 
 export const TableBody: React.FC<CertificateTableProps> = ({
   certificates,

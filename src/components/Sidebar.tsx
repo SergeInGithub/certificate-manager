@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { menuItems } from '@data';
 import { MenuItem } from '@types';
@@ -64,32 +64,34 @@ export const Sidebar: React.FC = () => {
     updateSelectedItems(location.pathname);
   }, [location.pathname]);
 
-  const handleClick = (
-    item: MenuItem,
-    event: React.MouseEvent,
-    parentItemType?: string,
-  ) => {
-    event.stopPropagation();
-    if (item.subItems) {
-      setSelectedMenuItem(item.icon?.type ?? null);
-      setOpenDropdown((prev) => ({
-        ...prev,
-        [item.url]: !prev[item.url],
-      }));
-    } else {
-      setSelectedMenuItem(parentItemType ?? item.icon?.type ?? null);
-      setSelectedSubItemUrl(item.url);
-      handleNavigate(item.url, navigate);
-      if (item.icon?.type === 'home') {
-        setOpenDropdown({});
+  const handleClick = useCallback(
+    (item: MenuItem, event: React.MouseEvent, parentItemType?: string) => {
+      event.stopPropagation();
+      if (item.subItems) {
+        setSelectedMenuItem(item.icon?.type ?? null);
+        setOpenDropdown((prev) => ({
+          ...prev,
+          [item.url]: !prev[item.url],
+        }));
+      } else {
+        setSelectedMenuItem(parentItemType ?? item.icon?.type ?? null);
+        setSelectedSubItemUrl(item.url);
+        handleNavigate(item.url, navigate);
+        if (item.icon?.type === 'home') {
+          setOpenDropdown({});
+        }
       }
-    }
-  };
+    },
+    [navigate],
+  );
 
   const handleSidebarOpen = () => {
     setIsSidebarOpen((prevSidebar) => !prevSidebar);
   };
 
+  const handleSidebarClose = () => {
+    setIsSidebarOpen(false);
+  };
   return (
     <React.Fragment>
       <div className="sidebar-button-container">
@@ -102,7 +104,7 @@ export const Sidebar: React.FC = () => {
       {isSidebarOpen && (
         <div
           className="sidebarOverlay"
-          onClick={() => setIsSidebarOpen(false)}
+          onClick={handleSidebarClose}
         />
       )}
 

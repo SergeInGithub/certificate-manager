@@ -8,7 +8,7 @@ interface ICertificateRowProps {
 export const CertificateRow: React.FC<ICertificateRowProps> = ({
   certificate,
 }) => (
-  <tr key={certificate.id}>
+  <tr>
     <td>{certificate.supplier}</td>
     <td>{certificate.certificateType}</td>
     <td>{certificate.validFrom}</td>

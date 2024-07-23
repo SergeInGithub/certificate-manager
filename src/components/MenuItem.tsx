@@ -1,44 +1,36 @@
-import { MenuItem } from '@types';
-import React from 'react';
+import { MenuItem, TMenuItemComponentProps } from '@types';
+import React, { useCallback } from 'react';
 import { SVG_COMPONENT_TYPE, SvgComponent } from './Svg';
+import { isValidSvgType } from '@utils';
 
-export const MenuItemComponent: React.FC<{
-  item: MenuItem;
-  openDropdown: { [key: string]: boolean };
-  selectedMenuItem: string | null;
-  selectedSubItemUrl: string | null;
-  handleClick: (
-    item: MenuItem,
-    event: React.MouseEvent,
-    parentItemType?: string,
-  ) => void;
-}> = ({
+export const MenuItemComponent: React.FC<TMenuItemComponentProps> = ({
   item,
   openDropdown,
   selectedMenuItem,
   selectedSubItemUrl,
   handleClick,
 }) => {
-  const isValidSvgType = (
-    type: string | undefined,
-  ): type is SVG_COMPONENT_TYPE => {
-    return Object.values(SVG_COMPONENT_TYPE).includes(
-      type as SVG_COMPONENT_TYPE,
-    );
+  const handleItemClick = (e: React.MouseEvent) => handleClick(item, e);
+
+  const handleSubItemClick = (subItem: MenuItem) => (e: React.MouseEvent) => {
+    handleClick(subItem, e, item.icon?.type);
   };
+
+  const getColorBasedOnSelection = useCallback(
+    (iconType: string | undefined, selectedMenuItem: string | null) => {
+      return iconType === selectedMenuItem ? '#3f9ac9' : '#275c79';
+    },
+    [],
+  );
 
   return (
     <React.Fragment>
       <div
-        onClick={(e) => handleClick(item, e)}
+        onClick={handleItemClick}
         className="sub-items"
       >
         <div
-          className="selection-box"
-          style={{
-            backgroundColor:
-              item.icon?.type === selectedMenuItem ? '#3f9ac9' : 'transparent',
-          }}
+          className={`selection-box ${item.icon?.type === selectedMenuItem ? 'primaryColor' : 'transparent'}`}
         />
         <SvgComponent
           type={
@@ -46,38 +38,31 @@ export const MenuItemComponent: React.FC<{
               ? item.icon.type
               : SVG_COMPONENT_TYPE.HAMBURGER
           }
-          color={`${item.icon?.type === selectedMenuItem ? '#3f9ac9' : '#275c79'}`}
+          color={getColorBasedOnSelection(item.icon?.type, selectedMenuItem)}
           className="icon"
         />
         <span
-          style={{
-            color: item.icon?.type === selectedMenuItem ? '#3f9ac9' : '#275c79',
-          }}
-          className="itemName"
+          className={`itemName ${item.icon?.type === selectedMenuItem ? 'primary-color' : 'secondary-color'}`}
         >
           {item.name}
         </span>
         {item.subItems && (
           <SvgComponent
             type={SVG_COMPONENT_TYPE.ARROW_DOWN}
-            color={`${item.icon?.type === selectedMenuItem ? '#3f9ac9' : '#275c79'}`}
+            color={getColorBasedOnSelection(item.icon?.type, selectedMenuItem)}
             className="arrowDown"
           />
         )}
       </div>
       {item.subItems && (
         <div
-          style={{ display: openDropdown[item.url] ? 'flex' : 'none' }}
-          className="subItem"
+          className={`subItem ${openDropdown[item.url] ? 'subItem-flex' : 'subItem-none'}`}
         >
           {item.subItems.map((subItem) => (
             <span
               key={subItem.url}
-              onClick={(e) => handleClick(subItem, e, item.icon?.type)}
-              style={{
-                color:
-                  subItem.url === selectedSubItemUrl ? '#3f9ac9' : '#275c79',
-              }}
+              onClick={handleSubItemClick(subItem)}
+              className={`${subItem.url === selectedSubItemUrl ? 'primary-color' : 'secondary-color'}`}
             >
               {subItem.name}
             </span>
