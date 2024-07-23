@@ -6,16 +6,21 @@ import '../../assets/styles/components/table.css';
 
 export type CertificateTableProps = {
   certificates: TCertificate[] | undefined;
+  onDelete: (id: number) => void;
 };
 
 export const CertificateTable: React.FC<CertificateTableProps> = ({
   certificates,
-}: CertificateTableProps) => {
+  onDelete,
+}) => {
   return (
     <section className="tableContainer">
       <table>
         <TableHeader />
-        <TableBody certificates={certificates} />
+        <TableBody
+          certificates={certificates}
+          onDelete={onDelete}
+        />
       </table>
       {!certificates?.length && (
         <div>
