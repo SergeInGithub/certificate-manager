@@ -1,5 +1,6 @@
-import { TCertificate } from '@types';
 import React from 'react';
+import { useFormatDate } from '@hooks';
+import { TCertificate } from '@types';
 
 interface ICertificateRowProps {
   certificate: TCertificate;
@@ -7,11 +8,15 @@ interface ICertificateRowProps {
 
 export const CertificateRow: React.FC<ICertificateRowProps> = ({
   certificate,
-}) => (
-  <tr>
-    <td>{certificate.supplier}</td>
-    <td>{certificate.certificateType}</td>
-    <td>{certificate.validFrom.toLocaleDateString()}</td>
-    <td>{certificate.validTo.toLocaleDateString()}</td>
-  </tr>
-);
+}) => {
+  const formatDate = useFormatDate();
+
+  return (
+    <tr>
+      <td>{certificate.supplier}</td>
+      <td>{certificate.certificateType}</td>
+      <td>{formatDate(certificate.dateFrom)}</td>
+      <td>{formatDate(certificate.dateTo)}</td>
+    </tr>
+  );
+};

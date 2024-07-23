@@ -4,6 +4,9 @@ export enum SVG_COMPONENT_TYPE {
   HAMBURGER = 'hamburger',
   HOME = 'home',
   ARROW_DOWN = 'arrowDown',
+  SEARCH = 'search',
+  CLOSE = 'close',
+  SELECTED_DOWN_ARROW = 'selectDownArrow',
 }
 
 type SvgComponentProps = {

@@ -12,6 +12,6 @@ export type TCertificate = {
   id: number;
   supplier: string;
   certificateType: CERTIFICATE_TYPE;
-  validFrom: Date;
-  validTo: Date;
+  dateFrom: Date;
+  dateTo: Date;
 };

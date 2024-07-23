@@ -3,14 +3,16 @@ import React, {
   useState,
   forwardRef,
   useImperativeHandle,
+  useCallback,
 } from 'react';
 import '../../assets/styles/components/certificateForm.css';
 import { Input } from '@components/Input';
 import { Label } from '@components/Label';
 import { Select } from '@components/Select';
 import { Button } from '@components/Button';
-import { SvgComponent } from '@components/Svg';
+import { SVG_COMPONENT_TYPE, SvgComponent } from '@components/Svg';
 import { CERTIFICATE_TYPE } from '@types';
+import { addCertificate } from '@utils';
 
 interface CertificateFormProps {
   pdfDataUrl: string | null;
@@ -47,72 +49,92 @@ export const CertificateForm = forwardRef(
       },
     }));
 
-    const handleFocusFrom = () => {
+    const handleFocusFrom = useCallback(() => {
       if (dateFromRef.current) {
         dateFromRef.current.type = 'date';
       }
-    };
+    }, []);
 
-    const handleBlurFrom = () => {
+    const handleBlurFrom = useCallback(() => {
       if (dateFromRef.current && !dateFrom) {
         dateFromRef.current.type = 'text';
       }
-    };
+    }, [dateFrom]);
 
-    const handleChangeFrom = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setDateFrom(e.target.value);
-    };
+    const handleChangeFrom = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        setDateFrom(e.target.value);
+      },
+      [],
+    );
 
-    const handleFocusTo = () => {
+    const handleFocusTo = useCallback(() => {
       if (dateToRef.current) {
         dateToRef.current.type = 'date';
       }
-    };
+    }, []);
 
-    const handleBlurTo = () => {
+    const handleBlurTo = useCallback(() => {
       if (dateToRef.current && !dateTo) {
         dateToRef.current.type = 'text';
       }
-    };
+    }, [dateTo]);
 
-    const handleChangeTo = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setDateTo(e.target.value);
-    };
+    const handleChangeTo = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        setDateTo(e.target.value);
+      },
+      [],
+    );
 
-    const handleChangeCertificateType = (
-      e: React.ChangeEvent<HTMLSelectElement>,
-    ) => {
-      setCertificateType(e.target.value);
-    };
+    const handleChangeCertificateType = useCallback(
+      (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setCertificateType(e.target.value);
+      },
+      [],
+    );
 
-    const handleChangeSupplier = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSupplier(e.target.value);
-    };
+    const handleChangeSupplier = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSupplier(e.target.value);
+      },
+      [],
+    );
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      const formData = {
-        supplier,
-        certificateType,
-        dateFrom,
-        dateTo,
-        // pdfDataUrl,
-      };
-      const storedData = JSON.parse(localStorage.getItem('formData') || '[]');
-      storedData.push(formData);
-      localStorage.setItem('formData', JSON.stringify(storedData));
-      console.log(formData);
-      if (formRef.current) {
-        formRef.current.reset();
-      }
-      setDateFrom('');
-      setDateTo('');
-      setCertificateType('');
-      setSupplier('');
-      if (onReset) {
-        onReset();
-      }
-    };
+    const handleSubmit = useCallback(
+      async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const dateFromParsed = new Date(dateFrom);
+        const dateToParsed = new Date(dateTo);
+
+        const formData = {
+          supplier,
+          certificateType,
+          dateFrom: dateFromParsed,
+          dateTo: dateToParsed,
+          pdfDataUrl,
+        };
+
+        try {
+          await addCertificate('CertificatesDB', 1, formData);
+          console.log(formData);
+          if (formRef.current) {
+            formRef.current.reset();
+          }
+          setDateFrom('');
+          setDateTo('');
+          setCertificateType('');
+          setSupplier('');
+          if (onReset) {
+            onReset();
+          }
+        } catch (error) {
+          console.error('Error adding certificate:', error);
+        }
+      },
+      [dateFrom, dateTo, supplier, certificateType, pdfDataUrl, onReset],
+    );
 
     return (
       <form
@@ -137,7 +159,7 @@ export const CertificateForm = forwardRef(
               type="button"
               children={
                 <SvgComponent
-                  type="search"
+                  type={SVG_COMPONENT_TYPE.SEARCH}
                   className="search-icon"
                 />
               }
@@ -147,7 +169,7 @@ export const CertificateForm = forwardRef(
               type="button"
               children={
                 <SvgComponent
-                  type="close"
+                  type={SVG_COMPONENT_TYPE.CLOSE}
                   className="close-icon"
                 />
               }
@@ -172,7 +194,7 @@ export const CertificateForm = forwardRef(
             />
             <div className="custom-select-icon">
               <SvgComponent
-                type="selectDownArrow"
+                type={SVG_COMPONENT_TYPE.SELECTED_DOWN_ARROW}
                 className="custom-select-arrow-icon"
               />
             </div>

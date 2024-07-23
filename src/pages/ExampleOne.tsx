@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CertificateTable } from '@components/Tables';
 import '../assets/styles/pages/exampleOne.css';
 import { Button } from '@components';
-import { handleNavigate } from '@utils';
+import { fetchCertificates, handleNavigate } from '@utils';
 import { useNavigate } from 'react-router';
 import { TCertificate } from '@types';
 
@@ -15,8 +15,15 @@ export function ExampleOne() {
   const [data, setData] = useState<TCertificate[]>([]);
 
   useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem('formData') || '[]');
-    setData(storedData);
+    const fetchData = async () => {
+      try {
+        const storedData = await fetchCertificates('CertificatesDB', 1);
+        setData(storedData);
+      } catch (error) {
+        console.error('Error fetching certificates:', error);
+      }
+    };
+    fetchData();
   }, []);
 
   return (
