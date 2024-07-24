@@ -17,7 +17,7 @@ export function ExampleOne() {
 
   const fetchData = useCallback(async () => {
     try {
-      const storedData = await fetchCertificates('CertificatesDB', 1);
+      const storedData = await fetchCertificates('myDatabase', 1);
       setData(storedData);
     } catch (error) {
       console.error('Error fetching certificates:', error);
@@ -26,8 +26,8 @@ export function ExampleOne() {
 
   const handleDelete = useCallback(async (id: number) => {
     try {
-      await deleteCertificate('CertificatesDB', 1, id);
-      const updatedData = await fetchCertificates('CertificatesDB', 1);
+      await deleteCertificate('myDatabase', 1, id);
+      const updatedData = await fetchCertificates('myDatabase', 1);
 
       setData(updatedData);
     } catch (error) {

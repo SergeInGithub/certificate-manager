@@ -1,5 +1,5 @@
 import React from 'react';
-import { SvgComponent } from './Svg';
+import { SvgComponent, SvgComponentType } from './Svg';
 
 interface ILookupHeaderProps {
   heading: string;
@@ -9,7 +9,7 @@ export const LookupHeader = ({ heading }: ILookupHeaderProps) => {
   return (
     <div className="lookup-header-container">
       <SvgComponent
-        type="selectDownArrow"
+        type={SvgComponentType.ARROW_DOWN}
         className="custom-select-arrow-icon"
         color="white"
       />

@@ -45,16 +45,16 @@ export const SupplierLookupTableHeaderItems: TableHeaderItem[] = [
   { id: 'city', label: 'City' },
 ];
 
-export const suppliers: TSupplier[] = [
+export const hardcodedSuppliers: TSupplier[] = [
   {
     supplierName: 'ANDEMIS GmbH',
     supplierIndex: 1,
     city: 'Stuttgart',
   },
   {
-    supplierName: 'ANDEMIS GmbH',
+    supplierName: 'DAIMLER AG',
     supplierIndex: 2,
-    city: 'Stuttgart',
+    city: 'Berlin',
   },
   {
     supplierName: 'ANDEMIS GmbH',

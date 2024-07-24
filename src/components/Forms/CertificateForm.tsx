@@ -13,6 +13,7 @@ import { Button } from '@components/Button';
 import { SvgComponentType, SvgComponent } from '@components/Svg';
 import { CertificateFormValues, CertificateType, TCertificate } from '@types';
 import { addCertificate, editCertificate } from '@utils';
+import { SupplierLookupModal } from '@components/SupplierLookupModal';
 
 const defaultFormData: TCertificate = {
   dateFrom: null,
@@ -36,6 +37,7 @@ export const CertificateForm = forwardRef(
   ) => {
     const [formData, setFormData] = useState<TCertificate>(defaultFormData);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [initialSupplierName, setInitialSupplierName] = useState('');
 
     const dateFromRef = useRef<HTMLInputElement | null>(null);
     const dateToRef = useRef<HTMLInputElement | null>(null);
@@ -139,9 +141,9 @@ export const CertificateForm = forwardRef(
 
         try {
           if (isEdit && certificateId) {
-            await editCertificate('CertificatesDB', 1, certificateId, formData);
+            await editCertificate('myDatabase', 1, certificateId, formData);
           } else {
-            await addCertificate('CertificatesDB', 1, formData);
+            await addCertificate('myDatabase', 1, formData);
           }
           if (formRef.current) {
             formRef.current.reset();
@@ -157,8 +159,18 @@ export const CertificateForm = forwardRef(
       [formData, pdfDataUrl, isEdit, certificateId, onReset],
     );
 
-    const openModal = () => setIsModalOpen(true);
+    const openModal = () => {
+      setInitialSupplierName(formData.supplier);
+      setIsModalOpen(true);
+    };
     const closeModal = () => setIsModalOpen(false);
+
+    const handleSupplierReset = () => {
+      setFormData((prev) => ({
+        ...prev,
+        supplier: '',
+      }));
+    };
 
     return (
       <React.Fragment>
@@ -193,6 +205,7 @@ export const CertificateForm = forwardRef(
               <Button
                 type="button"
                 className="close-button"
+                onClick={handleSupplierReset}
               >
                 <SvgComponent
                   type={SvgComponentType.CLOSE}
@@ -270,6 +283,7 @@ export const CertificateForm = forwardRef(
         <SupplierLookupModal
           isOpen={isModalOpen}
           onClose={closeModal}
+          initialSupplierName={initialSupplierName}
         />
       </React.Fragment>
     );
