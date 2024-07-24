@@ -11,7 +11,7 @@ import { Label } from '@components/Label';
 import { Select } from '@components/Select';
 import { Button } from '@components/Button';
 import { SVG_COMPONENT_TYPE, SvgComponent } from '@components/Svg';
-import { CERTIFICATE_TYPE } from '@types';
+import { CertificateType, TCertificate } from '@types';
 import { addCertificate } from '@utils';
 
 interface CertificateFormProps {
@@ -21,10 +21,12 @@ interface CertificateFormProps {
 
 export const CertificateForm = forwardRef(
   ({ pdfDataUrl, onReset }: CertificateFormProps, ref) => {
-    const [dateFrom, setDateFrom] = useState('');
-    const [dateTo, setDateTo] = useState('');
-    const [certificateType, setCertificateType] = useState('');
-    const [supplier, setSupplier] = useState('');
+    const [formData, setFormData] = useState<TCertificate>({
+      dateFrom: null,
+      dateTo: null,
+      certificateType: undefined,
+      supplier: '',
+    });
 
     const dateFromRef = useRef<HTMLInputElement | null>(null);
     const dateToRef = useRef<HTMLInputElement | null>(null);
@@ -39,10 +41,12 @@ export const CertificateForm = forwardRef(
         }
       },
       reset: () => {
-        setDateFrom('');
-        setDateTo('');
-        setCertificateType('');
-        setSupplier('');
+        setFormData({
+          dateFrom: null,
+          dateTo: null,
+          certificateType: undefined,
+          supplier: '',
+        });
         if (onReset) {
           onReset();
         }
@@ -56,14 +60,17 @@ export const CertificateForm = forwardRef(
     }, []);
 
     const handleBlurFrom = useCallback(() => {
-      if (dateFromRef.current && !dateFrom) {
+      if (dateFromRef.current && !formData.dateFrom) {
         dateFromRef.current.type = 'text';
       }
-    }, [dateFrom]);
+    }, [formData.dateFrom]);
 
     const handleChangeFrom = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        setDateFrom(e.target.value);
+        setFormData((prev) => ({
+          ...prev,
+          dateFrom: e.target.value ? new Date(e.target.value) : null,
+        }));
       },
       [],
     );
@@ -75,28 +82,38 @@ export const CertificateForm = forwardRef(
     }, []);
 
     const handleBlurTo = useCallback(() => {
-      if (dateToRef.current && !dateTo) {
+      if (dateToRef.current && !formData.dateTo) {
         dateToRef.current.type = 'text';
       }
-    }, [dateTo]);
+    }, [formData.dateTo]);
 
     const handleChangeTo = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        setDateTo(e.target.value);
+        setFormData((prev) => ({
+          ...prev,
+          dateTo: e.target.value ? new Date(e.target.value) : null,
+        }));
       },
       [],
     );
 
     const handleChangeCertificateType = useCallback(
       (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setCertificateType(e.target.value);
+        const selectedValue = e.target.value as CertificateType;
+        setFormData((prev) => ({
+          ...prev,
+          certificateType: selectedValue,
+        }));
       },
       [],
     );
 
     const handleChangeSupplier = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSupplier(e.target.value);
+        setFormData((prev) => ({
+          ...prev,
+          supplier: e.target.value,
+        }));
       },
       [],
     );
@@ -105,27 +122,22 @@ export const CertificateForm = forwardRef(
       async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const dateFromParsed = new Date(dateFrom);
-        const dateToParsed = new Date(dateTo);
-
-        const formData = {
-          supplier,
-          certificateType,
-          dateFrom: dateFromParsed,
-          dateTo: dateToParsed,
+        const formDataToSend = {
+          ...formData,
           pdfDataUrl,
         };
 
         try {
-          await addCertificate('CertificatesDB', 1, formData);
-          console.log(formData);
+          await addCertificate('CertificatesDB', 1, formDataToSend);
           if (formRef.current) {
             formRef.current.reset();
           }
-          setDateFrom('');
-          setDateTo('');
-          setCertificateType('');
-          setSupplier('');
+          setFormData({
+            dateFrom: null,
+            dateTo: null,
+            certificateType: undefined,
+            supplier: '',
+          });
           if (onReset) {
             onReset();
           }
@@ -133,7 +145,7 @@ export const CertificateForm = forwardRef(
           console.error('Error adding certificate:', error);
         }
       },
-      [dateFrom, dateTo, supplier, certificateType, pdfDataUrl, onReset],
+      [formData, pdfDataUrl, onReset],
     );
 
     return (
@@ -150,7 +162,7 @@ export const CertificateForm = forwardRef(
           <Input
             type="text"
             className="supplier-input"
-            value={supplier}
+            value={formData.supplier}
             onChange={handleChangeSupplier}
           />
 
@@ -186,10 +198,10 @@ export const CertificateForm = forwardRef(
 
           <div className="custom-select-container">
             <Select
-              options={CERTIFICATE_TYPE}
+              options={Object.values(CertificateType)}
               className="certificate-type-select"
               placeholder="Select your option"
-              value={certificateType}
+              value={formData.certificateType}
               onChange={handleChangeCertificateType}
             />
             <div className="custom-select-icon">
@@ -209,7 +221,11 @@ export const CertificateForm = forwardRef(
           <Input
             ref={dateFromRef}
             type="text"
-            value={dateFrom}
+            value={
+              formData.dateFrom
+                ? formData.dateFrom.toISOString().split('T')[0]
+                : ''
+            }
             onChange={handleChangeFrom}
             placeholder="Click to select date"
             onFocus={handleFocusFrom}
@@ -226,7 +242,9 @@ export const CertificateForm = forwardRef(
           <Input
             ref={dateToRef}
             type="text"
-            value={dateTo}
+            value={
+              formData.dateTo ? formData.dateTo.toISOString().split('T')[0] : ''
+            }
             onChange={handleChangeTo}
             placeholder="Click to select date"
             onFocus={handleFocusTo}

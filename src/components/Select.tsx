@@ -1,24 +1,23 @@
-import { CERTIFICATE_TYPE } from '@types';
 import React from 'react';
 
-interface SelectProps {
-  options: typeof CERTIFICATE_TYPE;
+interface SelectProps<T> {
+  options: T[];
   className?: string;
   placeholder?: string;
-  value?: string;
+  value?: T;
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-export const Select: React.FC<SelectProps> = ({
+export const Select = <T extends string>({
   options,
   className,
   placeholder,
   value,
   onChange,
-}: SelectProps) => (
+}: SelectProps<T>) => (
   <select
     className={className}
-    value={value}
+    value={value || ''}
     onChange={onChange}
   >
     <option
@@ -27,7 +26,7 @@ export const Select: React.FC<SelectProps> = ({
     >
       {placeholder}
     </option>
-    {Object.values(options).map((option) => (
+    {options.map((option) => (
       <option
         key={option}
         value={option}
