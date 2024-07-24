@@ -3,15 +3,15 @@ export type TableHeaderItem = {
   label: string;
 };
 
-export enum CERTIFICATE_TYPE {
+export enum CertificateType {
   PERMISSION_OF_PRINTING = 'Permission of Printing',
   OHSAS_18001 = 'OHSAS 18001',
 }
 
 export type TCertificate = {
-  id: number;
+  id?: number;
   supplier: string;
-  certificateType: CERTIFICATE_TYPE;
-  validFrom: Date;
-  validTo: Date;
+  certificateType: CertificateType | undefined;
+  dateFrom: Date | null;
+  dateTo: Date | null;
 };

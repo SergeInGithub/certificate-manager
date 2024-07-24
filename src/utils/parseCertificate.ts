@@ -1,12 +1,12 @@
 import { TCertificate } from '@types';
 
 export const parseCertificate = (
-  certificate: Omit<TCertificate, 'validFrom' | 'validTo'> & {
-    validFrom: string;
-    validTo: string;
+  certificate: Omit<TCertificate, 'dateFrom' | 'dateTo'> & {
+    dateFrom: string;
+    dateTo: string;
   },
 ): TCertificate => ({
   ...certificate,
-  validFrom: new Date(certificate.validFrom),
-  validTo: new Date(certificate.validTo),
+  dateFrom: new Date(certificate.dateFrom),
+  dateTo: new Date(certificate.dateTo),
 });

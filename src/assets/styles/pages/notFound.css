@@ -6,7 +6,7 @@
   margin-top: 20%;
 }
 
-button {
+button.not-found {
   width: 80px;
   height: 25px;
   padding: 5px;
