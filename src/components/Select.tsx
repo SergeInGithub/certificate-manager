@@ -1,4 +1,3 @@
-import { CERTIFICATE_TYPE } from '@types';
 import React from 'react';
 import { useLanguage } from '@hooks';
 
@@ -13,7 +12,7 @@ interface SelectProps<T> {
 export const Select = <T extends string>({
   options,
   className,
-  placeholder,
+  placeholder = 'Select your option',
   value,
   onChange,
 }: SelectProps<T>) => {
