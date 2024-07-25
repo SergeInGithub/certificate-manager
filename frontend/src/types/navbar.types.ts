@@ -40,3 +40,10 @@ export type TLanguageContextProps = {
 export const LanguageContext = createContext<TLanguageContextProps | undefined>(
   undefined,
 );
+
+export enum UserOptions {
+  USER1 = 'User 1',
+  USER2 = 'User 2',
+  USER3 = 'User 3',
+  USER4 = 'User 4',
+}

@@ -87,6 +87,7 @@ nav {
 
   .nav-header-container {
     width: 43.4%;
+    margin-right: 4px;
   }
 
   .nav-header-container h1 {
