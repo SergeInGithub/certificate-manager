@@ -73,6 +73,10 @@ tbody tr:hover {
   margin-bottom: 3px;
 }
 
+.gear-menu.adjust-margin {
+  margin-top: -50px;
+}
+
 @media (max-width: 834px) {
   table {
     min-width: 700px;

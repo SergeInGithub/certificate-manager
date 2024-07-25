@@ -26,7 +26,7 @@ export const Select = <T extends string>({
     >
       {placeholder}
     </option>
-    {Object.values(options).map((option) => (
+    {options.map((option) => (
       <option
         key={option}
         value={option}

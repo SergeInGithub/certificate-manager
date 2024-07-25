@@ -35,10 +35,11 @@ export function ExampleOne() {
 
         <Button
           type="button"
-          children="New certificate"
           className="certificate-button"
           onClick={handleClick}
-        />
+        >
+          New certificate
+        </Button>
         <CertificateTable certificates={data} />
       </div>
     </div>

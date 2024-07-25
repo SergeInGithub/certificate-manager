@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import '../assets/styles/pages/addCertificate.css';
 import { Button, CertificateForm, FileUpload, Preview } from '@components';
@@ -59,18 +59,18 @@ export function EditCertificate() {
     fetchCertificate();
   }, [id]);
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     if (formRef.current) {
       formRef.current.submit();
     }
-  };
+  }, []);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     if (formRef.current) {
       formRef.current.reset();
       setPdfDataUrl(null);
     }
-  };
+  }, []);
 
   return (
     <div className="add-certificate-page">

@@ -45,15 +45,17 @@ export function AddCertificate() {
         <Button
           type="button"
           onClick={handleSave}
-          children="Save"
           className="save-form-button"
-        />
+        >
+          Save
+        </Button>
         <Button
           type="button"
           onClick={handleReset}
-          children="Reset"
           className="reset-form-button"
-        />
+        >
+          Reset
+        </Button>
       </section>
     </div>
   );

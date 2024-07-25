@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useFormatDate } from '@hooks';
 import { SvgComponentType, SvgComponent } from '@components/Svg';
 import { TCertificate } from '@types';
@@ -22,17 +22,6 @@ export const CertificateRow: React.FC<ICertificateRowProps> = ({
     setIsGearOpen((prevGear) => !prevGear);
   }, []);
 
-  useEffect(() => {
-    if (isGearOpen && isLastRow && gearRef.current) {
-      const menuElement = gearRef.current.querySelector(
-        '.gear-menu',
-      ) as HTMLElement;
-      if (menuElement) {
-        menuElement.style.marginTop = '-50px';
-      }
-    }
-  }, [isGearOpen, isLastRow]);
-
   const formatDate = useFormatDate();
 
   const handleEditClick = useCallback(() => {
@@ -53,7 +42,7 @@ export const CertificateRow: React.FC<ICertificateRowProps> = ({
             onClick={handleGearOpen}
           />
           {isGearOpen && (
-            <div className="gear-menu">
+            <div className={`gear-menu ${isLastRow ? 'adjust-margin' : ''}`}>
               <span
                 className="edit-span"
                 onClick={handleEditClick}
