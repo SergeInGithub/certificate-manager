@@ -23,6 +23,7 @@ import { addCertificate, editCertificate } from '@utils';
 import { SupplierLookupModal, UserLookupModal } from '@components/Modals';
 import { useLanguage } from '@hooks';
 import { UserLookupTable } from '@components/Tables';
+import { Comment } from '@components/Comment';
 
 const defaultFormData: TCertificate = {
   dateFrom: null,
@@ -56,6 +57,9 @@ export const CertificateForm = forwardRef(
     >([]);
     const [selectedSuppliers, setSelectedSuppliers] =
       useState<TSupplier | null>(null);
+
+    const [isComment, setIsComment] = useState(false);
+    const [comment, setComment] = useState('');
 
     const dateFromRef = useRef<HTMLInputElement | null>(null);
     const dateToRef = useRef<HTMLInputElement | null>(null);
@@ -205,6 +209,10 @@ export const CertificateForm = forwardRef(
       }));
     };
 
+    const toggleComment = useCallback(() => {
+      setIsComment((prev) => !prev);
+    }, []);
+
     const handleApplicantSelection = (applicant: TUserApplicant) => {
       setSelectedApplicants((prevSelected) => {
         const isSelected = prevSelected.some(
@@ -229,6 +237,12 @@ export const CertificateForm = forwardRef(
       }
     }, [isEdit, formData.assignedUsers]);
 
+    const handleChangeComment = useCallback(
+      (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setComment(e.target.value);
+      },
+      [],
+    );
     return (
       <React.Fragment>
         <form
@@ -350,6 +364,15 @@ export const CertificateForm = forwardRef(
               selectedApplicants={selectedApplicants}
               handleApplicantSelection={handleApplicantSelection}
               selectedItems={selectedApplicants}
+            />
+          </section>
+
+          <section className="comments-section">
+            <Comment
+              comment={comment}
+              isComment={isComment}
+              handleChangeComment={handleChangeComment}
+              toggleComment={toggleComment}
             />
           </section>
         </form>

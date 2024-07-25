@@ -259,7 +259,33 @@ export const fetchUsers = async (dbName: string, version: number) => {
   );
   return new Promise<any[]>((resolve, reject) => {
     const request = store.getAll();
-    request.onsuccess = () => resolve(request.result);
+    request.onsuccess = () => {
+      const results = request.result.filter(
+        (user: TUserApplicant) =>
+          (userName
+            ? user.userLookupName.toLowerCase().includes(userName.toLowerCase())
+            : true) &&
+          (userFirstName
+            ? user.userLookupFirstName
+                .toLowerCase()
+                .includes(userFirstName.toLowerCase())
+            : true) &&
+          (userId
+            ? user.userLookupId.toLowerCase().includes(userId.toLowerCase())
+            : true) &&
+          (userDepartment
+            ? user.userLookupDepartment
+                .toLowerCase()
+                .includes(userDepartment.toLowerCase())
+            : true) &&
+          (userPlant
+            ? user.userLookupPlant
+                .toLowerCase()
+                .includes(userPlant.toLowerCase())
+            : true),
+      );
+      resolve(results);
+    };
     request.onerror = () => reject(request.error);
   });
 };
@@ -308,6 +334,124 @@ export const searchUsers = async (
       );
       resolve(results);
     };
+    request.onerror = () => reject(request.error);
+  });
+};
+
+//! Just for storing the hardcoded users at once - might delete later
+export const addUsers = async (
+  dbName: string,
+  version: number,
+  users: any[],
+) => {
+  const { store } = await getTransactionAndStore(dbName, version, 'users');
+  return new Promise<void>((resolve, reject) => {
+    const transaction = store.transaction;
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+
+    users.forEach((user) => {
+      const request = store.add(user);
+      request.onerror = () => {
+        reject(request.error);
+      };
+    });
+  });
+};
+
+export const fetchUsers = async (dbName: string, version: number) => {
+  const { store } = await getTransactionAndStore(
+    dbName,
+    version,
+    'users',
+    'readonly',
+  );
+  return new Promise<any[]>((resolve, reject) => {
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+};
+
+export const editCertificate = async (
+  dbName: string,
+  version: number,
+  id: number,
+  data: any,
+) => {
+  const { store } = await getTransactionAndStore(dbName, version);
+
+  return new Promise<void>((resolve, reject) => {
+    const request = store.put({ ...data, id });
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+};
+
+export const deleteCertificate = async (
+  dbName: string,
+  version: number,
+  id: number,
+) => {
+  const { store } = await getTransactionAndStore(
+    dbName,
+    version,
+    'certificates',
+  );
+
+  return new Promise<void>((resolve, reject) => {
+    const request = store.delete(id);
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+};
+
+//* Suppliers-related functions
+
+export const addSupplier = async (
+  dbName: string,
+  version: number,
+  data: any,
+) => {
+  const { store } = await getTransactionAndStore(dbName, version, 'suppliers');
+
+  return new Promise<void>((resolve, reject) => {
+    const request = store.add(data);
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+};
+
+//! Just for storing the hardcoded suppliers at once - might delete later
+export const addSuppliers = async (
+  dbName: string,
+  version: number,
+  suppliers: any[],
+) => {
+  const { store } = await getTransactionAndStore(dbName, version, 'suppliers');
+
+  return new Promise<void>((resolve, reject) => {
+    const transaction = store.transaction;
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+
+    suppliers.forEach((supplier) => {
+      store.add(supplier);
+    });
+  });
+};
+
+export const fetchSuppliers = async (dbName: string, version: number) => {
+  const { store } = await getTransactionAndStore(
+    dbName,
+    version,
+    'suppliers',
+    'readonly',
+  );
+
+  return new Promise<any[]>((resolve, reject) => {
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
 };

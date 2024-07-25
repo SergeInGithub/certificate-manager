@@ -117,3 +117,9 @@ export const participantTableHeaderItems: TableHeaderItem[] = [
   { id: 'userLookupDepartment', label: 'Department' },
   { id: 'userLookupEmail', label: 'E-mail' },
 ];
+
+export const participantTableHeaderItems: TableHeaderItem[] = [
+  { id: 'userLookupName', label: 'Name' },
+  { id: 'userLookupDepartment', label: 'Department' },
+  { id: 'userLookupEmail', label: 'E-mail' },
+];
