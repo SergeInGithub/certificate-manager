@@ -1,4 +1,3 @@
-import { CERTIFICATE_TYPE } from '@types';
 import React from 'react';
 
 interface SelectProps<T> {
@@ -12,7 +11,7 @@ interface SelectProps<T> {
 export const Select = <T extends string>({
   options,
   className,
-  placeholder,
+  placeholder = 'Select your option',
   value,
   onChange,
 }: SelectProps<T>) => (
@@ -27,7 +26,7 @@ export const Select = <T extends string>({
     >
       {placeholder}
     </option>
-    {Object.values(options).map((option) => (
+    {options.map((option) => (
       <option
         key={option}
         value={option}

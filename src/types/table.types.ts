@@ -46,3 +46,8 @@ export type TSupplier = {
   supplierIndex: number;
   city: string;
 };
+
+export enum LanguageOptions {
+  ENGLISH = 'English',
+  GERMAN = 'German',
+}
