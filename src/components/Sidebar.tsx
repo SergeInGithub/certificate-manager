@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { menuItems } from '@data';
 import { MenuItem } from '@types';
 import { handleNavigate } from '@utils';
 import { HamburgerButton } from './HamburgerButton';
 import { MenuItemComponent } from './MenuItem';
 import '../assets/styles/components/sidebar.css';
 import { SvgComponentType } from './Svg';
+import { useLanguage } from '@hooks';
+import { getMenuItems } from '@data';
 
 export const Sidebar: React.FC = () => {
   const [openDropdown, setOpenDropdown] = useState<{ [key: string]: boolean }>(
@@ -27,6 +28,9 @@ export const Sidebar: React.FC = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { translations } = useLanguage();
+  const menuItems = getMenuItems(translations);
 
   useEffect(() => {
     const handleResize = () => {

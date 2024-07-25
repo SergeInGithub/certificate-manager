@@ -1,10 +1,13 @@
 import React, { useState, useRef, useCallback } from 'react';
 import '../assets/styles/pages/addCertificate.css';
 import { Button, CertificateForm, FileUpload, Preview } from '@components';
+import { useLanguage } from '@hooks';
 
 export function AddCertificate() {
   const [pdfDataUrl, setPdfDataUrl] = useState<string | null>(null);
   const formRef = useRef<{ submit: () => void; reset: () => void }>(null);
+
+  const { translations } = useLanguage();
 
   const handleSave = useCallback(() => {
     if (formRef.current) {
@@ -47,14 +50,14 @@ export function AddCertificate() {
           onClick={handleSave}
           className="save-form-button"
         >
-          Save
+          {translations.saveButton}
         </Button>
         <Button
           type="button"
           onClick={handleReset}
           className="reset-form-button"
         >
-          Reset
+          {translations.resetButton}
         </Button>
       </section>
     </div>

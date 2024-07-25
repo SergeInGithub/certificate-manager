@@ -1,4 +1,5 @@
 import { SvgComponentType } from '@components';
+import { createContext } from 'react';
 
 export type MenuItem = {
   url: string;
@@ -22,3 +23,20 @@ export type TMenuItemComponentProps = {
     parentItemType?: string,
   ) => void;
 };
+
+export enum LanguageOptions {
+  ENGLISH = 'English',
+  GERMAN = 'German',
+}
+
+export type Language = LanguageOptions;
+
+export type TLanguageContextProps = {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  translations: Record<string, string>;
+};
+
+export const LanguageContext = createContext<TLanguageContextProps | undefined>(
+  undefined,
+);

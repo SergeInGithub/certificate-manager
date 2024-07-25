@@ -19,6 +19,7 @@ import {
 } from '@types';
 import { addCertificate, editCertificate } from '@utils';
 import { SupplierLookupModal } from '@components/SupplierLookupModal';
+import { useLanguage } from '@hooks';
 
 const defaultFormData: TCertificate = {
   dateFrom: null,
@@ -40,6 +41,8 @@ export const CertificateForm = forwardRef(
     { pdfDataUrl, onReset, isEdit, certificateId }: CertificateFormProps,
     ref,
   ) => {
+    const { translations } = useLanguage();
+
     const [formData, setFormData] = useState<TCertificate>(defaultFormData);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -182,7 +185,7 @@ export const CertificateForm = forwardRef(
         >
           <div className="label-input-container">
             <Label
-              children="Supplier"
+              children={translations.supplier}
               className="supplier-label"
             />
             <Input
@@ -217,7 +220,7 @@ export const CertificateForm = forwardRef(
 
           <div className="label-input-container">
             <Label
-              children="Certificate type"
+              children={translations.certificateType}
               className="certificate-type-label"
             />
 
@@ -240,7 +243,7 @@ export const CertificateForm = forwardRef(
 
           <div className="label-input-container">
             <Label
-              children="Valid from"
+              children={translations.validFrom}
               className="valid-from-label"
             />
             <Input
@@ -252,7 +255,7 @@ export const CertificateForm = forwardRef(
                   : ''
               }
               onChange={handleChangeFrom}
-              placeholder="Click to select date"
+              placeholder={translations.selectDatePlaceholder}
               onFocus={handleFocusFrom}
               onBlur={handleBlurFrom}
               className="valid-from-input"
@@ -261,7 +264,7 @@ export const CertificateForm = forwardRef(
 
           <div className="label-input-container">
             <Label
-              children="Valid to"
+              children={translations.validTo}
               className="valid-to-label"
             />
             <Input
@@ -273,7 +276,7 @@ export const CertificateForm = forwardRef(
                   : ''
               }
               onChange={handleChangeTo}
-              placeholder="Click to select date"
+              placeholder={translations.selectDatePlaceholder}
               onFocus={handleFocusTo}
               onBlur={handleBlurTo}
               className="valid-to-input"
