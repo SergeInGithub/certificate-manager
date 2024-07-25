@@ -12,7 +12,7 @@ interface SelectProps<T> {
 export const Select = <T extends string>({
   options,
   className,
-  placeholder = 'Select your option',
+  placeholder,
   value,
   onChange,
 }: SelectProps<T>) => {
