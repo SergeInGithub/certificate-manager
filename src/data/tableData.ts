@@ -2,6 +2,7 @@ import {
   CertificateType,
   TCertificate,
   TSupplier,
+  TUserApplicant,
   TableHeaderItem,
 } from '@types';
 import { parseCertificate } from '@utils';
@@ -65,5 +66,46 @@ export const hardcodedSuppliers: TSupplier[] = [
     supplierName: 'ANDEMIS GmbH',
     supplierIndex: 4,
     city: 'Stuttgart',
+  },
+];
+
+export const userLookupTableHeaderItems: TableHeaderItem[] = [
+  { id: 'editAndDelete', label: '' },
+  { id: 'userLookupName', label: 'Name' },
+  { id: 'userLookupFirstName', label: 'First name' },
+  { id: 'userLookupId', label: 'User ID' },
+  { id: 'userLookupDepartment', label: 'Department' },
+  { id: 'userLookupPlant', label: 'Plant' },
+];
+
+export const hardcodedUserApplicants: TUserApplicant[] = [
+  {
+    userLookupName: 'Simon',
+    userLookupFirstName: 'Zwolfer',
+    userLookupId: 'ZWOELF',
+    userLookupDepartment: 'ITM/FP',
+    userLookupPlant: '096',
+  },
+  {
+    userLookupName: 'Wolfgang',
+    userLookupFirstName: 'Tony',
+    userLookupId: 'WOLFST',
+    userLookupDepartment: 'ITM/FP',
+    userLookupPlant: '094',
+  },
+  {
+    userLookupName: 'Peter',
+    userLookupFirstName: 'Stark',
+    userLookupId: 'WOLFST',
+    userLookupDepartment: 'ITM/FP',
+    userLookupPlant: '095',
+  },
+
+  {
+    userLookupName: 'John',
+    userLookupFirstName: 'Stark',
+    userLookupId: 'WOLFST',
+    userLookupDepartment: 'ITM/FP',
+    userLookupPlant: '093',
   },
 ];

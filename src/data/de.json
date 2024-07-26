@@ -15,6 +15,7 @@
   "city": "Stadt",
   "selectDatePlaceholder": "Klicken, um Datum auszuwählen",
   "searchForSuppliers": "Lieferanten suchen",
+  "supplierList": "Lieferantenliste",
   "searchCriteria": "Suchkriterien",
   "searchButton": "Suchen",
   "resetButton": "Zurücksetzen",
@@ -22,5 +23,12 @@
   "cancelButton": "Abbrechen",
   "saveButton": "Speichern",
   "uploadFile": "hochladen",
-  "selectPlaceholder": "Wählen Sie Ihre Option"
+  "selectPlaceholder": "Wählen Sie Ihre Option",
+  "searchForPersons": "Lieferanten Personen",
+  "personList": "Personenliste",
+  "userLookupName": "Name",
+  "userLookupFirstName": "Vorname",
+  "userLookupId": "Benutzer-ID",
+  "userLookupDepartment": "Abteilung",
+  "userLookupPlant": "Werk"
 }

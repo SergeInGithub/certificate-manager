@@ -18,7 +18,7 @@ import {
   TSupplier,
 } from '@types';
 import { addCertificate, editCertificate } from '@utils';
-import { SupplierLookupModal } from '@components/SupplierLookupModal';
+import { SupplierLookupModal, UserLookupModal } from '@components/Modals';
 import { useLanguage } from '@hooks';
 
 const defaultFormData: TCertificate = {
@@ -45,6 +45,8 @@ export const CertificateForm = forwardRef(
 
     const [formData, setFormData] = useState<TCertificate>(defaultFormData);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+    const [initialSupplierName, setInitialSupplierName] = useState('');
 
     const dateFromRef = useRef<HTMLInputElement | null>(null);
     const dateToRef = useRef<HTMLInputElement | null>(null);
@@ -167,7 +169,9 @@ export const CertificateForm = forwardRef(
     const openModal = () => {
       setIsModalOpen(true);
     };
-    const closeModal = () => setIsModalOpen(false);
+
+    const closeModal = useCallback(() => setIsModalOpen(false), []);
+    const closeUserModal = useCallback(() => setIsUserModalOpen(false), []);
 
     const handleSupplierReset = () => {
       setFormData((prev) => ({
@@ -287,6 +291,10 @@ export const CertificateForm = forwardRef(
           isOpen={isModalOpen}
           onClose={closeModal}
           onSelectSupplier={handleSupplierSelect}
+        />
+        <UserLookupModal
+          isOpen={isUserModalOpen}
+          onClose={closeUserModal}
         />
       </React.Fragment>
     );

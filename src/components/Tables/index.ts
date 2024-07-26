@@ -5,3 +5,7 @@ export * from './CertificateTable';
 export * from './SupplierLookupTable';
 export * from './SupplierLookupTableHeader';
 export * from './SupplierLookupTableBody';
+export * from './UserLookupTable';
+export * from './UserLookupTableHeader';
+export * from './UserLookupTableBody';
+export * from './UserLookupTableRow';

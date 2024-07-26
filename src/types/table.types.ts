@@ -40,3 +40,11 @@ export enum LanguageOptions {
   ENGLISH = 'English',
   GERMAN = 'German',
 }
+
+export type TUserApplicant = {
+  userLookupName: string;
+  userLookupFirstName: string;
+  userLookupId: string;
+  userLookupDepartment: string;
+  userLookupPlant: string;
+};

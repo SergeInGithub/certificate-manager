@@ -90,6 +90,25 @@
   border-top-right-radius: 4px;
 }
 
+.search-participant-button {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid #c9c9c9;
+  background-color: #f2f2f2;
+  width: 140px;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  border-radius: 4px;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.add-participant {
+  font-size: small;
+  font-weight: 400;
+}
+
 @media (max-width: 834px) {
   .certificate-form {
     margin-top: 70px;
