@@ -83,6 +83,7 @@ export const hardcodedUserApplicants: TUserApplicant[] = [
     userLookupId: 'ZWOELF',
     userLookupDepartment: 'ITM/FP',
     userLookupPlant: '096',
+    userLookupEmail: 'simonz@mail.com',
   },
   {
     userLookupName: 'Wolfgang',
@@ -90,6 +91,7 @@ export const hardcodedUserApplicants: TUserApplicant[] = [
     userLookupId: 'WOFLST',
     userLookupDepartment: 'ITM/FP',
     userLookupPlant: '094',
+    userLookupEmail: 'wolfgangs@mail.com',
   },
   {
     userLookupName: 'Peter',
@@ -97,6 +99,7 @@ export const hardcodedUserApplicants: TUserApplicant[] = [
     userLookupId: 'WOLFTS',
     userLookupDepartment: 'ITM/FP',
     userLookupPlant: '095',
+    userLookupEmail: 'starkp@mail.com',
   },
 
   {
@@ -105,5 +108,12 @@ export const hardcodedUserApplicants: TUserApplicant[] = [
     userLookupId: 'WOLFST',
     userLookupDepartment: 'ITM/FP',
     userLookupPlant: '093',
+    userLookupEmail: 'johns@mail.com',
   },
+];
+
+export const participantTableHeaderItems: TableHeaderItem[] = [
+  { id: 'userLookupName', label: 'Name' },
+  { id: 'userLookupDepartment', label: 'Department' },
+  { id: 'userLookupEmail', label: 'E-mail' },
 ];

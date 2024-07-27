@@ -1,8 +1,8 @@
 import React from 'react';
 import { useLanguage } from '@hooks';
-import { ILookupTableHeader, TableHeaderItem } from '@types';
+import { TLookupTableHeader, TableHeaderItem } from '@types';
 
-export const LookupTableHeader = ({ tableHeaderItems }: ILookupTableHeader) => {
+export const LookupTableHeader = ({ tableHeaderItems }: TLookupTableHeader) => {
   const { translations } = useLanguage();
 
   return (

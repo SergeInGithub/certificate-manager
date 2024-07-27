@@ -109,6 +109,12 @@
   font-weight: 400;
 }
 
+.participants-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 @media (max-width: 834px) {
   .certificate-form {
     margin-top: 70px;

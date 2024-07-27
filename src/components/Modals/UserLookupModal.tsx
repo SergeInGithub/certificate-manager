@@ -1,25 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { LookupModal } from './LookupModal';
 import { hardcodedUserApplicants } from '@data';
-import { LookupModalType } from '@types';
+import { LookupModalType, TUserApplicant } from '@types';
 import { addUsers, fetchUsers } from '@utils';
 import { useLanguage } from '@hooks';
 
 interface UserLookupModalProps {
   isOpen: boolean;
   onClose: () => void;
+  selectedItems: any;
+  setSelectedItems: any;
+  cancelSelections: () => void;
 }
 
 export const UserLookupModal: React.FC<UserLookupModalProps> = ({
   isOpen,
   onClose,
+  selectedItems,
+  setSelectedItems,
+  cancelSelections,
 }) => {
   const [name, setName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [userId, setUserId] = useState('');
   const [department, setDepartment] = useState('');
   const [plant, setPlant] = useState('');
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<TUserApplicant[]>([]);
 
   const { translations } = useLanguage();
 
@@ -87,6 +93,9 @@ export const UserLookupModal: React.FC<UserLookupModalProps> = ({
       criteria={criteria}
       users={users}
       modalType={LookupModalType.USER_LOOKUP}
+      selectedItems={selectedItems}
+      setSelectedItems={setSelectedItems}
+      cancelSelections={cancelSelections}
     />
   );
 };

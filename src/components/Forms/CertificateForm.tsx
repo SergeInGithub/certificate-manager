@@ -20,6 +20,7 @@ import {
 import { addCertificate, editCertificate } from '@utils';
 import { SupplierLookupModal, UserLookupModal } from '@components/Modals';
 import { useLanguage } from '@hooks';
+import { LookupTable } from '@components/Tables';
 
 const defaultFormData: TCertificate = {
   dateFrom: null,
@@ -47,6 +48,10 @@ export const CertificateForm = forwardRef(
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isUserModalOpen, setIsUserModalOpen] = useState(false);
     const [initialSupplierName, setInitialSupplierName] = useState('');
+
+    const [selectedItems, setSelectedItems] = useState<
+      TUserApplicant[] | TSupplier[]
+    >([]);
 
     const dateFromRef = useRef<HTMLInputElement | null>(null);
     const dateToRef = useRef<HTMLInputElement | null>(null);
@@ -156,6 +161,7 @@ export const CertificateForm = forwardRef(
             formRef.current.reset();
           }
           setFormData(defaultFormData);
+          setSelectedItems([]);
           if (onReset) {
             onReset();
           }
@@ -170,8 +176,20 @@ export const CertificateForm = forwardRef(
       setIsModalOpen(true);
     };
 
-    const closeModal = useCallback(() => setIsModalOpen(false), []);
+    const openUserModal = useCallback(() => {
+      setIsUserModalOpen(true);
+    }, []);
+
+    const closeModal = useCallback(() => {
+      setIsModalOpen(false);
+      setSelectedItems([]);
+    }, []);
+
     const closeUserModal = useCallback(() => setIsUserModalOpen(false), []);
+
+    const cancelSelections = useCallback(() => {
+      setSelectedItems([]);
+    }, []);
 
     const handleSupplierReset = () => {
       setFormData((prev) => ({
@@ -180,6 +198,20 @@ export const CertificateForm = forwardRef(
       }));
     };
 
+    const handleSelection = (item: any) => {
+      setSelectedItems((prevSelectedItems: any[]) => {
+        const isSelected = prevSelectedItems.some(
+          (selectedItem: { id: any }) => selectedItem.id === item.id,
+        );
+        if (isSelected) {
+          return prevSelectedItems.filter(
+            (selectedItem: { id: any }) => selectedItem.id !== item.id,
+          );
+        } else {
+          return [...prevSelectedItems, item];
+        }
+      });
+    };
     return (
       <React.Fragment>
         <form
@@ -286,6 +318,30 @@ export const CertificateForm = forwardRef(
               className="valid-to-input"
             />
           </div>
+
+          <section className="participants-section">
+            <div>
+              <Label className="valid-to-label">Assigned users</Label>
+              <Button
+                type="button"
+                className="search-participant-button"
+                onClick={openUserModal}
+              >
+                <SvgComponent
+                  type={SvgComponentType.SEARCH}
+                  className="search-icon"
+                />
+                <h5 className="add-participant">Add participant</h5>
+              </Button>
+            </div>
+
+            <LookupTable
+              items={selectedItems}
+              // modalType={modalType}
+              handleSelection={handleSelection}
+              selectedItems={selectedItems}
+            />
+          </section>
         </form>
         <SupplierLookupModal
           isOpen={isModalOpen}
@@ -295,6 +351,9 @@ export const CertificateForm = forwardRef(
         <UserLookupModal
           isOpen={isUserModalOpen}
           onClose={closeUserModal}
+          selectedItems={selectedItems}
+          setSelectedItems={setSelectedItems}
+          cancelSelections={cancelSelections}
         />
       </React.Fragment>
     );

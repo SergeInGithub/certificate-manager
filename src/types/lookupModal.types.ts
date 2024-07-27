@@ -16,4 +16,7 @@ export type LookupModalProps = {
   suppliers?: any;
   users?: any;
   modalType: LookupModalType;
+  selectedItems?: any;
+  setSelectedItems?: any;
+  cancelSelections?: () => void;
 };

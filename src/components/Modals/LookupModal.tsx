@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../Button';
-import { SvgComponent } from '../Svg';
+import { SvgComponent, SvgComponentType } from '../Svg';
 import { LookupHeader } from '../LookupHeader';
 import { Input } from '../Input';
 import { Label } from '../Label';
 import '../../assets/styles/components/lookupModal.css';
 import { useLanguage } from '@hooks';
 import { LookupTable } from '@components/Tables';
-import { LookupModalProps, LookupModalType } from '@types';
+import {
+  LookupModalProps,
+  LookupModalType,
+  TSupplier,
+  TUserApplicant,
+} from '@types';
 
 export const LookupModal: React.FC<LookupModalProps> = ({
   isOpen,
@@ -17,10 +22,15 @@ export const LookupModal: React.FC<LookupModalProps> = ({
   suppliers,
   users,
   modalType,
+  selectedItems,
+  setSelectedItems,
+  cancelSelections,
 }) => {
   const { translations } = useLanguage();
-  const [items, setItems] = useState<any[]>([]);
-  const [filteredItems, setFilteredItems] = useState<any[]>([]);
+  const [items, setItems] = useState([]);
+  const [filteredItems, setFilteredItems] = useState<
+    TUserApplicant[] | TSupplier[]
+  >([]);
 
   useEffect(() => {
     const initializeItems = () => {
@@ -53,6 +63,28 @@ export const LookupModal: React.FC<LookupModalProps> = ({
   const handleReset = () => {
     criteria.forEach((criterion) => criterion.setValue(''));
     setFilteredItems(items);
+    setSelectedItems([]);
+  };
+
+  const handleSelection = (item: any) => {
+    setSelectedItems((prevSelectedItems: any[]) => {
+      const isSelected = prevSelectedItems.some(
+        (selectedItem: { id: any }) => selectedItem.id === item.id,
+      );
+      if (isSelected) {
+        return prevSelectedItems.filter(
+          (selectedItem: { id: any }) => selectedItem.id !== item.id,
+        );
+      } else {
+        return [...prevSelectedItems, item];
+      }
+    });
+  };
+
+  const handleSelectButtonClick = () => {
+    console.log('Selected Items: 🟡', selectedItems);
+    setSelectedItems(selectedItems);
+    onClose();
   };
 
   return (
@@ -64,7 +96,7 @@ export const LookupModal: React.FC<LookupModalProps> = ({
             type="button"
             children={
               <SvgComponent
-                type="close"
+                type={SvgComponentType.CLOSE}
                 className="lookup-close-icon"
               />
             }
@@ -74,19 +106,11 @@ export const LookupModal: React.FC<LookupModalProps> = ({
         </section>
 
         <section
-          className={`${
-            modalType === LookupModalType.SUPPLIER_LOOKUP
-              ? 'search-criteria-container'
-              : 'user-search-criteria-container'
-          }`}
+          className={`${modalType === LookupModalType.SUPPLIER_LOOKUP ? 'search-criteria-container' : 'user-search-criteria-container'}`}
         >
           <LookupHeader heading={translations.searchCriteria} />
           <section
-            className={`${
-              modalType === LookupModalType.SUPPLIER_LOOKUP
-                ? 'inputs-container'
-                : 'user-inputs-container'
-            }`}
+            className={`${modalType === LookupModalType.SUPPLIER_LOOKUP ? 'inputs-container' : 'user-inputs-container'}`}
           >
             {criteria.map((criterion, index) => (
               <div
@@ -107,11 +131,7 @@ export const LookupModal: React.FC<LookupModalProps> = ({
             ))}
           </section>
           <section
-            className={`${
-              modalType === LookupModalType.SUPPLIER_LOOKUP
-                ? 'search-criteria-button-section'
-                : 'user-search-criteria-button-section'
-            }`}
+            className={`${modalType === LookupModalType.SUPPLIER_LOOKUP ? 'search-criteria-button-section' : 'user-search-criteria-button-section'}`}
           >
             <Button
               type="button"
@@ -140,17 +160,16 @@ export const LookupModal: React.FC<LookupModalProps> = ({
             <LookupTable
               items={filteredItems}
               modalType={modalType}
+              handleSelection={handleSelection}
+              selectedItems={selectedItems}
             />
           </section>
           <section
-            className={`${
-              modalType === LookupModalType.SUPPLIER_LOOKUP
-                ? 'search-criteria-button-section'
-                : 'user-search-criteria-button-section'
-            }`}
+            className={`${modalType === LookupModalType.SUPPLIER_LOOKUP ? 'search-criteria-button-section' : 'user-search-criteria-button-section'}`}
           >
             <Button
               type="button"
+              onClick={handleSelectButtonClick}
               children={translations.selectButton}
               className="lookup-save-button"
             />
@@ -158,6 +177,7 @@ export const LookupModal: React.FC<LookupModalProps> = ({
               type="button"
               children={translations.cancelButton}
               className="lookup-cancel-button"
+              onClick={cancelSelections}
             />
           </section>
         </section>
