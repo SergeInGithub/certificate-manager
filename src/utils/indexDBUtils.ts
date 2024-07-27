@@ -18,6 +18,12 @@ export const openDB = (dbName: string, version: number) => {
           autoIncrement: true,
         });
       }
+      if (!db.objectStoreNames.contains('users')) {
+        db.createObjectStore('users', {
+          keyPath: 'id',
+          autoIncrement: true,
+        });
+      }
     };
 
     request.onsuccess = () => {
@@ -224,6 +230,41 @@ export const searchSuppliers = async (
       }
     };
 
+    request.onerror = () => reject(request.error);
+  });
+};
+
+//! Just for storing the hardcoded users at once - might delete later
+export const addUsers = async (
+  dbName: string,
+  version: number,
+  users: any[],
+) => {
+  const { store } = await getTransactionAndStore(dbName, version, 'users');
+  return new Promise<void>((resolve, reject) => {
+    const transaction = store.transaction;
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+
+    users.forEach((user) => {
+      const request = store.add(user);
+      request.onerror = () => {
+        reject(request.error);
+      };
+    });
+  });
+};
+
+export const fetchUsers = async (dbName: string, version: number) => {
+  const { store } = await getTransactionAndStore(
+    dbName,
+    version,
+    'users',
+    'readonly',
+  );
+  return new Promise<any[]>((resolve, reject) => {
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
 };

@@ -40,7 +40,6 @@ export const certificates: TCertificate[] = [
 ];
 
 export const SupplierLookupTableHeaderItems: TableHeaderItem[] = [
-  { id: 'editAndDelete', label: '' },
   { id: 'supplierName', label: 'Supplier name' },
   { id: 'supplierIndex', label: 'Supplier index' },
   { id: 'city', label: 'City' },
@@ -70,7 +69,6 @@ export const hardcodedSuppliers: TSupplier[] = [
 ];
 
 export const userLookupTableHeaderItems: TableHeaderItem[] = [
-  { id: 'editAndDelete', label: '' },
   { id: 'userLookupName', label: 'Name' },
   { id: 'userLookupFirstName', label: 'First name' },
   { id: 'userLookupId', label: 'User ID' },
@@ -89,14 +87,14 @@ export const hardcodedUserApplicants: TUserApplicant[] = [
   {
     userLookupName: 'Wolfgang',
     userLookupFirstName: 'Tony',
-    userLookupId: 'WOLFST',
+    userLookupId: 'WOFLST',
     userLookupDepartment: 'ITM/FP',
     userLookupPlant: '094',
   },
   {
     userLookupName: 'Peter',
     userLookupFirstName: 'Stark',
-    userLookupId: 'WOLFST',
+    userLookupId: 'WOLFTS',
     userLookupDepartment: 'ITM/FP',
     userLookupPlant: '095',
   },

@@ -1,13 +1,9 @@
-import React from 'react';
-import { Button } from '../Button';
-import { SvgComponent } from '../Svg';
-import { LookupHeader } from '../LookupHeader';
-import { Input } from '../Input';
-import { Label } from '../Label';
-import { UserLookupTable } from '../Tables';
-import '../../assets/styles/components/userLookupModal.css';
-import { useLanguage } from '@hooks';
+import React, { useEffect, useState } from 'react';
+import { LookupModal } from './LookupModal';
 import { hardcodedUserApplicants } from '@data';
+import { LookupModalType } from '@types';
+import { addUsers, fetchUsers } from '@utils';
+import { useLanguage } from '@hooks';
 
 interface UserLookupModalProps {
   isOpen: boolean;
@@ -18,120 +14,79 @@ export const UserLookupModal: React.FC<UserLookupModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [userId, setUserId] = useState('');
+  const [department, setDepartment] = useState('');
+  const [plant, setPlant] = useState('');
+  const [users, setUsers] = useState<any[]>([]);
+
   const { translations } = useLanguage();
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    const initializeUsers = async () => {
+      try {
+        const existingUsers = await fetchUsers('myDatabase', 1);
+        console.log('Existing Users:', existingUsers);
+
+        const existingUserIds = new Set(
+          existingUsers.map((user) => user.userLookupId),
+        );
+        console.log('Existing User IDs:', existingUserIds);
+
+        const usersToAdd = hardcodedUserApplicants.filter(
+          (user) => !existingUserIds.has(user.userLookupId),
+        );
+        console.log('Users to Add:', usersToAdd);
+
+        if (usersToAdd.length > 0) {
+          await addUsers('myDatabase', 1, usersToAdd);
+        }
+
+        const usersFromDB = await fetchUsers('myDatabase', 1);
+        console.log('Users from DB:', usersFromDB);
+        setUsers(usersFromDB);
+      } catch (error) {
+        console.error('Error in initializeUsers:', error);
+      }
+    };
+
+    if (isOpen) {
+      initializeUsers();
+    }
+  }, [isOpen]);
+
+  const criteria = [
+    { id: 'userLookupName', label: 'Name', value: name, setValue: setName },
+    {
+      id: 'userLookupFirstName',
+      label: 'First Name',
+      value: firstName,
+      setValue: setFirstName,
+    },
+    {
+      id: 'userLookupId',
+      label: 'User ID',
+      value: userId,
+      setValue: setUserId,
+    },
+    {
+      id: 'userLookupDepartment',
+      label: 'Department',
+      value: department,
+      setValue: setDepartment,
+    },
+    { id: 'userLookupPlant', label: 'Plant', value: plant, setValue: setPlant },
+  ];
 
   return (
-    <div className="supplier-lookup-modal">
-      <div className="supplier-lookup-modal-content">
-        <section className="lookup-modal-header-section">
-          <h6 className="lookup-modal-header">
-            {translations.searchForPersons}
-          </h6>
-          <Button
-            type="button"
-            children={
-              <SvgComponent
-                type="close"
-                className="lookup-close-icon"
-              />
-            }
-            className="lookup-close-button"
-            onClick={onClose}
-          />
-        </section>
-
-        <section className="user-lookup-search-criteria-container">
-          <LookupHeader heading={translations.searchCriteria} />
-
-          <section className="user-inputs-container">
-            <div className="lookup-label-input-container">
-              <Label className="supplier-label">
-                {translations.userLookupName}
-              </Label>
-              <Input
-                type="text"
-                className="supplier-input"
-              />
-            </div>
-
-            <div className="lookup-label-input-container">
-              <Label className="supplier-label">
-                {translations.userLookupFirstName}
-              </Label>
-              <Input
-                type="text"
-                className="supplier-input"
-              />
-            </div>
-
-            <div className="lookup-label-input-container">
-              <Label className="supplier-label">
-                {translations.userLookupId}
-              </Label>
-              <Input
-                type="text"
-                className="supplier-input"
-              />
-            </div>
-
-            <div className="lookup-label-input-container">
-              <Label className="supplier-label">
-                {translations.userLookupDepartment}
-              </Label>
-              <Input
-                type="text"
-                className="supplier-input"
-              />
-            </div>
-
-            <div className="lookup-label-input-container">
-              <Label className="supplier-label">
-                {translations.userLookupPlant}
-              </Label>
-              <Input
-                type="text"
-                className="supplier-input"
-              />
-            </div>
-          </section>
-
-          <section className="user-lookup-search-criteria-button-section">
-            <Button
-              type="button"
-              children={translations.searchButton}
-              className="lookup-search-button"
-            />
-            <Button
-              type="button"
-              children={translations.resetButton}
-              className="lookup-reset-button"
-            />
-          </section>
-        </section>
-
-        <section className="supplier-list-container">
-          <LookupHeader heading={translations.personList} />
-
-          <section className="supplier-list-table-container">
-            <UserLookupTable users={hardcodedUserApplicants} />
-          </section>
-
-          <section className="user-lookup-person-list-button-section">
-            <Button
-              type="button"
-              children={translations.selectButton}
-              className="lookup-save-button"
-            />
-            <Button
-              type="button"
-              children={translations.cancelButton}
-              className="lookup-cancel-button"
-            />
-          </section>
-        </section>
-      </div>
-    </div>
+    <LookupModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={translations.searchForPersons}
+      criteria={criteria}
+      users={users}
+      modalType={LookupModalType.USER_LOOKUP}
+    />
   );
 };

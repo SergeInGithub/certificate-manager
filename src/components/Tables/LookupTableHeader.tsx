@@ -1,15 +1,15 @@
 import React from 'react';
-import { userLookupTableHeaderItems } from '@data';
 import { useLanguage } from '@hooks';
-import { TableHeaderItem } from '@types';
+import { ILookupTableHeader, TableHeaderItem } from '@types';
 
-export const UserLookupTableHeader = () => {
+export const LookupTableHeader = ({ tableHeaderItems }: ILookupTableHeader) => {
   const { translations } = useLanguage();
 
   return (
     <thead>
       <tr>
-        {userLookupTableHeaderItems.map((item: TableHeaderItem) => (
+        <th />
+        {tableHeaderItems.map((item: TableHeaderItem) => (
           <th
             scope="col"
             key={item.id}

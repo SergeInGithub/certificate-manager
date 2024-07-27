@@ -48,3 +48,18 @@ export type TUserApplicant = {
   userLookupDepartment: string;
   userLookupPlant: string;
 };
+
+export type ILookupTableHeader = {
+  tableHeaderItems: TableHeaderItem[];
+};
+
+export type ILookupTableBody = {
+  items: TSupplier[] | TUserApplicant[];
+  columns: TableHeaderItem[];
+};
+
+export type ILookupTableRow = {
+  item: TSupplier | TUserApplicant;
+  index: number;
+  columns: TableHeaderItem[];
+};
