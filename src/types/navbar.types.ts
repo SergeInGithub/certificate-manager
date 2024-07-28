@@ -1,9 +1,9 @@
-import { SVG_COMPONENT_TYPE } from '@components';
+import { SvgComponentType } from '@components';
 
 export type MenuItem = {
   url: string;
   icon?: {
-    type: SVG_COMPONENT_TYPE;
+    type: SvgComponentType;
     color: string;
   };
   name: string;

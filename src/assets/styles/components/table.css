@@ -41,6 +41,42 @@ tbody tr:hover {
   background-color: #ffffff;
 }
 
+.gear {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: none;
+  flex-direction: column;
+}
+
+.gear-button {
+  width: 20px;
+  height: auto;
+  cursor: pointer;
+}
+
+.gear-menu {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  box-shadow: -2px 2px 3px 1px rgba(0, 0, 0, 0.1);
+  width: 60px;
+  height: 45px;
+  margin-left: 30px;
+  margin-top: 25px;
+  z-index: 10;
+}
+
+.gear-menu span {
+  cursor: pointer;
+  margin-bottom: 3px;
+}
+
+.gear-menu.adjust-margin {
+  margin-top: -50px;
+}
+
 @media (max-width: 834px) {
   table {
     min-width: 700px;

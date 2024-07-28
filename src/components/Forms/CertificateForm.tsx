@@ -10,23 +10,31 @@ import { Input } from '@components/Input';
 import { Label } from '@components/Label';
 import { Select } from '@components/Select';
 import { Button } from '@components/Button';
-import { SVG_COMPONENT_TYPE, SvgComponent } from '@components/Svg';
-import { CertificateType, TCertificate } from '@types';
-import { addCertificate } from '@utils';
+import { SvgComponentType, SvgComponent } from '@components/Svg';
+import { CertificateFormValues, CertificateType, TCertificate } from '@types';
+import { addCertificate, editCertificate } from '@utils';
+
+const defaultFormData: TCertificate = {
+  dateFrom: null,
+  dateTo: null,
+  certificateType: undefined,
+  supplier: '',
+  pdfDataUrl: null,
+};
 
 interface CertificateFormProps {
   pdfDataUrl: string | null;
   onReset?: () => void;
+  isEdit?: boolean;
+  certificateId?: number;
 }
 
 export const CertificateForm = forwardRef(
-  ({ pdfDataUrl, onReset }: CertificateFormProps, ref) => {
-    const [formData, setFormData] = useState<TCertificate>({
-      dateFrom: null,
-      dateTo: null,
-      certificateType: undefined,
-      supplier: '',
-    });
+  (
+    { pdfDataUrl, onReset, isEdit, certificateId }: CertificateFormProps,
+    ref,
+  ) => {
+    const [formData, setFormData] = useState<TCertificate>(defaultFormData);
 
     const dateFromRef = useRef<HTMLInputElement | null>(null);
     const dateToRef = useRef<HTMLInputElement | null>(null);
@@ -41,15 +49,19 @@ export const CertificateForm = forwardRef(
         }
       },
       reset: () => {
-        setFormData({
-          dateFrom: null,
-          dateTo: null,
-          certificateType: undefined,
-          supplier: '',
-        });
+        setFormData(defaultFormData);
         if (onReset) {
           onReset();
         }
+      },
+      setValues: (values: CertificateFormValues) => {
+        setFormData({
+          dateFrom: values.dateFrom ? new Date(values.dateFrom) : null,
+          dateTo: values.dateTo ? new Date(values.dateTo) : null,
+          certificateType: values.certificateType as CertificateType,
+          supplier: values.supplier,
+          pdfDataUrl: pdfDataUrl || null,
+        });
       },
     }));
 
@@ -122,30 +134,26 @@ export const CertificateForm = forwardRef(
       async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const formDataToSend = {
-          ...formData,
-          pdfDataUrl,
-        };
+        formData.pdfDataUrl = pdfDataUrl;
 
         try {
-          await addCertificate('CertificatesDB', 1, formDataToSend);
+          if (isEdit && certificateId) {
+            await editCertificate('CertificatesDB', 1, certificateId, formData);
+          } else {
+            await addCertificate('CertificatesDB', 1, formData);
+          }
           if (formRef.current) {
             formRef.current.reset();
           }
-          setFormData({
-            dateFrom: null,
-            dateTo: null,
-            certificateType: undefined,
-            supplier: '',
-          });
+          setFormData(defaultFormData);
           if (onReset) {
             onReset();
           }
         } catch (error) {
-          console.error('Error adding certificate:', error);
+          console.error('Error adding/editing certificate:', error);
         }
       },
-      [formData, pdfDataUrl, onReset],
+      [formData, pdfDataUrl, isEdit, certificateId, onReset],
     );
 
     return (
@@ -169,24 +177,22 @@ export const CertificateForm = forwardRef(
           <div className="input-buttons">
             <Button
               type="button"
-              children={
-                <SvgComponent
-                  type={SVG_COMPONENT_TYPE.SEARCH}
-                  className="search-icon"
-                />
-              }
               className="search-button"
-            />
+            >
+              <SvgComponent
+                type={SvgComponentType.SEARCH}
+                className="search-icon"
+              />
+            </Button>
             <Button
               type="button"
-              children={
-                <SvgComponent
-                  type={SVG_COMPONENT_TYPE.CLOSE}
-                  className="close-icon"
-                />
-              }
               className="close-button"
-            />
+            >
+              <SvgComponent
+                type={SvgComponentType.CLOSE}
+                className="close-icon"
+              />
+            </Button>
           </div>
         </div>
 
@@ -206,7 +212,7 @@ export const CertificateForm = forwardRef(
             />
             <div className="custom-select-icon">
               <SvgComponent
-                type={SVG_COMPONENT_TYPE.SELECTED_DOWN_ARROW}
+                type={SvgComponentType.SELECTED_DOWN_ARROW}
                 className="custom-select-arrow-icon"
               />
             </div>

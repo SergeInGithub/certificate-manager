@@ -14,4 +14,13 @@ export type TCertificate = {
   certificateType: CertificateType | undefined;
   dateFrom: Date | null;
   dateTo: Date | null;
+  pdfDataUrl: string | null;
+};
+
+export type CertificateFormValues = {
+  dateFrom: string;
+  dateTo: string;
+  certificateType: string;
+  supplier: string;
+  pdfDataUrl: string;
 };

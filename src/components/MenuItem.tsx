@@ -1,6 +1,6 @@
 import { MenuItem, TMenuItemComponentProps } from '@types';
 import React, { useCallback } from 'react';
-import { SVG_COMPONENT_TYPE, SvgComponent } from './Svg';
+import { SvgComponentType, SvgComponent } from './Svg';
 import { isValidSvgType } from '@utils';
 import { useGetColorOnSelection } from '@hooks';
 
@@ -39,8 +39,8 @@ export const MenuItemComponent: React.FC<TMenuItemComponentProps> = ({
         <SvgComponent
           type={
             isValidSvgType(item.icon?.type)
-              ? item.icon.type
-              : SVG_COMPONENT_TYPE.HAMBURGER
+              ? item.icon?.type
+              : SvgComponentType.HAMBURGER
           }
           color={getColorOnSelection(item.icon?.type, selectedMenuItem)}
           className="icon"
@@ -52,7 +52,7 @@ export const MenuItemComponent: React.FC<TMenuItemComponentProps> = ({
         </span>
         {item.subItems && (
           <SvgComponent
-            type={SVG_COMPONENT_TYPE.ARROW_DOWN}
+            type={SvgComponentType.ARROW_DOWN}
             color={getColorOnSelection(item.icon?.type, selectedMenuItem)}
             className="arrowDown"
           />
