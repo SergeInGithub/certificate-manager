@@ -71,3 +71,17 @@ export const editCertificate = async (
     request.onerror = () => reject(request.error);
   });
 };
+
+export const deleteCertificate = async (
+  dbName: string,
+  version: number,
+  id: number,
+) => {
+  const { store } = await getTransactionAndStore(dbName, version);
+
+  return new Promise<void>((resolve, reject) => {
+    const request = store.delete(id);
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+};

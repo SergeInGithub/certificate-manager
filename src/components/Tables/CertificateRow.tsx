@@ -8,11 +8,13 @@ import { useNavigate } from 'react-router-dom';
 interface ICertificateRowProps {
   certificate: TCertificate;
   isLastRow: boolean;
+  onDelete: (id: number) => void;
 }
 
 export const CertificateRow: React.FC<ICertificateRowProps> = ({
   certificate,
   isLastRow,
+  onDelete,
 }) => {
   const [isGearOpen, setIsGearOpen] = useState(false);
   const gearRef = useRef<HTMLTableDataCellElement>(null);
@@ -27,6 +29,14 @@ export const CertificateRow: React.FC<ICertificateRowProps> = ({
   const handleEditClick = useCallback(() => {
     handleNavigate(`/ml/edit-certificate/${certificate.id}`, navigate);
   }, [certificate.id, navigate]);
+
+  const handleDeleteClick = useCallback(async () => {
+    try {
+      await onDelete(certificate.id as number);
+    } catch (error) {
+      console.error('Error deleting certificate:', error);
+    }
+  }, [certificate.id, onDelete]);
 
   return (
     <React.Fragment>
@@ -49,7 +59,7 @@ export const CertificateRow: React.FC<ICertificateRowProps> = ({
               >
                 Edit
               </span>
-              <span>Delete</span>
+              <span onClick={handleDeleteClick}>Delete</span>
             </div>
           )}
         </td>

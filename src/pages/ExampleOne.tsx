@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { CertificateTable } from '@components/Tables';
 import '../assets/styles/pages/exampleOne.css';
 import { Button } from '@components';
-import { fetchCertificates, handleNavigate } from '@utils';
+import { fetchCertificates, handleNavigate, deleteCertificate } from '@utils';
 import { useNavigate } from 'react-router';
 import { TCertificate } from '@types';
 
@@ -24,6 +24,17 @@ export function ExampleOne() {
     }
   }, []);
 
+  const handleDelete = useCallback(async (id: number) => {
+    try {
+      await deleteCertificate('CertificatesDB', 1, id);
+      const updatedData = await fetchCertificates('CertificatesDB', 1);
+
+      setData(updatedData);
+    } catch (error) {
+      console.error('Error deleting certificate:', error);
+    }
+  }, []);
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -40,7 +51,10 @@ export function ExampleOne() {
         >
           New certificate
         </Button>
-        <CertificateTable certificates={data} />
+        <CertificateTable
+          certificates={data}
+          onDelete={handleDelete}
+        />
       </div>
     </div>
   );
