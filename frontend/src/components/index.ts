@@ -14,6 +14,6 @@ export * from './FileUpload';
 export * from './Modals';
 export * from './LookupHeader';
 export * from './Context';
-export * from './UserComment';
 export * from './CommentInput';
 export * from './Comment';
+export * from './UserComponent';

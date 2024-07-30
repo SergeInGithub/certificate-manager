@@ -1,19 +1,26 @@
 import React from 'react';
 import { Button } from './Button';
-import { UserComment } from './UserComment';
+import { UserComment } from './UserComponent';
 import { CommentInput } from './CommentInput';
+import { TComment, TUserApplicant } from '@types';
 
 type ICommentProps = {
   isComment: boolean;
   toggleComment: () => void;
   handleChangeComment: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   comment: string;
+  activeUser: TUserApplicant;
+  comments: TComment[];
+  handleCommentSubmit: () => void;
 };
 export const Comment: React.FC<ICommentProps> = ({
   isComment,
   toggleComment,
   handleChangeComment,
   comment,
+  activeUser,
+  comments,
+  handleCommentSubmit,
 }) => {
   return (
     <React.Fragment>
@@ -25,22 +32,30 @@ export const Comment: React.FC<ICommentProps> = ({
       >
         New comment
       </Button>
-      <UserComment
-        name="Adan"
-        comment="TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest"
-      />
+      {comments.length ? (
+        comments.map((comment) => (
+          <UserComment
+            name={comment.name}
+            comment={comment.comment}
+          />
+        ))
+      ) : (
+        <div>
+          <h4>No comments</h4>
+        </div>
+      )}
       {isComment && (
         <React.Fragment>
           <CommentInput
             onChange={handleChangeComment}
             placeholder="Comment..."
             value={comment}
-            name="Haris"
+            name={activeUser.userLookupName}
           />
           <Button
             type="button"
             className="send-comment-button"
-            onClick={toggleComment}
+            onClick={handleCommentSubmit}
           >
             Send
           </Button>

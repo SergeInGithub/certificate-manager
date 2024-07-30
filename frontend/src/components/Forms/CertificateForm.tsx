@@ -13,33 +13,21 @@ import { Select } from '@components/Select';
 import { Button } from '@components/Button';
 import { SvgComponentType, SvgComponent } from '@components/Svg';
 import {
-  CertificateFormValues,
+  CertificateFormProps,
   CertificateType,
+  defaultErrorState,
+  defaultFormData,
   TCertificate,
+  TComment,
+  TErrors,
   TSupplier,
   TUserApplicant,
 } from '@types';
 import { addCertificate, editCertificate } from '@utils';
+import { useLanguage, useUser } from '@hooks';
 import { SupplierLookupModal, UserLookupModal } from '@components/Modals';
-import { useLanguage } from '@hooks';
 import { UserLookupTable } from '@components/Tables';
-import { Comment } from '@components/Comment';
-
-const defaultFormData: TCertificate = {
-  dateFrom: null,
-  dateTo: null,
-  certificateType: undefined,
-  supplier: null,
-  pdfDataUrl: null,
-  assignedUsers: null,
-};
-
-interface CertificateFormProps {
-  pdfDataUrl: string | null;
-  onReset?: () => void;
-  isEdit?: boolean;
-  certificateId?: number;
-}
+import { Comment } from '@components';
 
 export const CertificateForm = forwardRef(
   (
@@ -47,6 +35,7 @@ export const CertificateForm = forwardRef(
     ref,
   ) => {
     const { translations } = useLanguage();
+    const { activeUser } = useUser();
 
     const [formData, setFormData] = useState<TCertificate>(defaultFormData);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -65,6 +54,8 @@ export const CertificateForm = forwardRef(
     const dateToRef = useRef<HTMLInputElement | null>(null);
     const formRef = useRef<HTMLFormElement | null>(null);
 
+    const [errors, setErrors] = useState<TErrors>(defaultErrorState);
+
     useImperativeHandle(ref, () => ({
       submit: () => {
         if (formRef.current) {
@@ -75,11 +66,17 @@ export const CertificateForm = forwardRef(
       },
       reset: () => {
         setFormData(defaultFormData);
+        setErrors({
+          supplier: '',
+          certificateType: '',
+          dateFrom: '',
+          dateTo: '',
+        });
         if (onReset) {
           onReset();
         }
       },
-      setValues: (values: CertificateFormValues) => {
+      setValues: (values: TCertificate) => {
         setFormData({
           dateFrom: values.dateFrom ? new Date(values.dateFrom) : null,
           dateTo: values.dateTo ? new Date(values.dateTo) : null,
@@ -87,6 +84,7 @@ export const CertificateForm = forwardRef(
           supplier: values.supplier,
           pdfDataUrl: pdfDataUrl || null,
           assignedUsers: values.assignedUsers,
+          comments: values.comments,
         });
       },
     }));
@@ -109,6 +107,7 @@ export const CertificateForm = forwardRef(
           ...prev,
           dateFrom: e.target.value ? new Date(e.target.value) : null,
         }));
+        setErrors((prev) => ({ ...prev, dateFrom: '' }));
       },
       [],
     );
@@ -131,6 +130,7 @@ export const CertificateForm = forwardRef(
           ...prev,
           dateTo: e.target.value ? new Date(e.target.value) : null,
         }));
+        setErrors((prev) => ({ ...prev, dateTo: '' }));
       },
       [],
     );
@@ -142,6 +142,7 @@ export const CertificateForm = forwardRef(
           ...prev,
           certificateType: selectedValue,
         }));
+        setErrors((prev) => ({ ...prev, certificateType: '' }));
       },
       [],
     );
@@ -151,6 +152,7 @@ export const CertificateForm = forwardRef(
         ...prev,
         supplier: supplier,
       }));
+      setErrors((prev) => ({ ...prev, supplier: '' }));
       setSelectedSuppliers(supplier);
       setIsModalOpen(false);
     }, []);
@@ -159,8 +161,21 @@ export const CertificateForm = forwardRef(
       async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        formData.pdfDataUrl = pdfDataUrl;
+        const newErrors = {
+          supplier: formData.supplier ? '' : 'Supplier is required',
+          certificateType: formData.certificateType
+            ? ''
+            : 'Certificate Type is required',
+          dateFrom: formData.dateFrom ? '' : 'Valid From date is required',
+          dateTo: formData.dateTo ? '' : 'Valid To date is required',
+        };
 
+        if (Object.values(newErrors).some((error) => error)) {
+          setErrors(newErrors);
+          return;
+        }
+
+        formData.pdfDataUrl = pdfDataUrl;
         try {
           if (isEdit && certificateId) {
             await editCertificate('CertificateDb', 1, certificateId, formData);
@@ -243,6 +258,20 @@ export const CertificateForm = forwardRef(
       },
       [],
     );
+
+    const handleCommentSubmit = useCallback(() => {
+      if (comment && activeUser) {
+        setFormData((prev) => ({
+          ...prev,
+          comments: [
+            ...prev.comments,
+            { name: activeUser.userLookupName, comment },
+          ],
+        }));
+        setComment('');
+      }
+    }, [comment, activeUser]);
+
     return (
       <React.Fragment>
         <form
@@ -257,6 +286,7 @@ export const CertificateForm = forwardRef(
               className="supplier-input"
               value={formData.supplier?.supplierName || ''}
             />
+            {errors.supplier && <div className="error">{errors.supplier}</div>}
 
             <div className="input-buttons">
               <Button
@@ -295,6 +325,9 @@ export const CertificateForm = forwardRef(
                 value={formData.certificateType}
                 onChange={handleChangeCertificateType}
               />
+              {errors.certificateType && (
+                <div className="error">{errors.certificateType}</div>
+              )}
               <div className="custom-select-icon">
                 <SvgComponent
                   type={SvgComponentType.SELECTED_DOWN_ARROW}
@@ -320,6 +353,7 @@ export const CertificateForm = forwardRef(
               onBlur={handleBlurFrom}
               className="valid-from-input"
             />
+            {errors.dateFrom && <div className="error">{errors.dateFrom}</div>}
           </div>
 
           <div className="label-input-container">
@@ -338,6 +372,7 @@ export const CertificateForm = forwardRef(
               onBlur={handleBlurTo}
               className="valid-to-input"
             />
+            {errors.dateTo && <div className="error">{errors.dateTo}</div>}
           </div>
 
           <section className="participants-section">
@@ -373,6 +408,9 @@ export const CertificateForm = forwardRef(
               isComment={isComment}
               handleChangeComment={handleChangeComment}
               toggleComment={toggleComment}
+              activeUser={activeUser as TUserApplicant}
+              comments={formData.comments as TComment[]}
+              handleCommentSubmit={handleCommentSubmit}
             />
           </section>
         </form>
