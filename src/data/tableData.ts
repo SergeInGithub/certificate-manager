@@ -1,4 +1,9 @@
-import { CertificateType, TCertificate, TableHeaderItem } from '@types';
+import {
+  CertificateType,
+  TCertificate,
+  TSupplier,
+  TableHeaderItem,
+} from '@types';
 import { parseCertificate } from '@utils';
 
 export const tableHeaderItems: TableHeaderItem[] = [
@@ -31,4 +36,34 @@ export const certificates: TCertificate[] = [
     dateFrom: '2017-10-04',
     dateTo: '2017-10-10',
   }),
+];
+
+export const SupplierLookupTableHeaderItems: TableHeaderItem[] = [
+  { id: 'editAndDelete', label: '' },
+  { id: 'supplierName', label: 'Supplier name' },
+  { id: 'supplierIndex', label: 'Supplier index' },
+  { id: 'city', label: 'City' },
+];
+
+export const hardcodedSuppliers: TSupplier[] = [
+  {
+    supplierName: 'ANDEMIS GmbH',
+    supplierIndex: 1,
+    city: 'Stuttgart',
+  },
+  {
+    supplierName: 'DAIMLER AG',
+    supplierIndex: 2,
+    city: 'Berlin',
+  },
+  {
+    supplierName: 'ANDEMIS GmbH',
+    supplierIndex: 3,
+    city: 'Stuttgart',
+  },
+  {
+    supplierName: 'ANDEMIS GmbH',
+    supplierIndex: 4,
+    city: 'Stuttgart',
+  },
 ];
