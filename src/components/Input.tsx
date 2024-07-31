@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import '../assets/styles/components/input.css';
 
 interface IInputProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;

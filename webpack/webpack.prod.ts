@@ -12,11 +12,6 @@ const prodConfig: Configuration = merge(baseConfig, {
     new CopyPlugin({
       patterns: [
         {
-          from: path.join(__dirname, '../static'),
-          to: path.join(__dirname, '../dist/static'),
-          filter: (sources) => !sources.includes('index.html'),
-        },
-        {
           from: path.join(__dirname, '../_redirects'),
           to: path.join(__dirname, '../dist'),
         },
