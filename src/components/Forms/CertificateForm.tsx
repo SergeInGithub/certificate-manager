@@ -11,7 +11,12 @@ import { Label } from '@components/Label';
 import { Select } from '@components/Select';
 import { Button } from '@components/Button';
 import { SvgComponentType, SvgComponent } from '@components/Svg';
-import { CertificateFormValues, CertificateType, TCertificate } from '@types';
+import {
+  CertificateFormValues,
+  CertificateType,
+  TCertificate,
+  TSupplier,
+} from '@types';
 import { addCertificate, editCertificate } from '@utils';
 import { SupplierLookupModal } from '@components/SupplierLookupModal';
 
@@ -19,7 +24,7 @@ const defaultFormData: TCertificate = {
   dateFrom: null,
   dateTo: null,
   certificateType: undefined,
-  supplier: '',
+  supplier: null,
   pdfDataUrl: null,
 };
 
@@ -37,7 +42,6 @@ export const CertificateForm = forwardRef(
   ) => {
     const [formData, setFormData] = useState<TCertificate>(defaultFormData);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [initialSupplierName, setInitialSupplierName] = useState('');
 
     const dateFromRef = useRef<HTMLInputElement | null>(null);
     const dateToRef = useRef<HTMLInputElement | null>(null);
@@ -123,15 +127,13 @@ export const CertificateForm = forwardRef(
       [],
     );
 
-    const handleChangeSupplier = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData((prev) => ({
-          ...prev,
-          supplier: e.target.value,
-        }));
-      },
-      [],
-    );
+    const handleSupplierSelect = useCallback((supplier: TSupplier) => {
+      setFormData((prev) => ({
+        ...prev,
+        supplier: supplier,
+      }));
+      setIsModalOpen(false);
+    }, []);
 
     const handleSubmit = useCallback(
       async (e: React.FormEvent<HTMLFormElement>) => {
@@ -141,9 +143,9 @@ export const CertificateForm = forwardRef(
 
         try {
           if (isEdit && certificateId) {
-            await editCertificate('myDatabase', 1, certificateId, formData);
+            await editCertificate('CertificateDb', 1, certificateId, formData);
           } else {
-            await addCertificate('myDatabase', 1, formData);
+            await addCertificate('CertificateDb', 1, formData);
           }
           if (formRef.current) {
             formRef.current.reset();
@@ -160,7 +162,6 @@ export const CertificateForm = forwardRef(
     );
 
     const openModal = () => {
-      setInitialSupplierName(formData.supplier);
       setIsModalOpen(true);
     };
     const closeModal = () => setIsModalOpen(false);
@@ -168,7 +169,7 @@ export const CertificateForm = forwardRef(
     const handleSupplierReset = () => {
       setFormData((prev) => ({
         ...prev,
-        supplier: '',
+        supplier: null,
       }));
     };
 
@@ -187,8 +188,7 @@ export const CertificateForm = forwardRef(
             <Input
               type="text"
               className="supplier-input"
-              value={formData.supplier}
-              onChange={handleChangeSupplier}
+              value={formData.supplier?.supplierName || ''}
             />
 
             <div className="input-buttons">
@@ -283,7 +283,7 @@ export const CertificateForm = forwardRef(
         <SupplierLookupModal
           isOpen={isModalOpen}
           onClose={closeModal}
-          initialSupplierName={initialSupplierName}
+          onSelectSupplier={handleSupplierSelect}
         />
       </React.Fragment>
     );

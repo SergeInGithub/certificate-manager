@@ -1,3 +1,5 @@
+import { TSupplier } from '@types';
+
 export const openDB = (dbName: string, version: number) => {
   return new Promise<IDBDatabase>((resolve, reject) => {
     const request = indexedDB.open(dbName, version);
@@ -159,6 +161,69 @@ export const fetchSuppliers = async (dbName: string, version: number) => {
   return new Promise<any[]>((resolve, reject) => {
     const request = store.getAll();
     request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+};
+
+export const initializeSuppliers = async (
+  dbName: string,
+  version: number,
+  hardcodedSuppliers: TSupplier[],
+) => {
+  try {
+    const existingSuppliers = await fetchSuppliers(dbName, version);
+
+    const existingIndexes = new Set(
+      existingSuppliers.map((supplier) => supplier.supplierIndex),
+    );
+
+    const suppliersToAdd = hardcodedSuppliers.filter(
+      (supplier) => !existingIndexes.has(supplier.supplierIndex),
+    );
+
+    if (suppliersToAdd.length > 0) {
+      await addSuppliers(dbName, version, suppliersToAdd);
+    }
+  } catch (error) {
+    console.error('Error in initializeSuppliers:', error);
+  }
+};
+
+export const searchSuppliers = async (
+  dbName: string,
+  version: number,
+  name: string,
+  index: string,
+  city: string,
+) => {
+  const { store } = await getTransactionAndStore(
+    dbName,
+    version,
+    'suppliers',
+    'readonly',
+  );
+
+  return new Promise<any[]>((resolve, reject) => {
+    const suppliers: any[] = [];
+    const request = store.openCursor();
+
+    request.onsuccess = (event) => {
+      const cursor = (event.target as IDBRequest).result;
+      if (cursor) {
+        const supplier = cursor.value;
+        if (
+          supplier.supplierName.toLowerCase().includes(name.toLowerCase()) &&
+          supplier.supplierIndex.toString().includes(index) &&
+          supplier.city.toLowerCase().includes(city.toLowerCase())
+        ) {
+          suppliers.push(supplier);
+        }
+        cursor.continue();
+      } else {
+        resolve(suppliers);
+      }
+    };
+
     request.onerror = () => reject(request.error);
   });
 };

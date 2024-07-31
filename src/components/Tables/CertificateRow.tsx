@@ -63,7 +63,7 @@ export const CertificateRow: React.FC<ICertificateRowProps> = ({
             </div>
           )}
         </td>
-        <td>{certificate.supplier}</td>
+        <td>{certificate.supplier?.supplierName}</td>
         <td>{certificate.certificateType}</td>
         <td>{formatDate(certificate.dateFrom)}</td>
         <td>{formatDate(certificate.dateTo)}</td>

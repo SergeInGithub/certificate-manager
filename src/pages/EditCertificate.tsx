@@ -30,7 +30,7 @@ export function EditCertificate() {
     const fetchCertificate = async () => {
       if (id) {
         try {
-          const db = await openDB('myDatabase', 1);
+          const db = await openDB('CertificateDb', 1);
           const transaction = db.transaction('certificates', 'readonly');
           const store = transaction.objectStore('certificates');
           const parsedCertificateId = parseInt(id, 10);

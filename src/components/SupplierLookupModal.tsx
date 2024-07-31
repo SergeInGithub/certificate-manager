@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from './Button';
 import { SvgComponent, SvgComponentType } from './Svg';
 import { LookupHeader } from './LookupHeader';
@@ -6,67 +6,43 @@ import { Input } from './Input';
 import { Label } from './Label';
 import { SupplierLookupTable } from './Tables';
 import '../assets/styles/components/supplierLookupModal.css';
-import { addSuppliers, fetchSuppliers } from '@utils';
+import { initializeSuppliers, searchSuppliers } from '@utils';
+import { TSupplier } from '@types';
 import { hardcodedSuppliers } from '@data';
 
 interface SupplierLookupModalProps {
   isOpen: boolean;
   onClose: () => void;
-  initialSupplierName: string;
+  onSelectSupplier: (supplier: TSupplier) => void;
 }
 
 export const SupplierLookupModal: React.FC<SupplierLookupModalProps> = ({
   isOpen,
   onClose,
-  initialSupplierName,
+  onSelectSupplier,
 }) => {
   const [name, setName] = useState('');
   const [index, setIndex] = useState('');
   const [city, setCity] = useState('');
-  const [suppliers, setSuppliers] = useState<any[]>([]);
-  const [filteredSuppliers, setFilteredSuppliers] = useState<any[]>([]);
+  const [filteredSuppliers, setFilteredSuppliers] = useState<TSupplier[]>([]);
+  const [selectedItem, setSelectedItem] = useState<TSupplier | null>(null);
 
   useEffect(() => {
-    const initializeSuppliers = async () => {
-      try {
-        const existingSuppliers = await fetchSuppliers('myDatabase', 1);
-
-        const existingIndexes = new Set(
-          existingSuppliers.map((supplier) => supplier.supplierIndex),
-        );
-
-        const suppliersToAdd = hardcodedSuppliers.filter(
-          (supplier) => !existingIndexes.has(supplier.supplierIndex),
-        );
-
-        if (suppliersToAdd.length > 0) {
-          await addSuppliers('myDatabase', 1, suppliersToAdd);
-        }
-
-        const suppliersFromDB = await fetchSuppliers('myDatabase', 1);
-        setSuppliers(suppliersFromDB);
-        setFilteredSuppliers(suppliersFromDB);
-      } catch (error) {
-        console.error('Error in initializeSuppliers:', error);
-      }
-    };
-
     if (isOpen) {
-      initializeSuppliers();
-      setName(initialSupplierName);
+      initializeSuppliers('CertificateDb', 1, hardcodedSuppliers);
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const handleSearch = () => {
-    const filtered = suppliers.filter((supplier) => {
-      return (
-        supplier.supplierName.toLowerCase().includes(name.toLowerCase()) &&
-        supplier.supplierIndex.toString().includes(index) &&
-        supplier.city.toLowerCase().includes(city.toLowerCase())
-      );
-    });
+  const handleSearch = async () => {
+    const filtered = await searchSuppliers(
+      'CertificateDb',
+      1,
+      name,
+      index,
+      city,
+    );
     setFilteredSuppliers(filtered);
   };
 
@@ -74,7 +50,18 @@ export const SupplierLookupModal: React.FC<SupplierLookupModalProps> = ({
     setName('');
     setIndex('');
     setCity('');
-    setFilteredSuppliers(suppliers);
+    setSelectedItem(null);
+  };
+
+  const handleSelection = (supplier: TSupplier) => {
+    setSelectedItem(supplier);
+  };
+
+  const handleSelectButtonClick = () => {
+    if (selectedItem) {
+      onSelectSupplier(selectedItem);
+      onClose();
+    }
   };
 
   return (
@@ -159,17 +146,23 @@ export const SupplierLookupModal: React.FC<SupplierLookupModalProps> = ({
           <LookupHeader heading="Supplier list" />
 
           <section className="supplier-list-table-container">
-            <SupplierLookupTable suppliers={filteredSuppliers} />
+            <SupplierLookupTable
+              suppliers={filteredSuppliers}
+              handleSelection={handleSelection}
+              selectedItem={selectedItem}
+            />
           </section>
 
           <section className="search-criteria-button-section">
             <Button
               type="button"
+              onClick={handleSelectButtonClick}
               children="Select"
               className="lookup-save-button"
             />
             <Button
               type="button"
+              onClick={onClose}
               children="Cancel"
               className="lookup-cancel-button"
             />

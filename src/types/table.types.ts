@@ -10,7 +10,7 @@ export enum CertificateType {
 
 export type TCertificate = {
   id?: number;
-  supplier: string;
+  supplier: TSupplier | null;
   certificateType: CertificateType | undefined;
   dateFrom: Date | null;
   dateTo: Date | null;
@@ -21,7 +21,7 @@ export type CertificateFormValues = {
   dateFrom: string;
   dateTo: string;
   certificateType: string;
-  supplier: string;
+  supplier: TSupplier;
   pdfDataUrl: string;
 };
 

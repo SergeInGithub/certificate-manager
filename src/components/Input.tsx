@@ -8,6 +8,7 @@ interface IInputProps {
   placeholder?: string;
   className?: string;
   value?: string;
+  checked?: boolean;
   onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
@@ -24,6 +25,7 @@ export const Input = forwardRef<HTMLInputElement, IInputProps>(
       value,
       onFocus,
       onBlur,
+      checked,
     },
     ref,
   ) => {
@@ -39,6 +41,7 @@ export const Input = forwardRef<HTMLInputElement, IInputProps>(
         value={value}
         onFocus={onFocus}
         onBlur={onBlur}
+        checked={checked}
       />
     );
   },
