@@ -1,31 +1,31 @@
 import { SvgComponentType } from '../components/Svg';
 
-export const menuItems = [
+export const getMenuItems = (translations: Record<string, string>) => [
   {
     url: '/',
     icon: { type: SvgComponentType.HOME, color: '#000000' },
     name: 'Start',
-    content: 'Start',
+    content: translations['start'],
   },
   {
     url: 'ml',
     icon: { type: SvgComponentType.HAMBURGER, color: '#000000' },
-    name: 'Machine Learning',
+    name: translations['machineLearning'],
     subItems: [
       {
         url: '/ml/example-one',
-        name: 'Example 1',
-        content: 'Example 1',
+        name: translations['example1'],
+        content: translations['example1'],
       },
       {
         url: '/ml/example2',
-        name: 'Example 2',
-        content: 'Example 2',
+        name: translations['example2'],
+        content: translations['example2'],
       },
       {
         url: '/ml/example3',
-        name: 'Example 3',
-        content: 'Example 3',
+        name: translations['example3'],
+        content: translations['example3'],
       },
     ],
   },

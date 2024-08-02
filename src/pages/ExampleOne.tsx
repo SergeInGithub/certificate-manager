@@ -5,6 +5,7 @@ import { Button } from '@components';
 import { fetchCertificates, handleNavigate, deleteCertificate } from '@utils';
 import { useNavigate } from 'react-router';
 import { TCertificate } from '@types';
+import { useLanguage } from '@hooks';
 
 export function ExampleOne() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export function ExampleOne() {
     handleNavigate('/ml/add-certificate', navigate);
   }, [navigate]);
 
+  const { translations } = useLanguage();
   const [data, setData] = useState<TCertificate[]>([]);
 
   const fetchData = useCallback(async () => {
@@ -49,7 +51,7 @@ export function ExampleOne() {
           className="certificate-button"
           onClick={handleClick}
         >
-          New certificate
+          {translations.newCertificate}
         </Button>
         <CertificateTable
           certificates={data}

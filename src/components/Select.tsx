@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '@hooks';
 
 interface SelectProps<T> {
   options: T[];
@@ -14,25 +15,29 @@ export const Select = <T extends string>({
   placeholder,
   value,
   onChange,
-}: SelectProps<T>) => (
-  <select
-    className={className}
-    value={value || ''}
-    onChange={onChange}
-  >
-    <option
-      value=""
-      disabled
+}: SelectProps<T>) => {
+  const { translations } = useLanguage();
+
+  return (
+    <select
+      className={className}
+      value={value || ''}
+      onChange={onChange}
     >
-      {placeholder}
-    </option>
-    {options.map((option) => (
       <option
-        key={option}
-        value={option}
+        value=""
+        disabled
       >
-        {option}
+        {placeholder || translations.selectPlaceholder}
       </option>
-    ))}
-  </select>
-);
+      {options.map((option) => (
+        <option
+          key={option}
+          value={option}
+        >
+          {option}
+        </option>
+      ))}
+    </select>
+  );
+};

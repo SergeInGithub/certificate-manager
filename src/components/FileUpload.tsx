@@ -1,6 +1,7 @@
 import React, { useRef, useCallback } from 'react';
 import { Input } from './Input';
 import { Label } from './Label';
+import { useLanguage } from '@hooks';
 
 interface IFileUploadProps {
   setPdfDataUrl: React.Dispatch<React.SetStateAction<string | null>>;
@@ -8,6 +9,8 @@ interface IFileUploadProps {
 
 export const FileUpload: React.FC<IFileUploadProps> = ({ setPdfDataUrl }) => {
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const { translations } = useLanguage();
 
   const handleFileChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +35,7 @@ export const FileUpload: React.FC<IFileUploadProps> = ({ setPdfDataUrl }) => {
       <Label
         htmlFor="file-upload"
         className="upload-button"
-        children="Upload"
+        children={translations.uploadFile}
       />
       <Input
         type="file"

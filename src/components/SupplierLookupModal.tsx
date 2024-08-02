@@ -9,6 +9,7 @@ import '../assets/styles/components/supplierLookupModal.css';
 import { initializeSuppliers, searchSuppliers } from '@utils';
 import { TSupplier } from '@types';
 import { hardcodedSuppliers } from '@data';
+import { useLanguage } from '@hooks';
 
 interface SupplierLookupModalProps {
   isOpen: boolean;
@@ -21,6 +22,8 @@ export const SupplierLookupModal: React.FC<SupplierLookupModalProps> = ({
   onClose,
   onSelectSupplier,
 }) => {
+  const { translations } = useLanguage();
+
   const [name, setName] = useState('');
   const [index, setIndex] = useState('');
   const [city, setCity] = useState('');
@@ -68,7 +71,9 @@ export const SupplierLookupModal: React.FC<SupplierLookupModalProps> = ({
     <div className="supplier-lookup-modal">
       <div className="supplier-lookup-modal-content">
         <section className="lookup-modal-header-section">
-          <h6 className="lookup-modal-header">Search for suppliers</h6>
+          <h6 className="lookup-modal-header">
+            {translations.searchForSuppliers}
+          </h6>
           <Button
             type="button"
             children={
@@ -83,12 +88,12 @@ export const SupplierLookupModal: React.FC<SupplierLookupModalProps> = ({
         </section>
 
         <section className="search-criteria-container">
-          <LookupHeader heading="Search criteria" />
+          <LookupHeader heading={translations.searchCriteria} />
 
           <section className="supplier-inputs-container">
             <div className="lookup-label-input-container">
               <Label
-                children="Supplier name"
+                children={translations.supplierName}
                 className="supplier-label"
               />
               <Input
@@ -101,7 +106,7 @@ export const SupplierLookupModal: React.FC<SupplierLookupModalProps> = ({
 
             <div className="lookup-label-input-container">
               <Label
-                children="Supplier index"
+                children={translations.supplierIndex}
                 className="supplier-label"
               />
               <Input
@@ -114,7 +119,7 @@ export const SupplierLookupModal: React.FC<SupplierLookupModalProps> = ({
 
             <div className="lookup-label-input-container">
               <Label
-                children="City"
+                children={translations.city}
                 className="supplier-label"
               />
               <Input
@@ -130,20 +135,20 @@ export const SupplierLookupModal: React.FC<SupplierLookupModalProps> = ({
             <Button
               type="button"
               onClick={handleSearch}
-              children="Search"
+              children={translations.searchButton}
               className="lookup-search-button"
             />
             <Button
               type="button"
               onClick={handleReset}
-              children="Reset"
+              children={translations.resetButton}
               className="lookup-reset-button"
             />
           </section>
         </section>
 
         <section className="supplier-list-container">
-          <LookupHeader heading="Supplier list" />
+          <LookupHeader heading={translations.supplierList} />
 
           <section className="supplier-list-table-container">
             <SupplierLookupTable
@@ -163,7 +168,7 @@ export const SupplierLookupModal: React.FC<SupplierLookupModalProps> = ({
             <Button
               type="button"
               onClick={onClose}
-              children="Cancel"
+              children={translations.cancelButton}
               className="lookup-cancel-button"
             />
           </section>

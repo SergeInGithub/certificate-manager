@@ -9,9 +9,9 @@ import { parseCertificate } from '@utils';
 export const tableHeaderItems: TableHeaderItem[] = [
   { id: 'editAndDelete', label: '' },
   { id: 'supplier', label: 'Supplier' },
-  { id: 'type', label: 'Certificate type' },
-  { id: 'dateFrom', label: 'Valid from' },
-  { id: 'dateTo', label: 'Valid to' },
+  { id: 'certificateType', label: 'Certificate type' },
+  { id: 'validFrom', label: 'Valid from' },
+  { id: 'validTo', label: 'Valid to' },
 ];
 
 export const certificates: TCertificate[] = [
