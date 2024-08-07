@@ -17,6 +17,7 @@ export type TCertificate = {
   dateFrom: Date | null;
   dateTo: Date | null;
   pdfDataUrl: string | null;
+  assignedUsers: TUserApplicant[] | null;
 };
 
 export type CertificateFormValues = {
@@ -25,6 +26,7 @@ export type CertificateFormValues = {
   certificateType: string;
   supplier: TSupplier;
   pdfDataUrl: string;
+  assignedUsers: TUserApplicant[];
 };
 
 export enum CERTIFICATE_TYPE {
@@ -37,10 +39,6 @@ export type TSupplier = {
   supplierIndex: number;
   city: string;
 };
-export enum LanguageOptions {
-  ENGLISH = 'English',
-  GERMAN = 'German',
-}
 
 export type TUserApplicant = {
   id?: number;
@@ -56,11 +54,12 @@ export type TLookupTableHeader = {
   tableHeaderItems: TableHeaderItem[];
 };
 
-export interface TLookupTableBody {
-  items?: TUserApplicant[] | TSupplier[];
+export interface TLookupTableBody<T> {
+  items?: T[];
   columns: TableHeaderItem[];
-  handleSelection: (item: any) => void;
-  selectedItems?: TUserApplicant[] | TSupplier[];
+  handleSelection: (item: T) => void;
+  selectedItems?: T[];
+  modalType: LookupModalType | undefined;
 }
 
 export type TLookupTableRow = {
@@ -71,9 +70,16 @@ export type TLookupTableRow = {
   isSelected?: boolean;
 };
 
-export type TLookupTableProps = {
-  items?: TSupplier[] | TUserApplicant[];
+export type TUserLookupTableProps = {
+  selectedApplicants?: TUserApplicant[];
   modalType?: LookupModalType;
-  handleSelection: (item: TUserApplicant | TSupplier) => void;
-  selectedItems?: TUserApplicant[] | TSupplier[];
+  handleApplicantSelection: (item: TUserApplicant) => void;
+  selectedItems?: TUserApplicant[];
+};
+
+export type TSupplierLookupTableProps = {
+  selectedSuppliers?: TSupplier[];
+  handleSupplierSelection: (item: TSupplier) => void;
+  selectedItems?: TSupplier[];
+  selectedSupplier: TSupplier;
 };

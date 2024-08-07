@@ -26,7 +26,6 @@ export const Input = forwardRef<HTMLInputElement, IInputProps>(
       checked,
       onFocus,
       onBlur,
-      checked,
     },
     ref,
   ) => {

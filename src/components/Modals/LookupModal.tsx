@@ -6,85 +6,100 @@ import { Input } from '../Input';
 import { Label } from '../Label';
 import '../../assets/styles/components/lookupModal.css';
 import { useLanguage } from '@hooks';
-import { LookupTable } from '@components/Tables';
+import { SupplierLookupTable, UserLookupTable } from '@components/Tables';
 import {
   LookupModalProps,
   LookupModalType,
   TSupplier,
   TUserApplicant,
 } from '@types';
+import { searchSuppliers, searchUsers } from '@utils';
 
 export const LookupModal: React.FC<LookupModalProps> = ({
   isOpen,
   onClose,
   title,
   criteria,
-  suppliers,
   users,
   modalType,
   selectedItems,
   setSelectedItems,
   cancelSelections,
+  handleSelectButtonClick,
+  handleApplicantSelection,
+  handleSupplierSelection,
 }) => {
   const { translations } = useLanguage();
-  const [items, setItems] = useState([]);
-  const [filteredItems, setFilteredItems] = useState<
-    TUserApplicant[] | TSupplier[]
+
+  const [userApplicants, setUserApplicants] = useState<TUserApplicant[]>([]);
+  const [suppliers, setSuppliers] = useState<TSupplier[]>([]);
+  const [filteredUserApplicants, setFilteredUserApplicants] = useState<
+    TUserApplicant[]
   >([]);
+  const [filteredSuppliers, setFilteredSuppliers] = useState<TSupplier[]>([]);
 
   useEffect(() => {
-    const initializeItems = () => {
-      if (suppliers || users) {
-        const initialItems = suppliers || users;
-        setItems(initialItems);
-        setFilteredItems(initialItems);
-      }
-    };
-
     if (isOpen) {
-      initializeItems();
+      if (modalType === LookupModalType.USER_LOOKUP) {
+        setUserApplicants(users as TUserApplicant[]);
+        setFilteredUserApplicants(users as TUserApplicant[]);
+      } else if (modalType === LookupModalType.SUPPLIER_LOOKUP) {
+        setSuppliers(users as TSupplier[]);
+        setFilteredSuppliers(users as TSupplier[]);
+      }
     }
-  }, [isOpen, suppliers, users]);
+  }, [isOpen, users, modalType]);
 
   if (!isOpen) return null;
 
-  const handleSearch = () => {
-    const filtered = items.filter((item) => {
-      return criteria.every((criterion, index) => {
-        const itemValue =
-          Object.values(item)[index]?.toString().toLowerCase() || '';
-        return itemValue.includes(criterion.value.toLowerCase());
-      });
-    });
-
-    setFilteredItems(filtered);
+  const handleSearch = async () => {
+    if (modalType === LookupModalType.USER_LOOKUP) {
+      const [userName, userFirstName, userId, userDepartment, userPlant] =
+        criteria.map((criterion) => criterion.value);
+      const filtered = await searchUsers(
+        'CertificateDb',
+        1,
+        userName,
+        userFirstName,
+        userId,
+        userDepartment,
+        userPlant,
+      );
+      setFilteredUserApplicants(filtered as TUserApplicant[]);
+    } else if (modalType === LookupModalType.SUPPLIER_LOOKUP) {
+      const [name, index, city] = criteria.map((criterion) => criterion.value);
+      const filtered = await searchSuppliers(
+        'CertificateDb',
+        1,
+        name,
+        index,
+        city,
+      );
+      setFilteredSuppliers(filtered as TSupplier[]);
+    }
   };
 
   const handleReset = () => {
     criteria.forEach((criterion) => criterion.setValue(''));
-    setFilteredItems(items);
-    setSelectedItems([]);
+    if (modalType === LookupModalType.USER_LOOKUP) {
+      setFilteredUserApplicants(userApplicants);
+    } else if (modalType === LookupModalType.SUPPLIER_LOOKUP) {
+      setFilteredSuppliers(suppliers);
+    }
+    if (setSelectedItems) {
+      setSelectedItems([]);
+    }
   };
 
-  const handleSelection = (item: any) => {
-    setSelectedItems((prevSelectedItems: any[]) => {
-      const isSelected = prevSelectedItems.some(
-        (selectedItem: { id: any }) => selectedItem.id === item.id,
-      );
-      if (isSelected) {
-        return prevSelectedItems.filter(
-          (selectedItem: { id: any }) => selectedItem.id !== item.id,
-        );
-      } else {
-        return [...prevSelectedItems, item];
-      }
-    });
-  };
-
-  const handleSelectButtonClick = () => {
-    console.log('Selected Items: 🟡', selectedItems);
-    setSelectedItems(selectedItems);
-    onClose();
+  const handleSelection = (item: TUserApplicant | TSupplier) => {
+    if (modalType === LookupModalType.USER_LOOKUP && handleApplicantSelection) {
+      handleApplicantSelection(item as TUserApplicant);
+    } else if (
+      modalType === LookupModalType.SUPPLIER_LOOKUP &&
+      handleSupplierSelection
+    ) {
+      handleSupplierSelection(item as TSupplier);
+    }
   };
 
   return (
@@ -106,11 +121,11 @@ export const LookupModal: React.FC<LookupModalProps> = ({
         </section>
 
         <section
-          className={`${modalType === LookupModalType.SUPPLIER_LOOKUP ? 'search-criteria-container' : 'user-search-criteria-container'}`}
+          className={`search-criteria-container ${modalType === LookupModalType.SUPPLIER_LOOKUP ? '' : 'user-search-criteria-container'}`}
         >
           <LookupHeader heading={translations.searchCriteria} />
           <section
-            className={`${modalType === LookupModalType.SUPPLIER_LOOKUP ? 'inputs-container' : 'user-inputs-container'}`}
+            className={`inputs-container ${modalType === LookupModalType.SUPPLIER_LOOKUP ? '' : 'user-inputs-container'}`}
           >
             {criteria.map((criterion, index) => (
               <div
@@ -131,7 +146,7 @@ export const LookupModal: React.FC<LookupModalProps> = ({
             ))}
           </section>
           <section
-            className={`${modalType === LookupModalType.SUPPLIER_LOOKUP ? 'search-criteria-button-section' : 'user-search-criteria-button-section'}`}
+            className={`search-criteria-button-section ${modalType === LookupModalType.SUPPLIER_LOOKUP ? '' : 'user-search-criteria-button-section'}`}
           >
             <Button
               type="button"
@@ -157,15 +172,25 @@ export const LookupModal: React.FC<LookupModalProps> = ({
             }
           />
           <section className="list-table-container">
-            <LookupTable
-              items={filteredItems}
-              modalType={modalType}
-              handleSelection={handleSelection}
-              selectedItems={selectedItems}
-            />
+            {modalType === LookupModalType.SUPPLIER_LOOKUP ? (
+              <SupplierLookupTable
+                selectedSuppliers={filteredSuppliers}
+                handleSupplierSelection={handleSelection}
+                selectedSupplier={selectedItems?.[0] as TSupplier}
+              />
+            ) : (
+              <UserLookupTable
+                selectedApplicants={filteredUserApplicants}
+                modalType={modalType}
+                handleApplicantSelection={
+                  handleSelection as (applicant: TUserApplicant) => void
+                }
+                selectedItems={selectedItems as TUserApplicant[]}
+              />
+            )}
           </section>
           <section
-            className={`${modalType === LookupModalType.SUPPLIER_LOOKUP ? 'search-criteria-button-section' : 'user-search-criteria-button-section'}`}
+            className={`search-criteria-button-section ${modalType === LookupModalType.SUPPLIER_LOOKUP ? '' : 'user-search-criteria-button-section'}`}
           >
             <Button
               type="button"

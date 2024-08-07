@@ -1,14 +1,22 @@
 import React from 'react';
-import { TableHeaderItem, TLookupTableRow } from '@types';
+import { TableHeaderItem, TUserApplicant } from '@types';
 import { Input } from '@components/Input';
 
-export const LookupTableRow: React.FC<TLookupTableRow> = ({
+interface UserLookupTableRowProps {
+  item: TUserApplicant;
+  index: number;
+  columns: TableHeaderItem[];
+  handleSelection: (item: TUserApplicant) => void;
+  isSelected: boolean;
+}
+
+export const UserLookupTableRow: React.FC<UserLookupTableRowProps> = ({
   item,
   index,
   columns,
   handleSelection,
   isSelected,
-}: TLookupTableRow) => {
+}) => {
   return (
     <tr key={index}>
       <td className="lookup-table-row-point-container">
@@ -19,7 +27,7 @@ export const LookupTableRow: React.FC<TLookupTableRow> = ({
         />
       </td>
       {columns.map((column: TableHeaderItem, colIndex: number) => (
-        <td key={colIndex}>{item && item[column.id as keyof typeof item]}</td>
+        <td key={colIndex}>{item[column.id as keyof TUserApplicant]}</td>
       ))}
     </tr>
   );

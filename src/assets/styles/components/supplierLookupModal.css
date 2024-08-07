@@ -159,44 +159,23 @@
   height: 300px;
 }
 
-/* .supplier-lookup-table-row-point {
-  position: absolute;
-  border-radius: 100%;
-  border: 1px solid #a7a7a7;
-  width: 8px;
-  height: 8px;
-  background-color: #ececec;
-} */
-
 .supplier-lookup-table {
   background-color: white;
 }
-
-/* .supplier-lookup-table-row-point-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  border-top: none;
-  border-bottom: none;
-  border-right: none;
-  flex-direction: column;
-  height: 20px;
-  justify-content: center;
-} */
 
 .supplier-lookup-table-row-point-container {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px; /* Adjust the width as needed */
+  width: 20px;
   border: 1px solid red;
 }
 
 .supplier-lookup-table-row-point {
   width: 10px;
   height: 10px;
-  background-color: red; /* Example color */
+  background-color: red;
   border-radius: 50%;
 }
 

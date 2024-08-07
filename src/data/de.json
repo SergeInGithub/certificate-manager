@@ -30,5 +30,7 @@
   "userLookupFirstName": "Vorname",
   "userLookupId": "Benutzer-ID",
   "userLookupDepartment": "Abteilung",
-  "userLookupPlant": "Werk"
+  "userLookupPlant": "Werk",
+  "addParticipant": "Teilnehmer hinzufügen",
+  "assignedUsers": "Zugewiesene Benutzer"
 }

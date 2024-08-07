@@ -8,8 +8,8 @@ import { useLanguage } from '@hooks';
 interface UserLookupModalProps {
   isOpen: boolean;
   onClose: () => void;
-  selectedItems: any;
-  setSelectedItems: any;
+  selectedItems: TUserApplicant[];
+  setSelectedItems: React.Dispatch<React.SetStateAction<TUserApplicant[]>>;
   cancelSelections: () => void;
 }
 
@@ -32,7 +32,7 @@ export const UserLookupModal: React.FC<UserLookupModalProps> = ({
   useEffect(() => {
     const initializeUsers = async () => {
       try {
-        const existingUsers = await fetchUsers('myDatabase', 1);
+        const existingUsers = await fetchUsers('CertificateDb', 1);
         console.log('Existing Users:', existingUsers);
 
         const existingUserIds = new Set(
@@ -46,10 +46,10 @@ export const UserLookupModal: React.FC<UserLookupModalProps> = ({
         console.log('Users to Add:', usersToAdd);
 
         if (usersToAdd.length > 0) {
-          await addUsers('myDatabase', 1, usersToAdd);
+          await addUsers('CertificateDb', 1, usersToAdd);
         }
 
-        const usersFromDB = await fetchUsers('myDatabase', 1);
+        const usersFromDB = await fetchUsers('CertificateDb', 1);
         console.log('Users from DB:', usersFromDB);
         setUsers(usersFromDB);
       } catch (error) {
@@ -66,24 +66,45 @@ export const UserLookupModal: React.FC<UserLookupModalProps> = ({
     { id: 'userLookupName', label: 'Name', value: name, setValue: setName },
     {
       id: 'userLookupFirstName',
-      label: 'First Name',
       value: firstName,
       setValue: setFirstName,
     },
     {
       id: 'userLookupId',
-      label: 'User ID',
       value: userId,
       setValue: setUserId,
     },
     {
       id: 'userLookupDepartment',
-      label: 'Department',
       value: department,
       setValue: setDepartment,
     },
-    { id: 'userLookupPlant', label: 'Plant', value: plant, setValue: setPlant },
+    {
+      id: 'userLookupPlant',
+      value: plant,
+      setValue: setPlant,
+    },
   ];
+
+  const handleSelectButtonClick = () => {
+    setSelectedItems(selectedItems);
+    onClose();
+  };
+
+  const handleSelection = (item: TUserApplicant) => {
+    setSelectedItems((prevSelectedItems) => {
+      const isSelected = prevSelectedItems.some(
+        (selectedItem) => selectedItem.id === item.id,
+      );
+      if (isSelected) {
+        return prevSelectedItems.filter(
+          (selectedItem) => selectedItem.id !== item.id,
+        );
+      } else {
+        return [...prevSelectedItems, item];
+      }
+    });
+  };
 
   return (
     <LookupModal
@@ -96,6 +117,8 @@ export const UserLookupModal: React.FC<UserLookupModalProps> = ({
       selectedItems={selectedItems}
       setSelectedItems={setSelectedItems}
       cancelSelections={cancelSelections}
+      handleSelectButtonClick={handleSelectButtonClick}
+      handleApplicantSelection={handleSelection}
     />
   );
 };

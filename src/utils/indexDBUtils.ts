@@ -1,4 +1,4 @@
-import { TSupplier } from '@types';
+import { TSupplier, TUserApplicant } from '@types';
 
 export const openDB = (dbName: string, version: number) => {
   return new Promise<IDBDatabase>((resolve, reject) => {
@@ -201,35 +201,30 @@ export const searchSuppliers = async (
   name: string,
   index: string,
   city: string,
-) => {
+): Promise<TSupplier[]> => {
   const { store } = await getTransactionAndStore(
     dbName,
     version,
     'suppliers',
     'readonly',
   );
-
-  return new Promise<any[]>((resolve, reject) => {
-    const suppliers: any[] = [];
-    const request = store.openCursor();
-
-    request.onsuccess = (event) => {
-      const cursor = (event.target as IDBRequest).result;
-      if (cursor) {
-        const supplier = cursor.value;
-        if (
-          supplier.supplierName.toLowerCase().includes(name.toLowerCase()) &&
-          supplier.supplierIndex.toString().includes(index) &&
-          supplier.city.toLowerCase().includes(city.toLowerCase())
-        ) {
-          suppliers.push(supplier);
-        }
-        cursor.continue();
-      } else {
-        resolve(suppliers);
-      }
+  return new Promise<TSupplier[]>((resolve, reject) => {
+    const request = store.getAll();
+    request.onsuccess = () => {
+      const results = request.result.filter(
+        (supplier: TSupplier) =>
+          (name
+            ? supplier.supplierName.toLowerCase().includes(name.toLowerCase())
+            : true) &&
+          (index
+            ? supplier.supplierIndex.toString().includes(index.toLowerCase())
+            : true) &&
+          (city
+            ? supplier.city.toLowerCase().includes(city.toLowerCase())
+            : true),
+      );
+      resolve(results);
     };
-
     request.onerror = () => reject(request.error);
   });
 };
@@ -265,6 +260,54 @@ export const fetchUsers = async (dbName: string, version: number) => {
   return new Promise<any[]>((resolve, reject) => {
     const request = store.getAll();
     request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+};
+
+export const searchUsers = async (
+  dbName: string,
+  version: number,
+  userName: string,
+  userFirstName: string,
+  userId: string,
+  userDepartment: string,
+  userPlant: string,
+): Promise<TUserApplicant[]> => {
+  const { store } = await getTransactionAndStore(
+    dbName,
+    version,
+    'users',
+    'readonly',
+  );
+  return new Promise<TUserApplicant[]>((resolve, reject) => {
+    const request = store.getAll();
+    request.onsuccess = () => {
+      const results = request.result.filter(
+        (user: TUserApplicant) =>
+          (userName
+            ? user.userLookupName.toLowerCase().includes(userName.toLowerCase())
+            : true) &&
+          (userFirstName
+            ? user.userLookupFirstName
+                .toLowerCase()
+                .includes(userFirstName.toLowerCase())
+            : true) &&
+          (userId
+            ? user.userLookupId.toLowerCase().includes(userId.toLowerCase())
+            : true) &&
+          (userDepartment
+            ? user.userLookupDepartment
+                .toLowerCase()
+                .includes(userDepartment.toLowerCase())
+            : true) &&
+          (userPlant
+            ? user.userLookupPlant
+                .toLowerCase()
+                .includes(userPlant.toLowerCase())
+            : true),
+      );
+      resolve(results);
+    };
     request.onerror = () => reject(request.error);
   });
 };

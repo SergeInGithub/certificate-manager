@@ -30,5 +30,7 @@
   "userLookupFirstName": "First name",
   "userLookupId": "User ID",
   "userLookupDepartment": "Department",
-  "userLookupPlant": "Plant"
+  "userLookupPlant": "Plant",
+  "addParticipant": "Add Participant",
+  "assignedUsers": "Assigned Users"
 }

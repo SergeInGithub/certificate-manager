@@ -4,6 +4,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
   useCallback,
+  useEffect,
 } from 'react';
 import '../../assets/styles/components/certificateForm.css';
 import { Input } from '@components/Input';
@@ -16,11 +17,12 @@ import {
   CertificateType,
   TCertificate,
   TSupplier,
+  TUserApplicant,
 } from '@types';
 import { addCertificate, editCertificate } from '@utils';
 import { SupplierLookupModal, UserLookupModal } from '@components/Modals';
 import { useLanguage } from '@hooks';
-import { LookupTable } from '@components/Tables';
+import { UserLookupTable } from '@components/Tables';
 
 const defaultFormData: TCertificate = {
   dateFrom: null,
@@ -28,6 +30,7 @@ const defaultFormData: TCertificate = {
   certificateType: undefined,
   supplier: null,
   pdfDataUrl: null,
+  assignedUsers: null,
 };
 
 interface CertificateFormProps {
@@ -47,11 +50,12 @@ export const CertificateForm = forwardRef(
     const [formData, setFormData] = useState<TCertificate>(defaultFormData);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isUserModalOpen, setIsUserModalOpen] = useState(false);
-    const [initialSupplierName, setInitialSupplierName] = useState('');
 
-    const [selectedItems, setSelectedItems] = useState<
-      TUserApplicant[] | TSupplier[]
+    const [selectedApplicants, setSelectedApplicants] = useState<
+      TUserApplicant[]
     >([]);
+    const [selectedSuppliers, setSelectedSuppliers] =
+      useState<TSupplier | null>(null);
 
     const dateFromRef = useRef<HTMLInputElement | null>(null);
     const dateToRef = useRef<HTMLInputElement | null>(null);
@@ -78,6 +82,7 @@ export const CertificateForm = forwardRef(
           certificateType: values.certificateType as CertificateType,
           supplier: values.supplier,
           pdfDataUrl: pdfDataUrl || null,
+          assignedUsers: values.assignedUsers,
         });
       },
     }));
@@ -142,6 +147,7 @@ export const CertificateForm = forwardRef(
         ...prev,
         supplier: supplier,
       }));
+      setSelectedSuppliers(supplier);
       setIsModalOpen(false);
     }, []);
 
@@ -161,7 +167,8 @@ export const CertificateForm = forwardRef(
             formRef.current.reset();
           }
           setFormData(defaultFormData);
-          setSelectedItems([]);
+          setSelectedApplicants([]);
+          setSelectedSuppliers(null);
           if (onReset) {
             onReset();
           }
@@ -182,13 +189,13 @@ export const CertificateForm = forwardRef(
 
     const closeModal = useCallback(() => {
       setIsModalOpen(false);
-      setSelectedItems([]);
+      setSelectedSuppliers(null);
     }, []);
 
     const closeUserModal = useCallback(() => setIsUserModalOpen(false), []);
 
     const cancelSelections = useCallback(() => {
-      setSelectedItems([]);
+      setSelectedApplicants([]);
     }, []);
 
     const handleSupplierReset = () => {
@@ -198,20 +205,30 @@ export const CertificateForm = forwardRef(
       }));
     };
 
-    const handleSelection = (item: any) => {
-      setSelectedItems((prevSelectedItems: any[]) => {
-        const isSelected = prevSelectedItems.some(
-          (selectedItem: { id: any }) => selectedItem.id === item.id,
+    const handleApplicantSelection = (applicant: TUserApplicant) => {
+      setSelectedApplicants((prevSelected) => {
+        const isSelected = prevSelected.some(
+          (selected) => selected.id === applicant.id,
         );
-        if (isSelected) {
-          return prevSelectedItems.filter(
-            (selectedItem: { id: any }) => selectedItem.id !== item.id,
-          );
-        } else {
-          return [...prevSelectedItems, item];
-        }
+        return isSelected
+          ? prevSelected.filter((selected) => selected.id !== applicant.id)
+          : [...prevSelected, applicant];
       });
     };
+
+    useEffect(() => {
+      setFormData((prev) => ({
+        ...prev,
+        assignedUsers: selectedApplicants,
+      }));
+    }, [selectedApplicants]);
+
+    useEffect(() => {
+      if (isEdit && formData.assignedUsers) {
+        setSelectedApplicants(formData.assignedUsers);
+      }
+    }, [isEdit, formData.assignedUsers]);
+
     return (
       <React.Fragment>
         <form
@@ -321,7 +338,9 @@ export const CertificateForm = forwardRef(
 
           <section className="participants-section">
             <div>
-              <Label className="valid-to-label">Assigned users</Label>
+              <Label className="valid-to-label">
+                {translations.assignedUsers}
+              </Label>
               <Button
                 type="button"
                 className="search-participant-button"
@@ -331,15 +350,16 @@ export const CertificateForm = forwardRef(
                   type={SvgComponentType.SEARCH}
                   className="search-icon"
                 />
-                <h5 className="add-participant">Add participant</h5>
+                <h5 className="add-participant">
+                  {translations.addParticipant}
+                </h5>
               </Button>
             </div>
 
-            <LookupTable
-              items={selectedItems}
-              // modalType={modalType}
-              handleSelection={handleSelection}
-              selectedItems={selectedItems}
+            <UserLookupTable
+              selectedApplicants={selectedApplicants}
+              handleApplicantSelection={handleApplicantSelection}
+              selectedItems={selectedApplicants}
             />
           </section>
         </form>
@@ -351,8 +371,8 @@ export const CertificateForm = forwardRef(
         <UserLookupModal
           isOpen={isUserModalOpen}
           onClose={closeUserModal}
-          selectedItems={selectedItems}
-          setSelectedItems={setSelectedItems}
+          selectedItems={selectedApplicants}
+          setSelectedItems={setSelectedApplicants}
           cancelSelections={cancelSelections}
         />
       </React.Fragment>

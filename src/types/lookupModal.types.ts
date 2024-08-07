@@ -1,3 +1,5 @@
+import { TSupplier, TUserApplicant } from './table.types';
+
 export enum LookupModalType {
   USER_LOOKUP = 'UserLookup',
   SUPPLIER_LOOKUP = 'SupplierLookup',
@@ -9,14 +11,15 @@ export type LookupModalProps = {
   title: string;
   criteria: Array<{
     id: string;
-    label: string;
     value: string;
     setValue: (value: string) => void;
   }>;
-  suppliers?: any;
-  users?: any;
+  users?: TUserApplicant[] | TSupplier[];
   modalType: LookupModalType;
-  selectedItems?: any;
-  setSelectedItems?: any;
+  selectedItems?: TUserApplicant[] | TSupplier[];
+  setSelectedItems?: React.Dispatch<React.SetStateAction<TUserApplicant[]>>;
   cancelSelections?: () => void;
+  handleSelectButtonClick: () => void;
+  handleApplicantSelection?: (item: TUserApplicant) => void;
+  handleSupplierSelection?: (item: TSupplier) => void;
 };
