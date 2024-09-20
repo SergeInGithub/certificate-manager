@@ -11,7 +11,6 @@ export * from './Input';
 export * from './Label';
 export * from './Select';
 export * from './FileUpload';
-export * from './SupplierLookupModal';
+export * from './Modals';
 export * from './LookupHeader';
-export * from './SupplierLookupModal';
 export * from './LanguageContext';

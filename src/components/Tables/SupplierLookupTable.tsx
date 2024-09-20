@@ -1,34 +1,33 @@
 import React from 'react';
-import { SupplierLookupTableHeader } from './SupplierLookupTableHeader';
+import { TSupplierLookupTableProps } from '@types';
 import { SupplierLookupTableBody } from './SupplierLookupTableBody';
-import { TSupplier } from '@types';
+import { LookupTableHeader } from './LookupTableHeader';
+import { SupplierLookupTableHeaderItems } from '@data';
 
-export type SupplierLookupTableProps = {
-  suppliers: TSupplier[] | undefined;
-  handleSelection: (item: TSupplier) => void;
-  selectedItem?: TSupplier | null;
-};
-
-export const SupplierLookupTable: React.FC<SupplierLookupTableProps> = ({
-  suppliers,
-  handleSelection,
-  selectedItem,
+export const SupplierLookupTable: React.FC<TSupplierLookupTableProps> = ({
+  selectedSuppliers,
+  handleSupplierSelection,
+  selectedSupplier,
 }) => {
+  const columns = SupplierLookupTableHeaderItems;
+
   return (
     <section className="tableContainer">
-      <table className="supplier-lookup-table">
-        <SupplierLookupTableHeader />
+      <table className="lookup-table">
+        <LookupTableHeader tableHeaderItems={columns} />
+
         <SupplierLookupTableBody
-          suppliers={suppliers}
-          handleSelection={handleSelection}
-          selectedItem={selectedItem}
+          items={selectedSuppliers}
+          columns={columns}
+          handleSelection={handleSupplierSelection}
+          selectedSupplier={selectedSupplier}
         />
       </table>
-      {!suppliers?.length && (
+      {!selectedSuppliers || selectedSuppliers.length === 0 ? (
         <div>
-          <h5>No suppliers 😢, try searching something else</h5>
+          <h1>No suppliers found 😢</h1>
         </div>
-      )}
+      ) : null}
     </section>
   );
 };

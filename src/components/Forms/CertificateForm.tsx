@@ -4,6 +4,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
   useCallback,
+  useEffect,
 } from 'react';
 import '../../assets/styles/components/certificateForm.css';
 import { Input } from '@components/Input';
@@ -16,10 +17,12 @@ import {
   CertificateType,
   TCertificate,
   TSupplier,
+  TUserApplicant,
 } from '@types';
 import { addCertificate, editCertificate } from '@utils';
-import { SupplierLookupModal } from '@components/SupplierLookupModal';
+import { SupplierLookupModal, UserLookupModal } from '@components/Modals';
 import { useLanguage } from '@hooks';
+import { UserLookupTable } from '@components/Tables';
 
 const defaultFormData: TCertificate = {
   dateFrom: null,
@@ -27,6 +30,7 @@ const defaultFormData: TCertificate = {
   certificateType: undefined,
   supplier: null,
   pdfDataUrl: null,
+  assignedUsers: null,
 };
 
 interface CertificateFormProps {
@@ -45,6 +49,13 @@ export const CertificateForm = forwardRef(
 
     const [formData, setFormData] = useState<TCertificate>(defaultFormData);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+
+    const [selectedApplicants, setSelectedApplicants] = useState<
+      TUserApplicant[]
+    >([]);
+    const [selectedSuppliers, setSelectedSuppliers] =
+      useState<TSupplier | null>(null);
 
     const dateFromRef = useRef<HTMLInputElement | null>(null);
     const dateToRef = useRef<HTMLInputElement | null>(null);
@@ -71,6 +82,7 @@ export const CertificateForm = forwardRef(
           certificateType: values.certificateType as CertificateType,
           supplier: values.supplier,
           pdfDataUrl: pdfDataUrl || null,
+          assignedUsers: values.assignedUsers,
         });
       },
     }));
@@ -135,6 +147,7 @@ export const CertificateForm = forwardRef(
         ...prev,
         supplier: supplier,
       }));
+      setSelectedSuppliers(supplier);
       setIsModalOpen(false);
     }, []);
 
@@ -154,6 +167,8 @@ export const CertificateForm = forwardRef(
             formRef.current.reset();
           }
           setFormData(defaultFormData);
+          setSelectedApplicants([]);
+          setSelectedSuppliers(null);
           if (onReset) {
             onReset();
           }
@@ -167,7 +182,21 @@ export const CertificateForm = forwardRef(
     const openModal = () => {
       setIsModalOpen(true);
     };
-    const closeModal = () => setIsModalOpen(false);
+
+    const openUserModal = useCallback(() => {
+      setIsUserModalOpen(true);
+    }, []);
+
+    const closeModal = useCallback(() => {
+      setIsModalOpen(false);
+      setSelectedSuppliers(null);
+    }, []);
+
+    const closeUserModal = useCallback(() => setIsUserModalOpen(false), []);
+
+    const cancelSelections = useCallback(() => {
+      setSelectedApplicants([]);
+    }, []);
 
     const handleSupplierReset = () => {
       setFormData((prev) => ({
@@ -175,6 +204,30 @@ export const CertificateForm = forwardRef(
         supplier: null,
       }));
     };
+
+    const handleApplicantSelection = (applicant: TUserApplicant) => {
+      setSelectedApplicants((prevSelected) => {
+        const isSelected = prevSelected.some(
+          (selected) => selected.id === applicant.id,
+        );
+        return isSelected
+          ? prevSelected.filter((selected) => selected.id !== applicant.id)
+          : [...prevSelected, applicant];
+      });
+    };
+
+    useEffect(() => {
+      setFormData((prev) => ({
+        ...prev,
+        assignedUsers: selectedApplicants,
+      }));
+    }, [selectedApplicants]);
+
+    useEffect(() => {
+      if (isEdit && formData.assignedUsers) {
+        setSelectedApplicants(formData.assignedUsers);
+      }
+    }, [isEdit, formData.assignedUsers]);
 
     return (
       <React.Fragment>
@@ -282,11 +335,45 @@ export const CertificateForm = forwardRef(
               className="valid-to-input"
             />
           </div>
+
+          <section className="participants-section">
+            <div>
+              <Label className="valid-to-label">
+                {translations.assignedUsers}
+              </Label>
+              <Button
+                type="button"
+                className="search-participant-button"
+                onClick={openUserModal}
+              >
+                <SvgComponent
+                  type={SvgComponentType.SEARCH}
+                  className="search-icon"
+                />
+                <h5 className="add-participant">
+                  {translations.addParticipant}
+                </h5>
+              </Button>
+            </div>
+
+            <UserLookupTable
+              selectedApplicants={selectedApplicants}
+              handleApplicantSelection={handleApplicantSelection}
+              selectedItems={selectedApplicants}
+            />
+          </section>
         </form>
         <SupplierLookupModal
           isOpen={isModalOpen}
           onClose={closeModal}
           onSelectSupplier={handleSupplierSelect}
+        />
+        <UserLookupModal
+          isOpen={isUserModalOpen}
+          onClose={closeUserModal}
+          selectedItems={selectedApplicants}
+          setSelectedItems={setSelectedApplicants}
+          cancelSelections={cancelSelections}
         />
       </React.Fragment>
     );

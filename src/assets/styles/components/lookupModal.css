@@ -1,4 +1,4 @@
-.supplier-lookup-modal {
+.lookup-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -11,7 +11,7 @@
   z-index: 1000;
 }
 
-.supplier-lookup-modal-content {
+.lookup-modal-content {
   background: white;
   padding: 20px;
   border-radius: 5px;
@@ -86,7 +86,7 @@
   margin-bottom: 10px;
 }
 
-.supplier-inputs-container {
+.inputs-container {
   display: flex;
   flex-direction: row;
   align-self: center;
@@ -142,14 +142,14 @@
   color: black;
 }
 
-.supplier-list-table-container {
+.list-table-container {
   margin-left: 18px;
   margin-right: 18px;
   margin-top: 10px;
   margin-bottom: 5px;
 }
 
-.supplier-list-container {
+.list-container {
   border: 0.5px solid #c9c9c9;
   border-radius: 4px;
   display: flex;
@@ -159,31 +159,61 @@
   height: 300px;
 }
 
-.supplier-lookup-table {
-  background-color: white;
-}
-
-.supplier-lookup-table-row-point-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  border: 1px solid red;
-}
-
-.supplier-lookup-table-row-point {
-  width: 10px;
-  height: 10px;
-  background-color: red;
-  border-radius: 50%;
-}
-
 .lookup-label-input-container {
   display: flex;
   flex-direction: column;
   margin-bottom: 0px;
 }
+
+.lookup-table-row-point-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  border-left: 1px solid #ddd;
+}
+
+/* USER */
+
+.user-search-criteria-container {
+  border: 0.5px solid #c9c9c9;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  padding-bottom: 5px;
+  height: 230px;
+  margin-bottom: 10px;
+}
+
+.user-inputs-container {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-self: center;
+  gap: 10px;
+  padding-top: 10px;
+  height: 140px;
+}
+
+.user-search-criteria-button-section {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  gap: 5px;
+  margin-left: 18px;
+}
+
+.user-person-list-button-section {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  gap: 5px;
+  margin-left: 18px;
+}
+
+/* END OF USER */
 
 @media (max-width: 834px) {
   .lookup-search-button,
@@ -191,13 +221,13 @@
     width: 20%;
   }
 
-  .supplier-lookup-modal-content {
+  .lookup-modal-content {
     padding: 10px;
     height: 400px;
     width: 450px;
   }
 
-  .supplier-inputs-container {
+  .inputs-container {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
@@ -220,15 +250,48 @@
     margin-top: 5px;
   }
 
-  @media (max-width: 430px) {
-    .supplier-lookup-modal-content {
-      height: 70%;
-      width: 90%;
-    }
+  /* USER */
 
-    .supplier-inputs-container {
-      padding-left: 7px;
-      padding-right: 7px;
-    }
+  .user-inputs-container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding-top: 8px;
+    height: 120px;
+  }
+
+  .user-search-criteria-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    padding-bottom: 5px;
+    height: 270px;
+    margin-bottom: 10px;
+  }
+
+  .user-search-criteria-button-section {
+    width: 90%;
+    justify-content: center;
+    margin-top: 65px;
+  }
+
+  .user-person-list-button-section {
+    width: 90%;
+    justify-content: center;
+    margin-top: 5px;
+  }
+  /* END OF USER */
+}
+
+@media (max-width: 430px) {
+  .lookup-modal-content {
+    height: 70%;
+    width: 90%;
+  }
+
+  .inputs-container,
+  .user-inputs-container {
+    padding-left: 7px;
+    padding-right: 7px;
   }
 }

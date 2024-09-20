@@ -1,3 +1,5 @@
+import { LookupModalType } from './lookupModal.types';
+
 export type TableHeaderItem = {
   id: string;
   label: string;
@@ -15,6 +17,7 @@ export type TCertificate = {
   dateFrom: Date | null;
   dateTo: Date | null;
   pdfDataUrl: string | null;
+  assignedUsers: TUserApplicant[] | null;
 };
 
 export type CertificateFormValues = {
@@ -23,6 +26,7 @@ export type CertificateFormValues = {
   certificateType: string;
   supplier: TSupplier;
   pdfDataUrl: string;
+  assignedUsers: TUserApplicant[];
 };
 
 export enum CERTIFICATE_TYPE {
@@ -34,4 +38,48 @@ export type TSupplier = {
   supplierName: string;
   supplierIndex: number;
   city: string;
+};
+
+export type TUserApplicant = {
+  id?: number;
+  userLookupName: string;
+  userLookupFirstName: string;
+  userLookupId: string;
+  userLookupDepartment: string;
+  userLookupPlant: string;
+  userLookupEmail?: string;
+};
+
+export type TLookupTableHeader = {
+  tableHeaderItems: TableHeaderItem[];
+};
+
+export interface TLookupTableBody<T> {
+  items?: T[];
+  columns: TableHeaderItem[];
+  handleSelection: (item: T) => void;
+  selectedItems?: T[];
+  modalType: LookupModalType | undefined;
+}
+
+export type TLookupTableRow = {
+  item?: TSupplier | TUserApplicant;
+  index: number;
+  columns: TableHeaderItem[];
+  handleSelection: (item: any) => void;
+  isSelected?: boolean;
+};
+
+export type TUserLookupTableProps = {
+  selectedApplicants?: TUserApplicant[];
+  modalType?: LookupModalType;
+  handleApplicantSelection: (item: TUserApplicant) => void;
+  selectedItems?: TUserApplicant[];
+};
+
+export type TSupplierLookupTableProps = {
+  selectedSuppliers?: TSupplier[];
+  handleSupplierSelection: (item: TSupplier) => void;
+  selectedItems?: TSupplier[];
+  selectedSupplier: TSupplier;
 };

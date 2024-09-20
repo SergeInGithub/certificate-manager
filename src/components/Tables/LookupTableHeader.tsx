@@ -1,15 +1,15 @@
-import { SupplierLookupTableHeaderItems } from '@data';
-import { TableHeaderItem } from '@types';
 import React from 'react';
 import { useLanguage } from '@hooks';
+import { TLookupTableHeader, TableHeaderItem } from '@types';
 
-export const SupplierLookupTableHeader: React.FC = () => {
+export const LookupTableHeader = ({ tableHeaderItems }: TLookupTableHeader) => {
   const { translations } = useLanguage();
 
   return (
     <thead>
       <tr>
-        {SupplierLookupTableHeaderItems.map((item: TableHeaderItem) => (
+        <th />
+        {tableHeaderItems.map((item: TableHeaderItem) => (
           <th
             scope="col"
             key={item.id}

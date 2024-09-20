@@ -75,27 +75,36 @@
   color: white;
 }
 
-.search-criteria-container {
+.user-lookup-search-criteria-container {
   border: 0.5px solid #c9c9c9;
   border-radius: 4px;
   display: flex;
   flex-direction: column;
   margin-top: 10px;
   padding-bottom: 5px;
-  height: 180px;
+  height: 230px;
   margin-bottom: 10px;
 }
 
-.supplier-inputs-container {
-  display: flex;
-  flex-direction: row;
+.user-inputs-container {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-self: center;
   gap: 10px;
   padding-top: 10px;
-  height: 80px;
+  height: 140px;
 }
 
-.search-criteria-button-section {
+.user-lookup-search-criteria-button-section {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  gap: 5px;
+  margin-left: 18px;
+}
+
+.user-lookup-person-list-button-section {
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -159,6 +168,15 @@
   height: 300px;
 }
 
+.supplier-lookup-table-row-point {
+  position: absolute;
+  border-radius: 100%;
+  border: 1px solid #a7a7a7;
+  width: 8px;
+  height: 8px;
+  background-color: #ececec;
+}
+
 .supplier-lookup-table {
   background-color: white;
 }
@@ -167,16 +185,12 @@
   position: relative;
   display: flex;
   align-items: center;
+  border-top: none;
+  border-bottom: none;
+  border-right: none;
+  flex-direction: column;
+  height: 20px;
   justify-content: center;
-  width: 20px;
-  border: 1px solid red;
-}
-
-.supplier-lookup-table-row-point {
-  width: 10px;
-  height: 10px;
-  background-color: red;
-  border-radius: 50%;
 }
 
 .lookup-label-input-container {
@@ -197,7 +211,7 @@
     width: 450px;
   }
 
-  .supplier-inputs-container {
+  .user-inputs-container {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
@@ -205,16 +219,22 @@
     height: 120px;
   }
 
-  .search-criteria-container {
+  .user-lookup-search-criteria-container {
     display: flex;
     flex-direction: column;
     margin-top: 10px;
     padding-bottom: 5px;
-    height: 210px;
+    height: 270px;
     margin-bottom: 10px;
   }
 
-  .search-criteria-button-section {
+  .user-lookup-search-criteria-button-section {
+    width: 90%;
+    justify-content: center;
+    margin-top: 65px;
+  }
+
+  .user-lookup-person-list-button-section {
     width: 90%;
     justify-content: center;
     margin-top: 5px;
