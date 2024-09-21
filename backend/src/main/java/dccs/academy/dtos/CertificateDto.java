@@ -4,6 +4,7 @@ import dccs.academy.enums.CertificateType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 public class CertificateDto {
@@ -13,9 +14,10 @@ public class CertificateDto {
     private LocalDate validFrom;
     @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate validTo;
-    private Long supplierId;
+    private SupplierDto supplier;
     private String fileUrl;
     private Set<Long> assignedUserIds;
+    private List<CommentDto> comments;
 
     // Getters and Setters
     public Long getId() {
@@ -66,11 +68,19 @@ public class CertificateDto {
         this.assignedUserIds = assignedUserIds;
     }
 
-    public Long getSupplierId() {
-        return supplierId;
+    public SupplierDto getSupplier() {
+        return supplier;
     }
 
-    public void setSupplierId(Long supplierId) {
-        this.supplierId = supplierId;
+    public void setSupplier(SupplierDto supplier) {
+        this.supplier = supplier;
+    }
+
+    public List<CommentDto> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentDto> comments) {
+        this.comments = comments;
     }
 }
