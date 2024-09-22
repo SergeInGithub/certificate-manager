@@ -15,9 +15,12 @@ public class DataSeederManager {
     @Inject
     UserSeeder userSeeder;
 
+    @Inject SupplierSeeder supplierSeeder;
+
     @Transactional
     public void seedData(@Observes StartupEvent event) {
         departmentSeeder.seed();
         userSeeder.seed();
+        supplierSeeder.seed();
     }
 }
