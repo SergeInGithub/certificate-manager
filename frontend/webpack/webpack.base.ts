@@ -12,7 +12,7 @@ const baseConfig: Configuration = {
     filename: 'js/[name].[contenthash].js',
     path: path.join(__dirname, '../dist'),
     clean: true,
-    publicPath: '/',
+    publicPath: '/dist/',
   },
   module: {
     rules: [
