@@ -83,10 +83,3 @@ export type TSupplierLookupTableProps = {
   selectedItems?: TSupplier[];
   selectedSupplier: TSupplier;
 };
-
-export interface TLookupTableBody {
-  items?: TUserApplicant[] | TSupplier[];
-  columns: TableHeaderItem[];
-  handleSelection: (item: any) => void;
-  selectedItems?: TUserApplicant[] | TSupplier[];
-}

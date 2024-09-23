@@ -32,5 +32,6 @@
   "userLookupDepartment": "Department",
   "userLookupPlant": "Plant",
   "addParticipant": "Add Participant",
-  "assignedUsers": "Assigned Users"
+  "assignedUsers": "Assigned Users",
+  "activeUser": "User"
 }
