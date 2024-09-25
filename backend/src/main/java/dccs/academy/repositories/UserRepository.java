@@ -1,6 +1,8 @@
 package dccs.academy.repositories;
 
+import dccs.academy.entities.DepartmentEntity_;
 import dccs.academy.entities.UserEntity;
+import dccs.academy.entities.UserEntity_;
 import dccs.academy.utils.CriteriaUtils;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -24,13 +26,12 @@ public class UserRepository implements PanacheRepository<UserEntity> {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        CriteriaUtils.addLikePredicate(predicates, cb, root, "firstName", firstName);
-        CriteriaUtils.addLikePredicate(predicates, cb, root, "lastName", lastName);
-        CriteriaUtils.addLikePredicate(predicates, cb, root, "userIndex", userIndex);
-        CriteriaUtils.addLikePredicate(predicates, cb, root, "email", email);
-        CriteriaUtils.addLikePredicate(predicates, cb, root, "plant", plant);
-        CriteriaUtils.addNestedLikePredicate(predicates, cb, root, "department", "name", departmentName);
-
+        CriteriaUtils.addLikePredicate(predicates, cb, root, UserEntity_.firstName, firstName);
+        CriteriaUtils.addLikePredicate(predicates, cb, root, UserEntity_.lastName, lastName);
+        CriteriaUtils.addLikePredicate(predicates, cb, root, UserEntity_.userIndex, userIndex);
+        CriteriaUtils.addLikePredicate(predicates, cb, root, UserEntity_.email, email);
+        CriteriaUtils.addLikePredicate(predicates, cb, root, UserEntity_.plant, plant);
+        CriteriaUtils.addNestedLikePredicate(predicates, cb, root, UserEntity_.department, DepartmentEntity_.name, departmentName);
         query.where(predicates.toArray(new Predicate[0]));
         return getEntityManager().createQuery(query).getResultList();
     }

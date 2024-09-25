@@ -76,4 +76,14 @@ public class SupplierService {
         return "Supplier with ID " + id + " was successfully deleted";
     }
 
+    public SupplierEntity getValidSupplier(Long supplierId, SupplierRepository supplierRepository) {
+        if (supplierId == null) return null;
+
+        SupplierEntity supplier = supplierRepository.findById(supplierId);
+        if (supplier == null) {
+            throw new NotFoundException("Supplier with ID " + supplierId + " not found");
+        }
+        return supplier;
+    }
+
 }

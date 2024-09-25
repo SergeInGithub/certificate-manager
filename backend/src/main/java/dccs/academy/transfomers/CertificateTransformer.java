@@ -31,11 +31,6 @@ public class CertificateTransformer {
                 .collect(Collectors.toSet());
         certificateDto.setAssignedUserIds(assignedUserIds);
 
-        Set<UserDto> assignedUsers = certificateEntity.getAssignedUsers().stream()
-                .map(userTransformer::toDto)
-                .collect(Collectors.toSet());
-        certificateDto.setAssignedUsers(assignedUsers);
-
         return certificateDto;
     }
 

@@ -16,7 +16,6 @@ public class CertificateDto {
     private Long supplierId;
     private String fileUrl;
     private Set<Long> assignedUserIds;
-    private Set<UserDto> assignedUsers;
 
     // Getters and Setters
     public Long getId() {
@@ -65,14 +64,6 @@ public class CertificateDto {
 
     public void setAssignedUserIds(Set<Long> assignedUserIds) {
         this.assignedUserIds = assignedUserIds;
-    }
-
-    public Set<UserDto> getAssignedUsers() {
-        return assignedUsers;
-    }
-
-    public void setAssignedUsers(Set<UserDto> assignedUsers) {
-        this.assignedUsers = assignedUsers;
     }
 
     public Long getSupplierId() {

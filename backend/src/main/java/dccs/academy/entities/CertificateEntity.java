@@ -21,7 +21,7 @@ public class CertificateEntity extends BaseEntity {
     @Column(name = "valid_to", nullable = false)
     private LocalDate validTo;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(
             name = "assigned_users",
             schema = "certificate",

@@ -12,12 +12,14 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 @Transactional
-public class UsersService {
+public class UserService {
 
     @Inject
     UserRepository userRepository;
@@ -98,5 +100,19 @@ public class UsersService {
         }
         userRepository.delete(userEntity);
         return "User with ID " + id + " was successfully deleted";
+    }
+
+    public Set<UserEntity> getValidUsers(Set<Long> userIds, UserRepository userRepository) {
+        if (userIds == null || userIds.isEmpty()) return new HashSet<>();
+
+        return userIds.stream()
+                .map(userId -> {
+                    UserEntity userEntity = userRepository.findById(userId);
+                    if (userEntity == null) {
+                        throw new NotFoundException("User with ID " + userId + " not found");
+                    }
+                    return userEntity;
+                })
+                .collect(Collectors.toSet());
     }
 }

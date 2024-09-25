@@ -1,6 +1,8 @@
 package dccs.academy.repositories;
 
 import dccs.academy.entities.SupplierEntity;
+import dccs.academy.entities.SupplierEntity_;
+import dccs.academy.utils.CriteriaUtils;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -23,17 +25,9 @@ public class SupplierRepository implements PanacheRepository<SupplierEntity> {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        if (name != null && !name.isEmpty()) {
-            predicates.add(cb.like(cb.lower(supplier.get("name")), "%" + name.toLowerCase() + "%"));
-        }
-
-        if (supplierIndex != null && !supplierIndex.isEmpty()) {
-            predicates.add(cb.like(cb.lower(supplier.get("supplierIndex")), "%" + supplierIndex.toLowerCase() + "%"));
-        }
-
-        if (city != null && !city.isEmpty()) {
-            predicates.add(cb.like(cb.lower(supplier.get("city")), "%" + city.toLowerCase() + "%"));
-        }
+        CriteriaUtils.addLikePredicate(predicates, cb, supplier, SupplierEntity_.name, name);
+        CriteriaUtils.addLikePredicate(predicates, cb, supplier, SupplierEntity_.supplierIndex, supplierIndex);
+        CriteriaUtils.addLikePredicate(predicates, cb, supplier, SupplierEntity_.city, city);
 
         cq.where(predicates.toArray(new Predicate[0]));
 
