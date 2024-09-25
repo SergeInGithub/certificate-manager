@@ -237,10 +237,7 @@ export const CertificateForm = forwardRef(
           ref={formRef}
         >
           <div className="label-input-container">
-            <Label
-              children={translations.supplier}
-              className="supplier-label"
-            />
+            <Label className="supplier-label">{translations.supplier}</Label>
             <Input
               type="text"
               className="supplier-input"
@@ -272,10 +269,9 @@ export const CertificateForm = forwardRef(
           </div>
 
           <div className="label-input-container">
-            <Label
-              children={translations.certificateType}
-              className="certificate-type-label"
-            />
+            <Label className="certificate-type-label">
+              {translations.certificateType}
+            </Label>
 
             <div className="custom-select-container">
               <Select
@@ -295,10 +291,7 @@ export const CertificateForm = forwardRef(
           </div>
 
           <div className="label-input-container">
-            <Label
-              children={translations.validFrom}
-              className="valid-from-label"
-            />
+            <Label className="valid-from-label">{translations.validFrom}</Label>
             <Input
               ref={dateFromRef}
               type="text"
@@ -316,10 +309,7 @@ export const CertificateForm = forwardRef(
           </div>
 
           <div className="label-input-container">
-            <Label
-              children={translations.validTo}
-              className="valid-to-label"
-            />
+            <Label className="valid-to-label">{translations.validTo}</Label>
             <Input
               ref={dateToRef}
               type="text"

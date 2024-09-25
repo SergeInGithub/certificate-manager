@@ -32,5 +32,6 @@
   "userLookupDepartment": "Abteilung",
   "userLookupPlant": "Werk",
   "addParticipant": "Teilnehmer hinzufügen",
-  "assignedUsers": "Zugewiesene Benutzer"
+  "assignedUsers": "Zugewiesene Benutzer",
+  "activeUser": "Benutzer"
 }

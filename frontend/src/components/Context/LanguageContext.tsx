@@ -18,7 +18,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
 
   const loadTranslations = useCallback(async (lang: Language) => {
     const fileName = languageFileMapping[lang];
-    const response = await import(`../data/${fileName}.json`);
+    const response = await import(`../../data/${fileName}.json`);
     setTranslations(response.default);
   }, []);
 
