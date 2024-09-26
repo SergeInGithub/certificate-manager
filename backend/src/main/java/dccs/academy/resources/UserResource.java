@@ -1,7 +1,7 @@
 package dccs.academy.resources;
 
 import dccs.academy.dtos.UserDto;
-import dccs.academy.services.UsersService;
+import dccs.academy.services.UserService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -15,11 +15,11 @@ import java.util.List;
 public class UserResource {
 
     @Inject
-    UsersService usersService;
+    UserService userService;
 
     @GET
     public List<UserDto> getUsers() {
-        return usersService.getUsers();
+        return userService.getUsers();
     }
 
     @GET
@@ -31,33 +31,33 @@ public class UserResource {
             @QueryParam("email") String email,
             @QueryParam("plant") String plant,
             @QueryParam("departmentName") String departmentName) {
-        return usersService.searchUsers(firstName, lastName, userIndex, email, plant, departmentName);
+        return userService.searchUsers(firstName, lastName, userIndex, email, plant, departmentName);
     }
 
     @POST
     public Response createUser(UserDto userDto) {
-        UserDto created = usersService.createUser(userDto);
+        UserDto created = userService.createUser(userDto);
         return Response.status(Response.Status.CREATED).entity(created).build();
     }
 
     @PUT
     @Path("/{id}")
     public Response updateUser(@PathParam("id") Long id, UserDto userDto) {
-        UserDto updated = usersService.updateUser(id, userDto);
+        UserDto updated = userService.updateUser(id, userDto);
         return Response.ok(updated).build();
     }
 
     @GET
     @Path("/{id}")
     public Response getUser(@PathParam("id") Long id) {
-        UserDto user = usersService.getUser(id);
+        UserDto user = userService.getUser(id);
         return Response.ok(user).build();
     }
 
     @DELETE
     @Path("/{id}")
     public Response deleteUser(@PathParam("id") Long id) {
-        String message = usersService.deleteUser(id);
+        String message = userService.deleteUser(id);
         return Response.ok(message).build();
     }
 }
