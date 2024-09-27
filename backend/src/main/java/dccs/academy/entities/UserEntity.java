@@ -2,6 +2,9 @@ package dccs.academy.entities;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+import java.util.Set;
+
 @Entity
 @Table(schema = "certificate", name = "Users")
 public class UserEntity extends BaseEntity {
@@ -22,9 +25,14 @@ public class UserEntity extends BaseEntity {
     @JoinColumn(name = "department_id", nullable = false)
     private DepartmentEntity department;
 
+    @ManyToMany(mappedBy = "assignedUsers")
+    private List<CertificateEntity> certificates;
+
     @Column(name = "plant")
     private String plant;
 
+    @OneToMany(mappedBy = "user")
+    private List<CommentEntity> comments;
 
     // Getters and Setters
     public String getEmail() {
@@ -71,5 +79,21 @@ public class UserEntity extends BaseEntity {
 
     public void setPlant(String plant) {
         this.plant = plant;
+    }
+
+    public List<CommentEntity> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentEntity> comments) {
+        this.comments = comments;
+    }
+
+    public List<CertificateEntity> getCertificates() {
+        return certificates;
+    }
+
+    public void setCertificates(List<CertificateEntity> certificates) {
+        this.certificates = certificates;
     }
 }

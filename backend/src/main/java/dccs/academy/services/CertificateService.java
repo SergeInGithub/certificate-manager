@@ -2,16 +2,21 @@ package dccs.academy.services;
 
 import dccs.academy.dtos.CertificateDto;
 import dccs.academy.entities.CertificateEntity;
+import dccs.academy.entities.CommentEntity;
+import dccs.academy.entities.UserEntity;
 import dccs.academy.repositories.CertificateRepository;
 import dccs.academy.repositories.SupplierRepository;
 import dccs.academy.repositories.UserRepository;
 import dccs.academy.transfomers.CertificateTransformer;
+import dccs.academy.transfomers.CommentTransformer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -35,6 +40,9 @@ public class CertificateService {
     @Inject
     UserService userService;
 
+    @Inject
+    CommentTransformer commentTransformer;
+
     public List<CertificateDto> getCertificates() {
         List<CertificateEntity> certificateEntities = certificateRepository.listAll();
         return certificateEntities.stream().map(certificateTransformer::toDto).collect(Collectors.toList());
@@ -42,12 +50,28 @@ public class CertificateService {
 
     public CertificateDto createCertificate(CertificateDto certificateDto) {
         CertificateEntity certificateEntity = certificateTransformer.toEntity(certificateDto);
-        certificateEntity.setSupplier(supplierService.getValidSupplier(certificateDto.getSupplierId(), supplierRepository));
+        certificateEntity.setSupplier(supplierService.getValidSupplier(certificateDto.getSupplier().getId(), supplierRepository));
         certificateEntity.setAssignedUsers(userService.getValidUsers(certificateDto.getAssignedUserIds(), userRepository));
 
+        if (certificateDto.getComments() != null) {
+            List<CommentEntity> commentEntities = certificateDto.getComments().stream()
+                    .map(commentDto -> {
+                        CommentEntity commentEntity = commentTransformer.toEntity(commentDto);
+
+                        Set<Long> userIdSet = Collections.singleton(commentDto.getUserId());
+                        UserEntity user = userService.getValidUsers(userIdSet, userRepository).iterator().next();
+
+                        commentEntity.setUser(user);
+                        commentEntity.setCertificate(certificateEntity);
+                        return commentEntity;
+                    })
+                    .collect(Collectors.toList());
+
+            certificateEntity.setComments(commentEntities);
+        }
+
         certificateRepository.persist(certificateEntity);
-        certificateDto.setId(certificateEntity.getId());
-        return certificateDto;
+        return certificateTransformer.toDto(certificateEntity);
     }
 
     public CertificateDto updateCertificate(Long id, CertificateDto certificateDto) {
@@ -56,7 +80,7 @@ public class CertificateService {
             throw new NotFoundException("Certificate with ID " + id + " not found");
         }
 
-        existingCertificate.setSupplier(supplierService.getValidSupplier(certificateDto.getSupplierId(), supplierRepository));
+        existingCertificate.setSupplier(supplierService.getValidSupplier(certificateDto.getSupplier().getId(), supplierRepository));
 
         existingCertificate.setType(certificateDto.getType());
         existingCertificate.setValidFrom(certificateDto.getValidFrom());
@@ -64,7 +88,6 @@ public class CertificateService {
         existingCertificate.setFileUrl(certificateDto.getFileUrl());
 
         existingCertificate.setAssignedUsers(userService.getValidUsers(certificateDto.getAssignedUserIds(), userRepository));
-
         certificateRepository.persist(existingCertificate);
         return certificateTransformer.toDto(existingCertificate);
     }

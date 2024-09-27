@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -21,7 +22,7 @@ public class CertificateEntity extends BaseEntity {
     @Column(name = "valid_to", nullable = false)
     private LocalDate validTo;
 
-    @ManyToMany(cascade = CascadeType.REMOVE)
+    @ManyToMany
     @JoinTable(
             name = "assigned_users",
             schema = "certificate",
@@ -36,6 +37,9 @@ public class CertificateEntity extends BaseEntity {
 
     @Column(name = "file_url")
     private String fileUrl;
+
+    @OneToMany(mappedBy = "certificate", cascade = CascadeType.ALL)
+    private List<CommentEntity> comments;
 
 
     // Getters and Setters
@@ -85,5 +89,13 @@ public class CertificateEntity extends BaseEntity {
 
     public void setFileUrl(String fileUrl) {
         this.fileUrl = fileUrl;
+    }
+
+    public List<CommentEntity> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentEntity> comments) {
+        this.comments = comments;
     }
 }
