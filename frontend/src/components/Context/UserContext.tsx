@@ -12,7 +12,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const initializeUsers = async () => {
       try {
-        const existingUsers = await fetchUsers('myDatabase', 1);
+        const existingUsers = await fetchUsers('CertificateDb', 1);
 
         const existingUserIds = new Set(
           existingUsers.map((user) => user.userLookupId),
@@ -23,10 +23,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         );
 
         if (usersToAdd.length > 0) {
-          await addUsers('myDatabase', 1, usersToAdd);
+          await addUsers('CertificateDb', 1, usersToAdd);
         }
 
-        const usersFromDB = await fetchUsers('myDatabase', 1);
+        const usersFromDB = await fetchUsers('CertificateDb', 1);
         setUsers(usersFromDB);
         if (usersFromDB.length > 0) {
           setActiveUser(usersFromDB[0]);

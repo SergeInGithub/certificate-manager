@@ -115,8 +115,125 @@
   gap: 10px;
 }
 
+.comments-section {
+  display: flex;
+  flex-direction: column;
+  min-height: 90px;
+  background-color: #f5f5f5;
+  gap: 15px;
+  padding-right: 10px;
+  padding-left: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+}
+
+.new-comment-button,
+.send-comment-button {
+  width: 35%;
+  height: 30px;
+  color: white;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: small;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 2px;
+  border: none;
+  cursor: pointer;
+}
+
+.new-comment-button {
+  align-self: end;
+  background-color: #3c9bcb;
+}
+
+.send-comment-button {
+  align-self: start;
+  background-color: rgb(194, 0, 0);
+}
+
+.user-comment-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.user-comment-comment-section {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  max-width: 100%;
+  margin-top: 5px;
+}
+
+.user-comment-name-section,
+.user-comment-comment-section {
+  font-size: smaller;
+}
+
+.comment-paragraph {
+  white-space: normal;
+  max-width: 75%;
+  word-wrap: break-word;
+  align-items: flex-start;
+  font-weight: 100;
+  color: #5f5f5f;
+  margin-top: 0px;
+}
+
+.userComment-name {
+  color: #5f5f5f;
+}
+
+.comment-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 4px;
+  padding-bottom: 10px;
+  border: 1px solid #c9c9c9;
+  border-radius: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.comment-text-area {
+  resize: none;
+  border-radius: 5px;
+  border-color: #c9c9c9;
+  padding: 10px;
+  font-size: medium;
+}
+
+.user-comment-name-label {
+  font-style: italic;
+  color: #5f5f5f;
+  font-size: small;
+}
+
+.error {
+  color: red;
+  font-size: x-small;
+  margin-top: 2px;
+}
+
 @media (max-width: 834px) {
   .certificate-form {
     margin-top: 70px;
+  }
+
+  .new-comment-button,
+  .send-comment-button {
+    width: 30%;
+  }
+}
+
+@media (max-width: 430px) {
+  .new-comment-button,
+  .send-comment-button {
+    width: 40%;
   }
 }

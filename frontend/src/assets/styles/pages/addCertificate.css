@@ -5,6 +5,7 @@
   min-height: 100vh;
   width: 70vw;
   justify-content: center;
+  margin-top: 70px;
 }
 
 .add-certificate-container {
@@ -32,6 +33,7 @@
 }
 
 .hidden-file-input {
+  max-height: 40px;
   position: absolute;
   top: 0;
   left: 0;

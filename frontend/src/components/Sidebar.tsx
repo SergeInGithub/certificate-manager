@@ -66,7 +66,7 @@ export const Sidebar: React.FC = () => {
 
   useEffect(() => {
     updateSelectedItems(location.pathname);
-  }, [location.pathname, menuItems]);
+  }, [location.pathname]);
 
   const handleClick = useCallback(
     (item: MenuItem, event: React.MouseEvent, parentItemType?: string) => {

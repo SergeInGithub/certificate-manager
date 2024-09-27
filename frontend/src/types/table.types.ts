@@ -5,6 +5,11 @@ export type TableHeaderItem = {
   label: string;
 };
 
+export type TComment = {
+  name: string;
+  comment: string;
+};
+
 export enum CertificateType {
   PERMISSION_OF_PRINTING = 'Permission of Printing',
   OHSAS_18001 = 'OHSAS 18001',
@@ -18,7 +23,25 @@ export type TCertificate = {
   dateTo: Date | null;
   pdfDataUrl: string | null;
   assignedUsers: TUserApplicant[] | null;
+  comments?: TComment[];
 };
+
+export const defaultFormData: TCertificate = {
+  dateFrom: null,
+  dateTo: null,
+  certificateType: undefined,
+  supplier: null,
+  pdfDataUrl: null,
+  assignedUsers: null,
+  comments: [],
+};
+
+export interface CertificateFormProps {
+  pdfDataUrl: string | null;
+  onReset?: () => void;
+  isEdit?: boolean;
+  certificateId?: number;
+}
 
 export type CertificateFormValues = {
   dateFrom: string;
@@ -27,6 +50,7 @@ export type CertificateFormValues = {
   supplier: TSupplier;
   pdfDataUrl: string;
   assignedUsers: TUserApplicant[];
+  comments?: TComment[];
 };
 
 export enum CERTIFICATE_TYPE {
@@ -54,22 +78,6 @@ export type TLookupTableHeader = {
   tableHeaderItems: TableHeaderItem[];
 };
 
-export interface TLookupTableBody<T> {
-  items?: T[];
-  columns: TableHeaderItem[];
-  handleSelection: (item: T) => void;
-  selectedItems?: T[];
-  modalType: LookupModalType | undefined;
-}
-
-export type TLookupTableRow = {
-  item?: TSupplier | TUserApplicant;
-  index: number;
-  columns: TableHeaderItem[];
-  handleSelection: (item: any) => void;
-  isSelected?: boolean;
-};
-
 export type TUserLookupTableProps = {
   selectedApplicants?: TUserApplicant[];
   modalType?: LookupModalType;
@@ -82,4 +90,18 @@ export type TSupplierLookupTableProps = {
   handleSupplierSelection: (item: TSupplier) => void;
   selectedItems?: TSupplier[];
   selectedSupplier: TSupplier;
+};
+
+export type TErrors = {
+  supplier: string;
+  certificateType: string;
+  dateFrom: string;
+  dateTo: string;
+};
+
+export const defaultErrorState: TErrors = {
+  supplier: '',
+  certificateType: '',
+  dateFrom: '',
+  dateTo: '',
 };
