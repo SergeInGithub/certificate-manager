@@ -1,11 +1,11 @@
 import React from 'react';
-import { TCertificate } from '@types';
+import { CertificateDto } from '@types';
 import TableHeader from './TableHeader';
 import { TableBody } from './TableBody';
 import '../../assets/styles/components/table.css';
 
 export type CertificateTableProps = {
-  certificates: TCertificate[] | undefined;
+  certificates: CertificateDto[] | undefined;
   onDelete: (id: number) => void;
 };
 

@@ -14,7 +14,7 @@ export type TComment = {
 export type TCertificate = {
   id?: number;
   supplier: TSupplier | null;
-  certificateType: CertificateType | undefined;
+  certificateType: OldCertificateType | undefined;
   dateFrom: Date | null;
   dateTo: Date | null;
   pdfDataUrl: string | null;
