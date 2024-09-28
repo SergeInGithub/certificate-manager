@@ -25,7 +25,7 @@ export const UserLookupTableBody: React.FC<TUserLookupTableBody> = ({
           columns={columns}
           handleSelection={handleSelection}
           isSelected={selectedItems.some(
-            (selectedItem) => selectedItem.id === item.id,
+            (selectedItem) => selectedItem.userId === item.userId,
           )}
         />
       ))}

@@ -1,12 +1,12 @@
 import React from 'react';
-import { TableHeaderItem, TSupplier } from '@types';
+import { SupplierDto, TableHeaderItem } from '@types';
 import { Input } from '@components/Input';
 
 interface SupplierLookupTableRowProps {
-  item: TSupplier;
+  item: SupplierDto;
   index: number;
   columns: TableHeaderItem[];
-  handleSelection: (item: TSupplier) => void;
+  handleSelection: (item: SupplierDto) => void;
   isSelected: boolean;
 }
 
@@ -30,7 +30,7 @@ export const SupplierLookupTableRow: React.FC<SupplierLookupTableRowProps> = ({
         />
       </td>
       {columns.map((column: TableHeaderItem, colIndex: number) => (
-        <td key={colIndex}>{item[column.id as keyof TSupplier]}</td>
+        <td key={colIndex}>{item[column.id as keyof SupplierDto]}</td>
       ))}
     </tr>
   );

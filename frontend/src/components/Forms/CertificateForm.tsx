@@ -18,10 +18,10 @@ import {
   defaultErrorState,
   defaultFormData,
   TErrors,
-  TSupplier,
   UserDto,
   CertificateDto,
   CommentDto,
+  SupplierDto,
 } from '@types';
 import { addCertificate, editCertificate } from '@utils';
 import { useLanguage, useUser } from '@hooks';
@@ -43,7 +43,7 @@ export const CertificateForm = forwardRef(
 
     const [selectedApplicants, setSelectedApplicants] = useState<UserDto[]>([]);
     const [selectedSuppliers, setSelectedSuppliers] =
-      useState<TSupplier | null>(null);
+      useState<SupplierDto | null>(null);
 
     const [isComment, setIsComment] = useState(false);
     const [comment, setComment] = useState('');
@@ -146,7 +146,7 @@ export const CertificateForm = forwardRef(
       [],
     );
 
-    const handleSupplierSelect = useCallback((supplier: TSupplier) => {
+    const handleSupplierSelect = useCallback((supplier: SupplierDto) => {
       setFormData((prev) => ({
         ...prev,
         supplier: supplier,
@@ -228,10 +228,12 @@ export const CertificateForm = forwardRef(
     const handleApplicantSelection = (applicant: UserDto) => {
       setSelectedApplicants((prevSelected) => {
         const isSelected = prevSelected.some(
-          (selected) => selected.id === applicant.id,
+          (selected) => selected.userId === applicant.userId,
         );
         return isSelected
-          ? prevSelected.filter((selected) => selected.id !== applicant.id)
+          ? prevSelected.filter(
+              (selected) => selected.userId !== applicant.userId,
+            )
           : [...prevSelected, applicant];
       });
     };

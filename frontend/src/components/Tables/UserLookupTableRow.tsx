@@ -47,7 +47,7 @@ export const UserLookupTableRow: React.FC<UserLookupTableRowProps> = ({
         let value;
         if (column.id === 'firstName') {
           value = formatUserName(item);
-        } else if (column.id === 'departmentId') {
+        } else if (column.id === 'departmentName') {
           value = getDepartmentNameById(item.departmentId, departments);
         } else {
           value = item[column.id as keyof UserDto];

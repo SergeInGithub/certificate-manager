@@ -10,10 +10,10 @@ import { SupplierLookupTable, UserLookupTable } from '@components/Tables';
 import {
   LookupModalProps,
   LookupModalType,
-  TSupplier,
-  TUserApplicant,
+  SupplierDto,
+  UserDto,
 } from '@types';
-import { searchSuppliers, searchUsers } from '@utils';
+import { searchSupplier, searchUser } from '@utils';
 
 export const LookupModal: React.FC<LookupModalProps> = ({
   isOpen,
@@ -31,21 +31,21 @@ export const LookupModal: React.FC<LookupModalProps> = ({
 }) => {
   const { translations } = useLanguage();
 
-  const [userApplicants, setUserApplicants] = useState<TUserApplicant[]>([]);
-  const [suppliers, setSuppliers] = useState<TSupplier[]>([]);
+  const [userApplicants, setUserApplicants] = useState<UserDto[]>([]);
+  const [suppliers, setSuppliers] = useState<SupplierDto[]>([]);
   const [filteredUserApplicants, setFilteredUserApplicants] = useState<
-    TUserApplicant[]
+    UserDto[]
   >([]);
-  const [filteredSuppliers, setFilteredSuppliers] = useState<TSupplier[]>([]);
+  const [filteredSuppliers, setFilteredSuppliers] = useState<SupplierDto[]>([]);
 
   useEffect(() => {
     if (isOpen) {
       if (modalType === LookupModalType.USER_LOOKUP) {
-        setUserApplicants(users as TUserApplicant[]);
-        setFilteredUserApplicants(users as TUserApplicant[]);
+        setUserApplicants(users as UserDto[]);
+        setFilteredUserApplicants(users as UserDto[]);
       } else if (modalType === LookupModalType.SUPPLIER_LOOKUP) {
-        setSuppliers(users as TSupplier[]);
-        setFilteredSuppliers(users as TSupplier[]);
+        setSuppliers(users as SupplierDto[]);
+        setFilteredSuppliers(users as SupplierDto[]);
       }
     }
   }, [isOpen, users, modalType]);
@@ -53,29 +53,27 @@ export const LookupModal: React.FC<LookupModalProps> = ({
   if (!isOpen) return null;
 
   const handleSearch = async () => {
-    if (modalType === LookupModalType.USER_LOOKUP) {
-      const [userName, userFirstName, userId, userDepartment, userPlant] =
-        criteria.map((criterion) => criterion.value);
-      const filtered = await searchUsers(
-        'CertificateDb',
-        1,
-        userName,
-        userFirstName,
-        userId,
-        userDepartment,
-        userPlant,
-      );
-      setFilteredUserApplicants(filtered as TUserApplicant[]);
-    } else if (modalType === LookupModalType.SUPPLIER_LOOKUP) {
-      const [name, index, city] = criteria.map((criterion) => criterion.value);
-      const filtered = await searchSuppliers(
-        'CertificateDb',
-        1,
-        name,
-        index,
-        city,
-      );
-      setFilteredSuppliers(filtered as TSupplier[]);
+    try {
+      if (modalType === LookupModalType.USER_LOOKUP) {
+        const [lastName, firstName, userIndex, departmentName, plant] =
+          criteria.map((criterion) => criterion.value);
+        const filtered = await searchUser(
+          firstName,
+          lastName,
+          userIndex,
+          plant,
+          departmentName,
+        );
+        setFilteredUserApplicants(filtered as UserDto[]);
+      } else if (modalType === LookupModalType.SUPPLIER_LOOKUP) {
+        const [name, supplierIndex, city] = criteria.map(
+          (criterion) => criterion.value,
+        );
+        const filtered = await searchSupplier(name, supplierIndex, city);
+        setFilteredSuppliers(filtered as SupplierDto[]);
+      }
+    } catch (error) {
+      console.error('Error fetching suppliers:', error);
     }
   };
 
@@ -91,14 +89,14 @@ export const LookupModal: React.FC<LookupModalProps> = ({
     }
   };
 
-  const handleSelection = (item: TUserApplicant | TSupplier) => {
+  const handleSelection = (item: UserDto | SupplierDto) => {
     if (modalType === LookupModalType.USER_LOOKUP && handleApplicantSelection) {
-      handleApplicantSelection(item as TUserApplicant);
+      handleApplicantSelection(item as UserDto);
     } else if (
       modalType === LookupModalType.SUPPLIER_LOOKUP &&
       handleSupplierSelection
     ) {
-      handleSupplierSelection(item as TSupplier);
+      handleSupplierSelection(item as SupplierDto);
     }
   };
 
@@ -176,16 +174,16 @@ export const LookupModal: React.FC<LookupModalProps> = ({
               <SupplierLookupTable
                 selectedSuppliers={filteredSuppliers}
                 handleSupplierSelection={handleSelection}
-                selectedSupplier={selectedItems?.[0] as TSupplier}
+                selectedSupplier={selectedItems?.[0] as SupplierDto}
               />
             ) : (
               <UserLookupTable
                 selectedApplicants={filteredUserApplicants}
                 modalType={modalType}
                 handleApplicantSelection={
-                  handleSelection as (applicant: TUserApplicant) => void
+                  handleSelection as (applicant: UserDto) => void
                 }
-                selectedItems={selectedItems as TUserApplicant[]}
+                selectedItems={selectedItems as UserDto[]}
               />
             )}
           </section>

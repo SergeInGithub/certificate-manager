@@ -1,4 +1,4 @@
-import { CertificateDto, UserDto } from './certificate.types';
+import { CertificateDto, SupplierDto, UserDto } from './certificate.types';
 import { LookupModalType } from './lookupModal.types';
 
 export type TableHeaderItem = {
@@ -82,10 +82,10 @@ export type TUserLookupTableProps = {
 };
 
 export type TSupplierLookupTableProps = {
-  selectedSuppliers?: TSupplier[];
-  handleSupplierSelection: (item: TSupplier) => void;
-  selectedItems?: TSupplier[];
-  selectedSupplier: TSupplier;
+  selectedSuppliers?: SupplierDto[];
+  handleSupplierSelection: (item: SupplierDto) => void;
+  selectedItems?: SupplierDto[];
+  selectedSupplier: SupplierDto;
 };
 
 export type TErrors = {
