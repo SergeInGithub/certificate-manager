@@ -80,7 +80,7 @@ public class UserResource {
     public Response getUser(@PathParam("id") Long id) {
         try {
             UserDto user = userService.getUser(id);
-            return ResponseHandler.successResponse("User retrieved successfully", user, Response.Status.FOUND);
+            return ResponseHandler.successResponse("User retrieved successfully", user, Response.Status.OK);
         } catch (EntityNotFoundException e) {
             return ResponseHandler.errorResponse(e.getMessage(), Response.Status.NOT_FOUND);
         }

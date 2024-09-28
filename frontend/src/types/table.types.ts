@@ -10,7 +10,7 @@ export type TComment = {
   comment: string;
 };
 
-export enum CertificateType {
+export enum OldCertificateType {
   PERMISSION_OF_PRINTING = 'Permission of Printing',
   OHSAS_18001 = 'OHSAS 18001',
 }
@@ -18,7 +18,7 @@ export enum CertificateType {
 export type TCertificate = {
   id?: number;
   supplier: TSupplier | null;
-  certificateType: CertificateType | undefined;
+  certificateType: OldCertificateType | undefined;
   dateFrom: Date | null;
   dateTo: Date | null;
   pdfDataUrl: string | null;

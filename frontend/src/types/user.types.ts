@@ -1,10 +1,10 @@
 import { createContext } from 'react';
-import { TUserApplicant } from './table.types';
+import { UserDto } from './certificate.types';
 
 export type TUserContext = {
-  users: TUserApplicant[];
-  activeUser: TUserApplicant | null;
-  setActiveUser: (user: TUserApplicant | null) => void;
+  users: UserDto[];
+  activeUser: UserDto | null;
+  setActiveUser: (user: UserDto | null) => void;
 };
 
 export const UserContext = createContext<TUserContext | undefined>(undefined);

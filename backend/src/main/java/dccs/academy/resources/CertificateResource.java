@@ -33,7 +33,7 @@ public class CertificateResource {
     public Response getCertificate(@PathParam("id") Long id) {
         try {
             CertificateDto certificate = certificateService.getCertificate(id);
-            return ResponseHandler.successResponse("Certificates retrieved successfully", certificate, Response.Status.FOUND);
+            return ResponseHandler.successResponse("Certificates retrieved successfully", certificate, Response.Status.OK);
         } catch (EntityNotFoundException e) {
             return ResponseHandler.errorResponse(e.getMessage(), Response.Status.NOT_FOUND);
         }

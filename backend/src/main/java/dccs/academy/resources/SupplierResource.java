@@ -47,7 +47,7 @@ public class SupplierResource {
     public Response getSupplier(@PathParam("id") Long id) {
         try {
             SupplierDto supplier = supplierService.getSupplier(id);
-            return ResponseHandler.successResponse("Supplier retrieved successfully", supplier, Response.Status.FOUND);
+            return ResponseHandler.successResponse("Supplier retrieved successfully", supplier, Response.Status.OK);
         } catch (EntityNotFoundException e) {
             return ResponseHandler.errorResponse(e.getMessage(), Response.Status.NOT_FOUND);
         }

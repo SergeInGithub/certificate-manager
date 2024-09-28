@@ -59,7 +59,7 @@ public class CommentResource {
     public Response getComment(@PathParam("id") Long id) {
         try {
             CommentDto comment = commentService.getComment(id);
-            return ResponseHandler.successResponse("Comment retrieved successfully", comment, Response.Status.FOUND);
+            return ResponseHandler.successResponse("Comment retrieved successfully", comment, Response.Status.OK);
         } catch (EntityNotFoundException e) {
             return ResponseHandler.errorResponse(e.getMessage(), Response.Status.NOT_FOUND);
         }
