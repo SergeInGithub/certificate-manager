@@ -1,4 +1,4 @@
-import { CertificateType } from './certificate.types';
+import { CertificateDto, UserDto } from './certificate.types';
 import { LookupModalType } from './lookupModal.types';
 
 export type TableHeaderItem = {
@@ -22,18 +22,23 @@ export type TCertificate = {
   comments?: TComment[];
 };
 
-export const defaultFormData: TCertificate = {
-  dateFrom: null,
-  dateTo: null,
-  certificateType: undefined,
-  supplier: null,
-  pdfDataUrl: null,
-  assignedUsers: null,
+export const defaultFormData: CertificateDto = {
+  id: 0,
+  type: OldCertificateType.OHSAS_18001,
+  validFrom: new Date(),
+  validTo: new Date(),
+  supplier: {
+    id: 0,
+    name: '',
+    supplierIndex: '',
+    city: '',
+  },
+  fileUrl: '',
+  assignedUserIds: [],
   comments: [],
 };
-
 export interface CertificateFormProps {
-  pdfDataUrl: string | null;
+  pdfDataUrl: string | '';
   onReset?: () => void;
   isEdit?: boolean;
   certificateId?: number;
@@ -48,11 +53,6 @@ export type CertificateFormValues = {
   assignedUsers: TUserApplicant[];
   comments?: TComment[];
 };
-
-export enum CERTIFICATE_TYPE {
-  PERMISSION_OF_PRINTING = 'Permission of Printing',
-  OHSAS_18001 = 'OHSAS 18001',
-}
 
 export type TSupplier = {
   supplierName: string;
@@ -75,10 +75,10 @@ export type TLookupTableHeader = {
 };
 
 export type TUserLookupTableProps = {
-  selectedApplicants?: TUserApplicant[];
+  selectedApplicants?: UserDto[];
   modalType?: LookupModalType;
-  handleApplicantSelection: (item: TUserApplicant) => void;
-  selectedItems?: TUserApplicant[];
+  handleApplicantSelection: (item: UserDto) => void;
+  selectedItems?: UserDto[];
 };
 
 export type TSupplierLookupTableProps = {

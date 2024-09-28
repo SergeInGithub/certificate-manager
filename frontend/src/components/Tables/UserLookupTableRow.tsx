@@ -1,12 +1,14 @@
-import React from 'react';
-import { TableHeaderItem, TUserApplicant } from '@types';
+import React, { useEffect, useState } from 'react';
+import { TableHeaderItem, UserDto, DepartmentDto } from '@types';
 import { Input } from '@components/Input';
+import axios from 'axios';
+import { formatUserName, getDepartmentNameById } from '@utils';
 
 interface UserLookupTableRowProps {
-  item: TUserApplicant;
+  item: UserDto;
   index: number;
   columns: TableHeaderItem[];
-  handleSelection: (item: TUserApplicant) => void;
+  handleSelection: (item: UserDto) => void;
   isSelected: boolean;
 }
 
@@ -17,6 +19,21 @@ export const UserLookupTableRow: React.FC<UserLookupTableRowProps> = ({
   handleSelection,
   isSelected,
 }) => {
+  const [departments, setDepartments] = useState<DepartmentDto[]>([]);
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const response = await axios.get('/departments');
+        setDepartments(response.data.data);
+      } catch (error) {
+        console.error('Error fetching departments:', error);
+      }
+    };
+
+    fetchDepartments();
+  }, []);
+
   return (
     <tr key={index}>
       <td className="lookup-table-row-point-container">
@@ -26,9 +43,18 @@ export const UserLookupTableRow: React.FC<UserLookupTableRowProps> = ({
           onChange={() => handleSelection(item)}
         />
       </td>
-      {columns.map((column: TableHeaderItem, colIndex: number) => (
-        <td key={colIndex}>{item[column.id as keyof TUserApplicant]}</td>
-      ))}
+      {columns.map((column: TableHeaderItem, colIndex: number) => {
+        let value;
+        if (column.id === 'firstName') {
+          value = formatUserName(item);
+        } else if (column.id === 'departmentId') {
+          value = getDepartmentNameById(item.departmentId, departments);
+        } else {
+          value = item[column.id as keyof UserDto];
+        }
+
+        return <td key={colIndex}>{value}</td>;
+      })}
     </tr>
   );
 };

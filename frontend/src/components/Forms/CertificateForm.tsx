@@ -17,12 +17,11 @@ import {
   OldCertificateType,
   defaultErrorState,
   defaultFormData,
-  TCertificate,
-  TComment,
   TErrors,
   TSupplier,
-  TUserApplicant,
   UserDto,
+  CertificateDto,
+  CommentDto,
 } from '@types';
 import { addCertificate, editCertificate } from '@utils';
 import { useLanguage, useUser } from '@hooks';
@@ -36,15 +35,13 @@ export const CertificateForm = forwardRef(
     ref,
   ) => {
     const { translations } = useLanguage();
-    const { activeUser } = useUser();
+    const { users, activeUser } = useUser();
 
-    const [formData, setFormData] = useState<TCertificate>(defaultFormData);
+    const [formData, setFormData] = useState<CertificateDto>(defaultFormData);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isUserModalOpen, setIsUserModalOpen] = useState(false);
 
-    const [selectedApplicants, setSelectedApplicants] = useState<
-      TUserApplicant[]
-    >([]);
+    const [selectedApplicants, setSelectedApplicants] = useState<UserDto[]>([]);
     const [selectedSuppliers, setSelectedSuppliers] =
       useState<TSupplier | null>(null);
 
@@ -77,14 +74,15 @@ export const CertificateForm = forwardRef(
           onReset();
         }
       },
-      setValues: (values: TCertificate) => {
+      setValues: (values: CertificateDto) => {
         setFormData({
-          dateFrom: values.dateFrom ? new Date(values.dateFrom) : null,
-          dateTo: values.dateTo ? new Date(values.dateTo) : null,
-          certificateType: values.certificateType as OldCertificateType,
+          id: values.id,
+          validFrom: new Date(values.validFrom),
+          validTo: new Date(values.validTo),
+          type: values.type as OldCertificateType,
           supplier: values.supplier,
-          pdfDataUrl: pdfDataUrl || null,
-          assignedUsers: values.assignedUsers,
+          fileUrl: pdfDataUrl || '',
+          assignedUserIds: values.assignedUserIds,
           comments: values.comments,
         });
       },
@@ -97,10 +95,10 @@ export const CertificateForm = forwardRef(
     }, []);
 
     const handleBlurFrom = useCallback(() => {
-      if (dateFromRef.current && !formData.dateFrom) {
+      if (dateFromRef.current && !formData.validFrom) {
         dateFromRef.current.type = 'text';
       }
-    }, [formData.dateFrom]);
+    }, [formData.validFrom]);
 
     const handleChangeFrom = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,10 +118,10 @@ export const CertificateForm = forwardRef(
     }, []);
 
     const handleBlurTo = useCallback(() => {
-      if (dateToRef.current && !formData.dateTo) {
+      if (dateToRef.current && !formData.validTo) {
         dateToRef.current.type = 'text';
       }
-    }, [formData.dateTo]);
+    }, [formData.validTo]);
 
     const handleChangeTo = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -164,11 +162,9 @@ export const CertificateForm = forwardRef(
 
         const newErrors = {
           supplier: formData.supplier ? '' : 'Supplier is required',
-          certificateType: formData.certificateType
-            ? ''
-            : 'Certificate Type is required',
-          dateFrom: formData.dateFrom ? '' : 'Valid From date is required',
-          dateTo: formData.dateTo ? '' : 'Valid To date is required',
+          certificateType: formData.type ? '' : 'Certificate Type is required',
+          dateFrom: formData.validFrom ? '' : 'Valid From date is required',
+          dateTo: formData.validTo ? '' : 'Valid To date is required',
         };
 
         if (Object.values(newErrors).some((error) => error)) {
@@ -176,7 +172,7 @@ export const CertificateForm = forwardRef(
           return;
         }
 
-        formData.pdfDataUrl = pdfDataUrl;
+        formData.fileUrl = pdfDataUrl;
         try {
           if (isEdit && certificateId) {
             await editCertificate('CertificateDb', 1, certificateId, formData);
@@ -229,7 +225,7 @@ export const CertificateForm = forwardRef(
       setIsComment((prev) => !prev);
     }, []);
 
-    const handleApplicantSelection = (applicant: TUserApplicant) => {
+    const handleApplicantSelection = (applicant: UserDto) => {
       setSelectedApplicants((prevSelected) => {
         const isSelected = prevSelected.some(
           (selected) => selected.id === applicant.id,
@@ -248,10 +244,13 @@ export const CertificateForm = forwardRef(
     }, [selectedApplicants]);
 
     useEffect(() => {
-      if (isEdit && formData.assignedUsers) {
-        setSelectedApplicants(formData.assignedUsers);
+      if (isEdit && formData.assignedUserIds && users.length > 0) {
+        const matchedApplicants = users.filter((user) =>
+          formData.assignedUserIds.includes(user.userId),
+        );
+        setSelectedApplicants(matchedApplicants);
       }
-    }, [isEdit, formData.assignedUsers]);
+    }, [isEdit, formData.assignedUserIds, users]);
 
     const handleChangeComment = useCallback(
       (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -282,7 +281,7 @@ export const CertificateForm = forwardRef(
             <Input
               type="text"
               className="supplier-input"
-              value={formData.supplier?.supplierName || ''}
+              value={formData.supplier?.name || ''}
             />
             {errors.supplier && <div className="error">{errors.supplier}</div>}
 
@@ -320,7 +319,7 @@ export const CertificateForm = forwardRef(
                 options={Object.values(OldCertificateType)}
                 className="certificate-type-select"
                 placeholder="Select your option"
-                value={formData.certificateType}
+                value={formData.type}
                 onChange={handleChangeCertificateType}
               />
               {errors.certificateType && (
@@ -341,8 +340,8 @@ export const CertificateForm = forwardRef(
               ref={dateFromRef}
               type="text"
               value={
-                formData.dateFrom
-                  ? formData.dateFrom.toISOString().split('T')[0]
+                formData.validFrom
+                  ? formData.validTo.toISOString().split('T')[0]
                   : ''
               }
               onChange={handleChangeFrom}
@@ -360,8 +359,8 @@ export const CertificateForm = forwardRef(
               ref={dateToRef}
               type="text"
               value={
-                formData.dateTo
-                  ? formData.dateTo.toISOString().split('T')[0]
+                formData.validTo
+                  ? formData.validTo.toISOString().split('T')[0]
                   : ''
               }
               onChange={handleChangeTo}
@@ -407,7 +406,7 @@ export const CertificateForm = forwardRef(
               handleChangeComment={handleChangeComment}
               toggleComment={toggleComment}
               activeUser={activeUser as UserDto}
-              comments={formData.comments as TComment[]}
+              comments={formData.comments as CommentDto[]}
               handleCommentSubmit={handleCommentSubmit}
             />
           </section>

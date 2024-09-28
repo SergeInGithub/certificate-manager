@@ -1,12 +1,12 @@
 import React from 'react';
-import { TableHeaderItem, TUserApplicant } from '@types';
+import { TableHeaderItem, UserDto } from '@types';
 import { UserLookupTableRow } from './UserLookupTableRow';
 
 interface TUserLookupTableBody {
-  items?: TUserApplicant[];
+  items?: UserDto[];
   columns: TableHeaderItem[];
-  handleSelection: (item: TUserApplicant) => void;
-  selectedItems?: TUserApplicant[];
+  handleSelection: (item: UserDto) => void;
+  selectedItems?: UserDto[];
 }
 
 export const UserLookupTableBody: React.FC<TUserLookupTableBody> = ({
@@ -17,7 +17,7 @@ export const UserLookupTableBody: React.FC<TUserLookupTableBody> = ({
 }) => {
   return (
     <tbody>
-      {items?.map((item: TUserApplicant, index: number) => (
+      {items?.map((item: UserDto, index: number) => (
         <UserLookupTableRow
           key={index}
           item={item}

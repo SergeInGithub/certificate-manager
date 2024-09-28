@@ -4,7 +4,7 @@ import { Label } from './Label';
 import { useLanguage } from '@hooks';
 
 interface IFileUploadProps {
-  setPdfDataUrl: React.Dispatch<React.SetStateAction<string | null>>;
+  setPdfDataUrl: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const FileUpload: React.FC<IFileUploadProps> = ({ setPdfDataUrl }) => {
