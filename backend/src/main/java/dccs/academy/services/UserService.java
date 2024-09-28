@@ -9,8 +9,8 @@ import dccs.academy.repositories.UserRepository;
 import dccs.academy.transfomers.UserTransformer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.NotFoundException;
 
 import java.util.HashSet;
 import java.util.List;
@@ -43,7 +43,7 @@ public class UserService {
     public UserDto createUser(UserDto userDto) {
         DepartmentEntity department = departmentRepository.findById(userDto.getDepartmentId());
         if (department == null) {
-            throw new NotFoundException("Department with ID " + userDto.getDepartmentId() + " not found");
+            throw new EntityNotFoundException("Department with ID " + userDto.getDepartmentId() + " not found");
         }
 
         UserEntity existingUser = userRepository.find("userIndex", userDto.getUserIndex()).firstResult();
@@ -67,7 +67,12 @@ public class UserService {
     public UserDto updateUser(Long id, UserDto userDto) {
         UserEntity userEntity = userRepository.findById(id);
         if (userEntity == null) {
-            throw new NotFoundException("User with ID " + id + " not found");
+            throw new EntityNotFoundException("User with ID " + id + " not found");
+        }
+
+        UserEntity existingUser = userRepository.find("userIndex", userDto.getUserIndex()).firstResult();
+        if (existingUser != null) {
+            throw new DuplicateException("User with index " + userDto.getUserIndex() + " already exists");
         }
 
         UserEntity existingEmailUser = userRepository.find("email", userDto.getEmail()).firstResult();
@@ -87,16 +92,16 @@ public class UserService {
 
     public UserDto getUser(Long id) {
         UserEntity userEntity = userRepository.findById(id);
-        if(userEntity == null) {
-            throw new NotFoundException("User with ID " + id + " not found");
+        if (userEntity == null) {
+            throw new EntityNotFoundException("User with ID " + id + " not found");
         }
         return userTransformer.toDto(userEntity);
     }
 
     public String deleteUser(Long id) {
         UserEntity userEntity = userRepository.findById(id);
-        if(userEntity == null) {
-            throw new NotFoundException("User with ID " + id + " not found");
+        if (userEntity == null) {
+            throw new EntityNotFoundException("User with ID " + id + " not found");
         }
         userRepository.delete(userEntity);
         return "User with ID " + id + " was successfully deleted";
@@ -109,7 +114,7 @@ public class UserService {
                 .map(userId -> {
                     UserEntity userEntity = userRepository.findById(userId);
                     if (userEntity == null) {
-                        throw new NotFoundException("User with ID " + userId + " not found");
+                        throw new EntityNotFoundException("User with ID " + userId + " not found");
                     }
                     return userEntity;
                 })

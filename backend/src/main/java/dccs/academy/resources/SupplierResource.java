@@ -1,8 +1,11 @@
 package dccs.academy.resources;
 
 import dccs.academy.dtos.SupplierDto;
+import dccs.academy.exceptions.DuplicateException;
 import dccs.academy.services.SupplierService;
+import dccs.academy.utils.ResponseHandler;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -18,8 +21,12 @@ public class SupplierResource {
     SupplierService supplierService;
 
     @GET
-    public List<SupplierDto> getSuppliers() {
-        return supplierService.getSuppliers();
+    public Response getSuppliers() {
+        try {
+            return ResponseHandler.successResponse("Suppliers retrieved successfully", supplierService.getSuppliers(), Response.Status.OK);
+        } catch (Exception e) {
+            return ResponseHandler.errorResponse(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GET
@@ -27,34 +34,60 @@ public class SupplierResource {
     public Response searchSuppliers(@QueryParam("name") String name,
                                     @QueryParam("supplierIndex") String supplierIndex,
                                     @QueryParam("city") String city) {
-        List<SupplierDto> suppliers = supplierService.searchSuppliers(name, supplierIndex, city);
-        return Response.ok(suppliers).build();
+        try {
+            List<SupplierDto> suppliers = supplierService.searchSuppliers(name, supplierIndex, city);
+            return ResponseHandler.successResponse("Search results retrieved successfully", suppliers, Response.Status.OK);
+        } catch (Exception e) {
+            return ResponseHandler.errorResponse(e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GET
     @Path("/{id}")
     public Response getSupplier(@PathParam("id") Long id) {
-        SupplierDto supplier = supplierService.getSupplier(id);
-        return Response.ok(supplier).build();
+        try {
+            SupplierDto supplier = supplierService.getSupplier(id);
+            return ResponseHandler.successResponse("Supplier retrieved successfully", supplier, Response.Status.FOUND);
+        } catch (EntityNotFoundException e) {
+            return ResponseHandler.errorResponse(e.getMessage(), Response.Status.NOT_FOUND);
+        }
     }
 
     @POST
-    public Response createSupplier(SupplierDto supplierDto){
-        SupplierDto createdSupplier = supplierService.createSupplier(supplierDto);
-        return Response.status(Response.Status.CREATED).entity(createdSupplier).build();
+    public Response createSupplier(SupplierDto supplierDto) {
+        try {
+            SupplierDto createdSupplier = supplierService.createSupplier(supplierDto);
+            return ResponseHandler.successResponse("Supplier created successfully", createdSupplier, Response.Status.CREATED);
+        } catch (EntityNotFoundException e) {
+            return ResponseHandler.errorResponse(e.getMessage(), Response.Status.NOT_FOUND);
+        } catch (DuplicateException e) {
+            return ResponseHandler.errorResponse(e.getMessage(), Response.Status.CONFLICT);
+        } catch (Exception e) {
+            return ResponseHandler.errorResponse(e.getMessage(), Response.Status.BAD_REQUEST);
+        }
     }
 
     @PUT
     @Path("/{id}")
     public Response updateSupplier(@PathParam("id") Long id, SupplierDto supplierDto) {
-        SupplierDto updatedSupplier = supplierService.updateSupplier(id, supplierDto);
-        return Response.ok(updatedSupplier).build();
+        try {
+            SupplierDto updatedSupplier = supplierService.updateSupplier(id, supplierDto);
+            return ResponseHandler.successResponse("Supplier updated successfully", updatedSupplier, Response.Status.OK);
+        } catch (EntityNotFoundException e) {
+            return ResponseHandler.errorResponse(e.getMessage(), Response.Status.NOT_FOUND);
+        } catch (Exception e) {
+            return ResponseHandler.errorResponse(e.getMessage(), Response.Status.BAD_REQUEST);
+        }
     }
 
     @DELETE
     @Path("/{id}")
     public Response deleteSupplier(@PathParam("id") Long id) {
-        String message = supplierService.deleteSupplier(id);
-        return Response.ok(message).build();
+        try {
+            String message = supplierService.deleteSupplier(id);
+            return ResponseHandler.successMessageResponse(message, Response.Status.OK);
+        } catch (EntityNotFoundException e) {
+            return ResponseHandler.errorResponse(e.getMessage(), Response.Status.NOT_FOUND);
+        }
     }
 }
