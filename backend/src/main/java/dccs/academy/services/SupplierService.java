@@ -7,8 +7,8 @@ import dccs.academy.repositories.SupplierRepository;
 import dccs.academy.transfomers.SupplierTransformer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.NotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,7 +48,7 @@ public class SupplierService {
     public SupplierDto updateSupplier(Long id, SupplierDto supplierDto) {
         SupplierEntity supplierEntity = supplierRepository.findById(id);
         if (supplierEntity == null) {
-            throw new NotFoundException("Supplier with ID " + id + " not found");
+            throw new EntityNotFoundException("Supplier with ID " + id + " not found");
         }
 
         supplierEntity.setName(supplierDto.getName());
@@ -62,7 +62,7 @@ public class SupplierService {
     public SupplierDto getSupplier(Long id) {
         SupplierEntity supplierEntity = supplierRepository.findById(id);
         if(supplierEntity == null) {
-            throw new NotFoundException("Supplier with ID " + id + " not found");
+            throw new EntityNotFoundException("Supplier with ID " + id + " not found");
         }
         return supplierTransformer.toDto(supplierEntity);
     }
@@ -70,7 +70,7 @@ public class SupplierService {
     public String deleteSupplier(Long id) {
         SupplierEntity supplierEntity = supplierRepository.findById(id);
         if(supplierEntity == null) {
-            throw new NotFoundException("Supplier with ID " + id + " not found");
+            throw new EntityNotFoundException("Supplier with ID " + id + " not found");
         }
         supplierRepository.delete(supplierEntity);
         return "Supplier with ID " + id + " was successfully deleted";
@@ -81,7 +81,7 @@ public class SupplierService {
 
         SupplierEntity supplier = supplierRepository.findById(supplierId);
         if (supplier == null) {
-            throw new NotFoundException("Supplier with ID " + supplierId + " not found");
+            throw new EntityNotFoundException("Supplier with ID " + supplierId + " not found");
         }
         return supplier;
     }

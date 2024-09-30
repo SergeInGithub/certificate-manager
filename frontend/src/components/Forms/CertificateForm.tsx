@@ -22,6 +22,7 @@ import {
   TErrors,
   TSupplier,
   TUserApplicant,
+  UserDto,
 } from '@types';
 import { addCertificate, editCertificate } from '@utils';
 import { useLanguage, useUser } from '@hooks';
@@ -263,10 +264,7 @@ export const CertificateForm = forwardRef(
       if (comment && activeUser) {
         setFormData((prev) => ({
           ...prev,
-          comments: [
-            ...prev.comments,
-            { name: activeUser.userLookupName, comment },
-          ],
+          comments: [...prev.comments, { name: activeUser.firstName, comment }],
         }));
         setComment('');
       }
@@ -408,7 +406,7 @@ export const CertificateForm = forwardRef(
               isComment={isComment}
               handleChangeComment={handleChangeComment}
               toggleComment={toggleComment}
-              activeUser={activeUser as TUserApplicant}
+              activeUser={activeUser as UserDto}
               comments={formData.comments as TComment[]}
               handleCommentSubmit={handleCommentSubmit}
             />

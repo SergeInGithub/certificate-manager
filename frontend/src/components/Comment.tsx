@@ -2,14 +2,14 @@ import React from 'react';
 import { Button } from './Button';
 import { UserComment } from './UserComponent';
 import { CommentInput } from './CommentInput';
-import { TComment, TUserApplicant } from '@types';
+import { TComment, UserDto } from '@types';
 
 type ICommentProps = {
   isComment: boolean;
   toggleComment: () => void;
   handleChangeComment: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   comment: string;
-  activeUser: TUserApplicant;
+  activeUser: UserDto;
   comments: TComment[];
   handleCommentSubmit: () => void;
 };
@@ -50,7 +50,7 @@ export const Comment: React.FC<ICommentProps> = ({
             onChange={handleChangeComment}
             placeholder="Comment..."
             value={comment}
-            name={activeUser.userLookupName}
+            name={activeUser.firstName}
           />
           <Button
             type="button"

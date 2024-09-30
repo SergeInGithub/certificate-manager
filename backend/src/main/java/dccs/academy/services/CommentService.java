@@ -10,8 +10,8 @@ import dccs.academy.repositories.UserRepository;
 import dccs.academy.transfomers.CommentTransformer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.NotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,12 +40,12 @@ public class CommentService {
     public CommentDto createComment(CommentDto commentDto) {
         UserEntity user = userRepository.findById(commentDto.getUserId());
         if(user == null) {
-            throw new NotFoundException("User with ID " + commentDto.getUserId() + " not found");
+            throw new EntityNotFoundException("User with ID " + commentDto.getUserId() + " not found");
         }
 
         CertificateEntity certificate = certificateRepository.findById(commentDto.getCertificateId());
         if(certificate == null) {
-            throw new NotFoundException("Certificate with ID " + commentDto.getCertificateId() + " not found");
+            throw new EntityNotFoundException("Certificate with ID " + commentDto.getCertificateId() + " not found");
         }
 
         CommentEntity commentEntity = commentTransformer.toEntity(commentDto);
@@ -60,7 +60,7 @@ public class CommentService {
     public CommentDto updateComment(Long id, CommentDto commentDto) {
         CommentEntity commentEntity = commentRepository.findById(id);
         if(commentEntity == null) {
-            throw new NotFoundException("Comment with ID " + id + " not found");
+            throw new EntityNotFoundException("Comment with ID " + id + " not found");
         }
 
         commentEntity.setComment(commentEntity.getComment());
@@ -71,7 +71,7 @@ public class CommentService {
     public CommentDto getComment(Long id) {
         CommentEntity commentEntity = commentRepository.findById(id);
         if(commentEntity == null) {
-            throw new NotFoundException("Comment with ID " + id + " not found");
+            throw new EntityNotFoundException("Comment with ID " + id + " not found");
         }
         return commentTransformer.toDto(commentEntity);
     }
@@ -79,7 +79,7 @@ public class CommentService {
     public String deleteComment(Long id) {
         CommentEntity commentEntity = commentRepository.findById(id);
         if(commentEntity == null) {
-            throw new NotFoundException("Comment with ID " + id + " not found");
+            throw new EntityNotFoundException("Comment with ID " + id + " not found");
         }
         commentRepository.delete(commentEntity);
         return "Comment with ID " + id + " was successfully deleted";

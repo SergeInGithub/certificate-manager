@@ -48,6 +48,7 @@ web_modules/
 
 # TypeScript cache
 *.tsbuildinfo
+src/types/certificate.types.ts
 
 # Optional npm cache directory
 .npm

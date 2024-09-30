@@ -11,8 +11,8 @@ import dccs.academy.transfomers.CertificateTransformer;
 import dccs.academy.transfomers.CommentTransformer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.NotFoundException;
 
 import java.util.Collections;
 import java.util.List;
@@ -77,7 +77,7 @@ public class CertificateService {
     public CertificateDto updateCertificate(Long id, CertificateDto certificateDto) {
         CertificateEntity existingCertificate = certificateRepository.findById(id);
         if (existingCertificate == null) {
-            throw new NotFoundException("Certificate with ID " + id + " not found");
+            throw new EntityNotFoundException("Certificate with ID " + id + " not found");
         }
 
         existingCertificate.setSupplier(supplierService.getValidSupplier(certificateDto.getSupplier().getId(), supplierRepository));
@@ -95,7 +95,7 @@ public class CertificateService {
     public CertificateDto getCertificate(Long id) {
         CertificateEntity certificateEntity = certificateRepository.findById(id);
         if(certificateEntity == null){
-            throw new NotFoundException("Certificate with ID " + id + " not found");
+            throw new EntityNotFoundException("Certificate with ID " + id + " not found");
         }
         return certificateTransformer.toDto(certificateEntity);
     }
@@ -103,7 +103,7 @@ public class CertificateService {
     public String deleteCertificate(Long id) {
         CertificateEntity certificateEntity = certificateRepository.findById(id);
         if(certificateEntity == null){
-            throw new NotFoundException("Certificate with ID " + id + " not found");
+            throw new EntityNotFoundException("Certificate with ID " + id + " not found");
         }
 
         certificateRepository.delete(certificateEntity);

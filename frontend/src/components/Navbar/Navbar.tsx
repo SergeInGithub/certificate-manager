@@ -10,9 +10,9 @@ export const Navbar: React.FC = () => {
   const { language, setLanguage, translations } = useLanguage();
   const { users, activeUser, setActiveUser } = useUser();
 
-  const userNames = users.map((user) => user.userLookupName);
+  const userNames = users.map((user) => user.firstName);
   const userNameToIdMap = new Map(
-    users.map((user) => [user.userLookupName, user.userLookupId]),
+    users.map((user) => [user.firstName, user.userIndex]),
   );
 
   const handleChangeLanguageType = useCallback(
@@ -28,7 +28,7 @@ export const Navbar: React.FC = () => {
       const selectedUserName = e.target.value;
       const selectedUserId = userNameToIdMap.get(selectedUserName) || '';
       const selectedUser =
-        users.find((user) => user.userLookupId === selectedUserId) || null;
+        users.find((user) => user.userIndex === selectedUserId) || null;
       setActiveUser(selectedUser);
     },
     [users, userNameToIdMap, setActiveUser],
@@ -52,7 +52,7 @@ export const Navbar: React.FC = () => {
               <Select
                 options={userNames}
                 className="language-type-select"
-                value={activeUser ? activeUser.userLookupName : ''}
+                value={activeUser ? activeUser.firstName : ''}
                 onChange={handleUserSelection}
               />
 
