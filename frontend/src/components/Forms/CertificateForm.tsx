@@ -14,7 +14,7 @@ import { Button } from '@components/Button';
 import { SvgComponentType, SvgComponent } from '@components/Svg';
 import {
   CertificateFormProps,
-  OldCertificateType,
+  CertificateType,
   defaultErrorState,
   defaultFormData,
   TCertificate,
@@ -81,7 +81,7 @@ export const CertificateForm = forwardRef(
         setFormData({
           dateFrom: values.dateFrom ? new Date(values.dateFrom) : null,
           dateTo: values.dateTo ? new Date(values.dateTo) : null,
-          certificateType: values.certificateType as OldCertificateType,
+          certificateType: values.certificateType as CertificateType,
           supplier: values.supplier,
           pdfDataUrl: pdfDataUrl || null,
           assignedUsers: values.assignedUsers,
@@ -138,7 +138,7 @@ export const CertificateForm = forwardRef(
 
     const handleChangeCertificateType = useCallback(
       (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedValue = e.target.value as OldCertificateType;
+        const selectedValue = e.target.value as CertificateType;
         setFormData((prev) => ({
           ...prev,
           certificateType: selectedValue,
@@ -317,7 +317,7 @@ export const CertificateForm = forwardRef(
 
             <div className="custom-select-container">
               <Select
-                options={Object.values(OldCertificateType)}
+                options={Object.values(CertificateType)}
                 className="certificate-type-select"
                 placeholder="Select your option"
                 value={formData.certificateType}

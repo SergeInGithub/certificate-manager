@@ -1,3 +1,4 @@
+import { CertificateType } from './certificate.types';
 import { LookupModalType } from './lookupModal.types';
 
 export type TableHeaderItem = {
@@ -10,15 +11,10 @@ export type TComment = {
   comment: string;
 };
 
-export enum OldCertificateType {
-  PERMISSION_OF_PRINTING = 'Permission of Printing',
-  OHSAS_18001 = 'OHSAS 18001',
-}
-
 export type TCertificate = {
   id?: number;
   supplier: TSupplier | null;
-  certificateType: OldCertificateType | undefined;
+  certificateType: CertificateType | undefined;
   dateFrom: Date | null;
   dateTo: Date | null;
   pdfDataUrl: string | null;
