@@ -55,8 +55,7 @@ public class CertificateService {
 
     public CertificateDto createCertificate(CertificateDto certificateDto) {
         CertificateEntity certificateEntity = certificateTransformer.toEntity(certificateDto);
-        certificateEntity.setSupplier(supplierService.getValidSupplier(certificateDto.getSupplier().getId(), supplierRepository));
-        certificateEntity.setAssignedUsers(userService.getValidUsers(certificateDto.getAssignedUserIds(), userRepository));
+        setSupplierAndUsers(certificateDto, certificateEntity);
 
         if (certificateDto.getComments() != null) {
             List<CommentEntity> commentEntities = processComments(certificateDto.getComments(), certificateEntity);
@@ -73,7 +72,7 @@ public class CertificateService {
             throw new EntityNotFoundException("Certificate with ID " + id + " not found");
         }
 
-        existingCertificate.setSupplier(supplierService.getValidSupplier(certificateDto.getSupplier().getId(), supplierRepository));
+        setSupplierAndUsers(certificateDto, existingCertificate);
         existingCertificate.setType(certificateDto.getType());
         existingCertificate.setValidFrom(certificateDto.getValidFrom());
         existingCertificate.setValidTo(certificateDto.getValidTo());
@@ -84,24 +83,9 @@ public class CertificateService {
         }
 
         if (certificateDto.getComments() != null) {
-            List<CommentEntity> existingComments = existingCertificate.getComments();
-
-            Set<Long> existingCommentIds = existingComments.stream()
-                    .map(BaseEntity::getId)
-                    .collect(Collectors.toSet());
-
-            List<CommentEntity> newComments = processComments(
-                    certificateDto.getComments().stream()
-                            .filter(commentDto -> !existingCommentIds.contains(commentDto.getId()))
-                            .collect(Collectors.toList()),
-                    existingCertificate
-            );
-
-            existingComments.addAll(newComments);
-            existingCertificate.setComments(existingComments);
+            updateComments(certificateDto, existingCertificate);
         }
 
-        existingCertificate.setAssignedUsers(userService.getValidUsers(certificateDto.getAssignedUserIds(), userRepository));
         certificateRepository.persist(existingCertificate);
         return certificateTransformer.toDto(existingCertificate);
     }
@@ -144,4 +128,28 @@ public class CertificateService {
                 })
                 .collect(Collectors.toList());
     }
+
+    private void updateComments(CertificateDto certificateDto, CertificateEntity existingCertificate) {
+        List<CommentEntity> existingComments = existingCertificate.getComments();
+
+        Set<Long> existingCommentIds = existingComments.stream()
+                .map(CommentEntity::getId)
+                .collect(Collectors.toSet());
+
+        List<CommentEntity> newComments = processComments(
+                certificateDto.getComments().stream()
+                        .filter(commentDto -> !existingCommentIds.contains(commentDto.getId()))
+                        .collect(Collectors.toList()),
+                existingCertificate
+        );
+
+        existingComments.addAll(newComments);
+        existingCertificate.setComments(existingComments);
+    }
+
+    private void setSupplierAndUsers(CertificateDto certificateDto, CertificateEntity certificateEntity) {
+        certificateEntity.setSupplier(supplierService.getValidSupplier(certificateDto.getSupplier().getId(), supplierRepository));
+        certificateEntity.setAssignedUsers(userService.getValidUsers(certificateDto.getAssignedUserIds(), userRepository));
+    }
+
 }

@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 
 interface IInputProps {
+  name?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type?: string;
   accept?: string;
@@ -16,6 +17,7 @@ interface IInputProps {
 export const Input = forwardRef<HTMLInputElement, IInputProps>(
   (
     {
+      name,
       placeholder,
       type = 'text',
       accept,
@@ -31,6 +33,7 @@ export const Input = forwardRef<HTMLInputElement, IInputProps>(
   ) => {
     return (
       <input
+        name={name}
         disabled={disabled}
         placeholder={placeholder}
         type={type}

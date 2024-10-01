@@ -7,10 +7,8 @@ import React, {
   useEffect,
 } from 'react';
 import '../../assets/styles/components/certificateForm.css';
-import { Input } from '@components/Input';
 import { Label } from '@components/Label';
 import { Select } from '@components/Select';
-import { Button } from '@components/Button';
 import { SvgComponentType, SvgComponent } from '@components/Svg';
 import {
   CertificateFormProps,
@@ -22,12 +20,17 @@ import {
   CertificateDto,
   CommentDto,
   SupplierDto,
+  defaultBooleanState,
 } from '@types';
 import { apiClient, isSupplierValid } from '@utils';
 import { useLanguage, useUser } from '@hooks';
 import { SupplierLookupModal, UserLookupModal } from '@components/Modals';
-import { UserLookupTable } from '@components/Tables';
-import { Comment } from '@components';
+import {
+  Comment,
+  DateSection,
+  ParticipantSection,
+  SupplierSection,
+} from '@components';
 
 export const CertificateForm = forwardRef(
   (
@@ -36,22 +39,13 @@ export const CertificateForm = forwardRef(
   ) => {
     const { translations } = useLanguage();
     const { users, activeUser } = useUser();
-
     const [formData, setFormData] = useState<CertificateDto>(defaultFormData);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isUserModalOpen, setIsUserModalOpen] = useState(false);
-
+    const [booleanState, setBooleanState] = useState(defaultBooleanState);
     const [selectedApplicants, setSelectedApplicants] = useState<UserDto[]>([]);
     const [selectedSuppliers, setSelectedSuppliers] =
       useState<SupplierDto | null>(null);
-
-    const [isComment, setIsComment] = useState(false);
     const [comment, setComment] = useState('');
-
-    const dateFromRef = useRef<HTMLInputElement | null>(null);
-    const dateToRef = useRef<HTMLInputElement | null>(null);
     const formRef = useRef<HTMLFormElement | null>(null);
-
     const [errors, setErrors] = useState<TErrors>(defaultErrorState);
 
     useImperativeHandle(ref, () => ({
@@ -94,30 +88,12 @@ export const CertificateForm = forwardRef(
       },
     }));
 
-    const handleChangeFrom = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        const dateValue = e.target.value;
-        const dateObject = new Date(dateValue);
-
-        setFormData((prev) => ({
-          ...prev,
-          validFrom: dateObject,
-        }));
-        setErrors((prev) => ({ ...prev, validFrom: '' }));
-      },
-      [],
-    );
-
-    const handleChangeTo = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        const dateValue = e.target.value;
-        const dateObject = new Date(dateValue);
-
-        setFormData((prev) => ({
-          ...prev,
-          validTo: dateObject,
-        }));
-        setErrors((prev) => ({ ...prev, validTo: '' }));
+    const handleChange = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        const dateValue = name.includes('valid') ? new Date(value) : value;
+        setFormData((prev) => ({ ...prev, [name]: dateValue }));
+        setErrors((prev) => ({ ...prev, [name]: '' }));
       },
       [],
     );
@@ -140,21 +116,25 @@ export const CertificateForm = forwardRef(
       }));
       setErrors((prev) => ({ ...prev, supplier: '' }));
       setSelectedSuppliers(supplier);
-      setIsModalOpen(false);
+      setBooleanState((prev) => ({ ...prev, isModalOpen: false }));
     }, []);
+
+    const validateForm = () => {
+      const newErrors = {
+        supplier: isSupplierValid(formData.supplier)
+          ? ''
+          : 'Supplier is required and must have valid details',
+        validFrom: formData.validFrom ? '' : 'Valid From date is required',
+        validTo: formData.validTo ? '' : 'Valid To date is required',
+        type: formData.type ? '' : 'Certificate Type is required',
+      };
+      return newErrors;
+    };
 
     const handleSubmit = useCallback(
       async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const newErrors = {
-          supplier: isSupplierValid(formData.supplier)
-            ? ''
-            : 'Supplier is required and must have valid details',
-          validFrom: formData.validFrom ? '' : 'Valid From date is required',
-          validTo: formData.validTo ? '' : 'Valid To date is required',
-          type: formData.type ? '' : 'Certificate Type is required',
-        };
-
+        const newErrors = validateForm();
         if (Object.values(newErrors).some((error) => error)) {
           setErrors(newErrors);
           return;
@@ -184,19 +164,22 @@ export const CertificateForm = forwardRef(
     );
 
     const openModal = () => {
-      setIsModalOpen(true);
+      setBooleanState((prev) => ({ ...prev, isModalOpen: true }));
     };
 
     const openUserModal = useCallback(() => {
-      setIsUserModalOpen(true);
+      setBooleanState((prev) => ({ ...prev, isUserModalOpen: true }));
     }, []);
 
     const closeModal = useCallback(() => {
-      setIsModalOpen(false);
+      setBooleanState((prev) => ({ ...prev, isModalOpen: false }));
       setSelectedSuppliers(null);
     }, []);
 
-    const closeUserModal = useCallback(() => setIsUserModalOpen(false), []);
+    const closeUserModal = useCallback(
+      () => setBooleanState((prev) => ({ ...prev, isUserModalOpen: false })),
+      [],
+    );
 
     const cancelSelections = useCallback(() => {
       setSelectedApplicants([]);
@@ -210,7 +193,7 @@ export const CertificateForm = forwardRef(
     };
 
     const toggleComment = useCallback(() => {
-      setIsComment((prev) => !prev);
+      setBooleanState((prev) => ({ ...prev, isComment: !prev.isComment }));
     }, []);
 
     const handleApplicantSelection = (applicant: UserDto) => {
@@ -262,38 +245,12 @@ export const CertificateForm = forwardRef(
           onSubmit={handleSubmit}
           ref={formRef}
         >
-          <div className="label-input-container">
-            <Label className="supplier-label">{translations.supplier}</Label>
-            <Input
-              type="text"
-              className="supplier-input"
-              value={formData.supplier?.name || ''}
-            />
-            {errors.supplier && <div className="error">{errors.supplier}</div>}
-
-            <div className="input-buttons">
-              <Button
-                type="button"
-                className="search-button"
-                onClick={openModal}
-              >
-                <SvgComponent
-                  type={SvgComponentType.SEARCH}
-                  className="search-icon"
-                />
-              </Button>
-              <Button
-                type="button"
-                className="close-button"
-                onClick={handleSupplierReset}
-              >
-                <SvgComponent
-                  type={SvgComponentType.CLOSE}
-                  className="close-icon"
-                />
-              </Button>
-            </div>
-          </div>
+          <SupplierSection
+            formData={formData}
+            errors={errors}
+            openModal={openModal}
+            handleSupplierReset={handleSupplierReset}
+          />
 
           <div className="label-input-container">
             <Label className="certificate-type-label">
@@ -318,73 +275,22 @@ export const CertificateForm = forwardRef(
             </div>
           </div>
 
-          <div className="label-input-container">
-            <Label className="valid-from-label">{translations.validFrom}</Label>
-            <Input
-              ref={dateFromRef}
-              type="date"
-              value={
-                formData.validFrom
-                  ? formData.validFrom.toISOString().split('T')[0]
-                  : ''
-              }
-              onChange={handleChangeFrom}
-              placeholder={translations.selectDatePlaceholder}
-              className="valid-from-input"
-            />
-            {errors.validFrom && (
-              <div className="error">{errors.validFrom}</div>
-            )}
-          </div>
+          <DateSection
+            formData={formData}
+            errors={errors}
+            handleChange={handleChange}
+          />
 
-          <div className="label-input-container">
-            <Label className="valid-to-label">{translations.validTo}</Label>
-            <Input
-              ref={dateToRef}
-              type="date"
-              value={
-                formData.validTo
-                  ? formData.validTo.toISOString().split('T')[0]
-                  : ''
-              }
-              onChange={handleChangeTo}
-              placeholder={translations.selectDatePlaceholder}
-              className="valid-to-input"
-            />
-            {errors.validTo && <div className="error">{errors.validTo}</div>}
-          </div>
-
-          <section className="participants-section">
-            <div>
-              <Label className="valid-to-label">
-                {translations.assignedUsers}
-              </Label>
-              <Button
-                type="button"
-                className="search-participant-button"
-                onClick={openUserModal}
-              >
-                <SvgComponent
-                  type={SvgComponentType.SEARCH}
-                  className="search-icon"
-                />
-                <h5 className="add-participant">
-                  {translations.addParticipant}
-                </h5>
-              </Button>
-            </div>
-
-            <UserLookupTable
-              selectedApplicants={selectedApplicants}
-              handleApplicantSelection={handleApplicantSelection}
-              selectedItems={selectedApplicants}
-            />
-          </section>
+          <ParticipantSection
+            selectedApplicants={selectedApplicants}
+            openUserModal={openUserModal}
+            handleApplicantSelection={handleApplicantSelection}
+          />
 
           <section className="comments-section">
             <Comment
               comment={comment}
-              isComment={isComment}
+              isComment={booleanState.isComment}
               handleChangeComment={handleChangeComment}
               toggleComment={toggleComment}
               activeUser={activeUser as UserDto}
@@ -393,13 +299,14 @@ export const CertificateForm = forwardRef(
             />
           </section>
         </form>
+
         <SupplierLookupModal
-          isOpen={isModalOpen}
+          isOpen={booleanState.isModalOpen}
           onClose={closeModal}
           onSelectSupplier={handleSupplierSelect}
         />
         <UserLookupModal
-          isOpen={isUserModalOpen}
+          isOpen={booleanState.isUserModalOpen}
           onClose={closeUserModal}
           selectedItems={selectedApplicants}
           setSelectedItems={setSelectedApplicants}

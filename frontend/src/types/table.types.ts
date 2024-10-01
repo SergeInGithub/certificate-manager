@@ -106,3 +106,9 @@ export const defaultErrorState: TErrors = {
   validFrom: '',
   validTo: '',
 };
+
+export const defaultBooleanState = {
+  isModalOpen: false,
+  isUserModalOpen: false,
+  isComment: false,
+};

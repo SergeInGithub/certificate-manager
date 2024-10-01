@@ -22,7 +22,7 @@ public class CertificateEntity extends BaseEntity {
     @Column(name = "valid_to", nullable = false)
     private LocalDateTime validTo;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "assigned_users",
             schema = "certificate",
@@ -39,7 +39,7 @@ public class CertificateEntity extends BaseEntity {
     @Column(name = "file_data")
     private byte[] fileData;
 
-    @OneToMany(mappedBy = "certificate", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "certificate", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CommentEntity> comments;
 
 
