@@ -8,12 +8,12 @@ import java.util.List;
 import java.util.Set;
 
 public class CertificateDto {
-    private Long  id;
+    private Long id;
     private CertificateType type;
-    @JsonFormat(pattern="yyyy-MM-dd")
-    private LocalDate validFrom;
-    @JsonFormat(pattern="yyyy-MM-dd")
-    private LocalDate validTo;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private String validFrom;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private String validTo;
     private SupplierDto supplier;
     private String fileUrl;
     private Set<Long> assignedUserIds;
@@ -36,19 +36,19 @@ public class CertificateDto {
         this.type = type;
     }
 
-    public LocalDate getValidFrom() {
+    public String getValidFrom() {
         return validFrom;
     }
 
-    public void setValidFrom(LocalDate validFrom) {
+    public void setValidFrom(String validFrom) {
         this.validFrom = validFrom;
     }
 
-    public LocalDate getValidTo() {
+    public String getValidTo() {
         return validTo;
     }
 
-    public void setValidTo(LocalDate validTo) {
+    public void setValidTo(String validTo) {
         this.validTo = validTo;
     }
 

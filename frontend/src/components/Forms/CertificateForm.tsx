@@ -14,7 +14,7 @@ import { Button } from '@components/Button';
 import { SvgComponentType, SvgComponent } from '@components/Svg';
 import {
   CertificateFormProps,
-  OldCertificateType,
+  CertificateType,
   defaultErrorState,
   defaultFormData,
   TErrors,
@@ -23,11 +23,12 @@ import {
   CommentDto,
   SupplierDto,
 } from '@types';
-import { addCertificate, editCertificate } from '@utils';
+import { isSupplierValid } from '@utils';
 import { useLanguage, useUser } from '@hooks';
 import { SupplierLookupModal, UserLookupModal } from '@components/Modals';
 import { UserLookupTable } from '@components/Tables';
 import { Comment } from '@components';
+import axios from 'axios';
 
 export const CertificateForm = forwardRef(
   (
@@ -66,82 +67,65 @@ export const CertificateForm = forwardRef(
         setFormData(defaultFormData);
         setErrors({
           supplier: '',
-          certificateType: '',
-          dateFrom: '',
-          dateTo: '',
+          type: '',
+          validFrom: '',
+          validTo: '',
         });
         if (onReset) {
           onReset();
         }
       },
       setValues: (values: CertificateDto) => {
+        const selectedApplicants = users.filter((user) =>
+          values.assignedUserIds.includes(user.userId),
+        );
+
         setFormData({
           id: values.id,
-          validFrom: new Date(values.validFrom),
-          validTo: new Date(values.validTo),
-          type: values.type as OldCertificateType,
+          validFrom: values.validFrom,
+          validTo: values.validTo,
+          type: values.type as CertificateType,
           supplier: values.supplier,
           fileUrl: pdfDataUrl || '',
           assignedUserIds: values.assignedUserIds,
-          comments: values.comments,
+          comments: values.comments || [],
         });
+
+        setSelectedApplicants(selectedApplicants);
       },
     }));
 
-    const handleFocusFrom = useCallback(() => {
-      if (dateFromRef.current) {
-        dateFromRef.current.type = 'date';
-      }
-    }, []);
-
-    const handleBlurFrom = useCallback(() => {
-      if (dateFromRef.current && !formData.validFrom) {
-        dateFromRef.current.type = 'text';
-      }
-    }, [formData.validFrom]);
-
     const handleChangeFrom = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
+        const dateValue = e.target.value;
         setFormData((prev) => ({
           ...prev,
-          dateFrom: e.target.value ? new Date(e.target.value) : null,
+          validFrom: dateValue,
         }));
-        setErrors((prev) => ({ ...prev, dateFrom: '' }));
+        setErrors((prev) => ({ ...prev, validFrom: '' }));
       },
       [],
     );
-
-    const handleFocusTo = useCallback(() => {
-      if (dateToRef.current) {
-        dateToRef.current.type = 'date';
-      }
-    }, []);
-
-    const handleBlurTo = useCallback(() => {
-      if (dateToRef.current && !formData.validTo) {
-        dateToRef.current.type = 'text';
-      }
-    }, [formData.validTo]);
 
     const handleChangeTo = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
+        const dateValue = e.target.value;
         setFormData((prev) => ({
           ...prev,
-          dateTo: e.target.value ? new Date(e.target.value) : null,
+          validTo: dateValue,
         }));
-        setErrors((prev) => ({ ...prev, dateTo: '' }));
+        setErrors((prev) => ({ ...prev, validTo: '' }));
       },
       [],
     );
-
     const handleChangeCertificateType = useCallback(
       (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedValue = e.target.value as OldCertificateType;
+        const selectedValue = e.target.value as CertificateType;
         setFormData((prev) => ({
           ...prev,
-          certificateType: selectedValue,
+          type: selectedValue,
         }));
-        setErrors((prev) => ({ ...prev, certificateType: '' }));
+        setErrors((prev) => ({ ...prev, type: '' }));
       },
       [],
     );
@@ -159,12 +143,13 @@ export const CertificateForm = forwardRef(
     const handleSubmit = useCallback(
       async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
         const newErrors = {
-          supplier: formData.supplier ? '' : 'Supplier is required',
-          certificateType: formData.type ? '' : 'Certificate Type is required',
-          dateFrom: formData.validFrom ? '' : 'Valid From date is required',
-          dateTo: formData.validTo ? '' : 'Valid To date is required',
+          supplier: isSupplierValid(formData.supplier)
+            ? ''
+            : 'Supplier is required and must have valid details',
+          validFrom: formData.validFrom ? '' : 'Valid From date is required',
+          validTo: formData.validTo ? '' : 'Valid To date is required',
+          type: formData.type ? '' : 'Certificate Type is required',
         };
 
         if (Object.values(newErrors).some((error) => error)) {
@@ -175,9 +160,9 @@ export const CertificateForm = forwardRef(
         formData.fileUrl = pdfDataUrl;
         try {
           if (isEdit && certificateId) {
-            await editCertificate('CertificateDb', 1, certificateId, formData);
+            await axios.put(`/certificates/${certificateId}`, formData);
           } else {
-            await addCertificate('CertificateDb', 1, formData);
+            await axios.post('/certificates', formData);
           }
           if (formRef.current) {
             formRef.current.reset();
@@ -217,7 +202,7 @@ export const CertificateForm = forwardRef(
     const handleSupplierReset = () => {
       setFormData((prev) => ({
         ...prev,
-        supplier: null,
+        supplier: defaultFormData.supplier,
       }));
     };
 
@@ -241,18 +226,11 @@ export const CertificateForm = forwardRef(
     useEffect(() => {
       setFormData((prev) => ({
         ...prev,
-        assignedUsers: selectedApplicants,
+        assignedUserIds: selectedApplicants.map(
+          (applicant) => applicant.userId,
+        ),
       }));
     }, [selectedApplicants]);
-
-    useEffect(() => {
-      if (isEdit && formData.assignedUserIds && users.length > 0) {
-        const matchedApplicants = users.filter((user) =>
-          formData.assignedUserIds.includes(user.userId),
-        );
-        setSelectedApplicants(matchedApplicants);
-      }
-    }, [isEdit, formData.assignedUserIds, users]);
 
     const handleChangeComment = useCallback(
       (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -265,7 +243,10 @@ export const CertificateForm = forwardRef(
       if (comment && activeUser) {
         setFormData((prev) => ({
           ...prev,
-          comments: [...prev.comments, { name: activeUser.firstName, comment }],
+          comments: [
+            ...(prev.comments || []),
+            { userId: activeUser.userId, comment } as CommentDto,
+          ],
         }));
         setComment('');
       }
@@ -318,15 +299,13 @@ export const CertificateForm = forwardRef(
 
             <div className="custom-select-container">
               <Select
-                options={Object.values(OldCertificateType)}
+                options={Object.values(CertificateType)}
                 className="certificate-type-select"
                 placeholder="Select your option"
                 value={formData.type}
                 onChange={handleChangeCertificateType}
               />
-              {errors.certificateType && (
-                <div className="error">{errors.certificateType}</div>
-              )}
+              {errors.type && <div className="error">{errors.type}</div>}
               <div className="custom-select-icon">
                 <SvgComponent
                   type={SvgComponentType.SELECTED_DOWN_ARROW}
@@ -340,38 +319,28 @@ export const CertificateForm = forwardRef(
             <Label className="valid-from-label">{translations.validFrom}</Label>
             <Input
               ref={dateFromRef}
-              type="text"
-              value={
-                formData.validFrom
-                  ? formData.validTo.toISOString().split('T')[0]
-                  : ''
-              }
+              type="date"
+              value={formData.validFrom}
               onChange={handleChangeFrom}
               placeholder={translations.selectDatePlaceholder}
-              onFocus={handleFocusFrom}
-              onBlur={handleBlurFrom}
               className="valid-from-input"
             />
-            {errors.dateFrom && <div className="error">{errors.dateFrom}</div>}
+            {errors.validFrom && (
+              <div className="error">{errors.validFrom}</div>
+            )}
           </div>
 
           <div className="label-input-container">
             <Label className="valid-to-label">{translations.validTo}</Label>
             <Input
               ref={dateToRef}
-              type="text"
-              value={
-                formData.validTo
-                  ? formData.validTo.toISOString().split('T')[0]
-                  : ''
-              }
+              type="date"
+              value={formData.validTo}
               onChange={handleChangeTo}
               placeholder={translations.selectDatePlaceholder}
-              onFocus={handleFocusTo}
-              onBlur={handleBlurTo}
               className="valid-to-input"
             />
-            {errors.dateTo && <div className="error">{errors.dateTo}</div>}
+            {errors.validTo && <div className="error">{errors.validTo}</div>}
           </div>
 
           <section className="participants-section">

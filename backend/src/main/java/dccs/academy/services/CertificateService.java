@@ -1,6 +1,8 @@
 package dccs.academy.services;
 
 import dccs.academy.dtos.CertificateDto;
+import dccs.academy.dtos.CommentDto;
+import dccs.academy.entities.BaseEntity;
 import dccs.academy.entities.CertificateEntity;
 import dccs.academy.entities.CommentEntity;
 import dccs.academy.entities.UserEntity;
@@ -9,6 +11,7 @@ import dccs.academy.repositories.SupplierRepository;
 import dccs.academy.repositories.UserRepository;
 import dccs.academy.transfomers.CertificateTransformer;
 import dccs.academy.transfomers.CommentTransformer;
+import dccs.academy.utils.FileConversionUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityNotFoundException;
@@ -35,7 +38,8 @@ public class CertificateService {
     @Inject
     CertificateTransformer certificateTransformer;
 
-    @Inject SupplierService supplierService;
+    @Inject
+    SupplierService supplierService;
 
     @Inject
     UserService userService;
@@ -54,19 +58,7 @@ public class CertificateService {
         certificateEntity.setAssignedUsers(userService.getValidUsers(certificateDto.getAssignedUserIds(), userRepository));
 
         if (certificateDto.getComments() != null) {
-            List<CommentEntity> commentEntities = certificateDto.getComments().stream()
-                    .map(commentDto -> {
-                        CommentEntity commentEntity = commentTransformer.toEntity(commentDto);
-
-                        Set<Long> userIdSet = Collections.singleton(commentDto.getUserId());
-                        UserEntity user = userService.getValidUsers(userIdSet, userRepository).iterator().next();
-
-                        commentEntity.setUser(user);
-                        commentEntity.setCertificate(certificateEntity);
-                        return commentEntity;
-                    })
-                    .collect(Collectors.toList());
-
+            List<CommentEntity> commentEntities = processComments(certificateDto.getComments(), certificateEntity);
             certificateEntity.setComments(commentEntities);
         }
 
@@ -81,11 +73,32 @@ public class CertificateService {
         }
 
         existingCertificate.setSupplier(supplierService.getValidSupplier(certificateDto.getSupplier().getId(), supplierRepository));
-
         existingCertificate.setType(certificateDto.getType());
         existingCertificate.setValidFrom(certificateDto.getValidFrom());
         existingCertificate.setValidTo(certificateDto.getValidTo());
-        existingCertificate.setFileUrl(certificateDto.getFileUrl());
+
+        if (certificateDto.getFileUrl() != null) {
+            byte[] fileData = FileConversionUtil.convertBase64ToBlob(certificateDto.getFileUrl());
+            existingCertificate.setFileData(fileData);
+        }
+
+        if (certificateDto.getComments() != null) {
+            List<CommentEntity> existingComments = existingCertificate.getComments();
+
+            Set<Long> existingCommentIds = existingComments.stream()
+                    .map(BaseEntity::getId)
+                    .collect(Collectors.toSet());
+
+            List<CommentEntity> newComments = processComments(
+                    certificateDto.getComments().stream()
+                            .filter(commentDto -> !existingCommentIds.contains(commentDto.getId()))
+                            .collect(Collectors.toList()),
+                    existingCertificate
+            );
+
+            existingComments.addAll(newComments);
+            existingCertificate.setComments(existingComments);
+        }
 
         existingCertificate.setAssignedUsers(userService.getValidUsers(certificateDto.getAssignedUserIds(), userRepository));
         certificateRepository.persist(existingCertificate);
@@ -94,7 +107,7 @@ public class CertificateService {
 
     public CertificateDto getCertificate(Long id) {
         CertificateEntity certificateEntity = certificateRepository.findById(id);
-        if(certificateEntity == null){
+        if (certificateEntity == null) {
             throw new EntityNotFoundException("Certificate with ID " + id + " not found");
         }
         return certificateTransformer.toDto(certificateEntity);
@@ -102,11 +115,26 @@ public class CertificateService {
 
     public String deleteCertificate(Long id) {
         CertificateEntity certificateEntity = certificateRepository.findById(id);
-        if(certificateEntity == null){
+        if (certificateEntity == null) {
             throw new EntityNotFoundException("Certificate with ID " + id + " not found");
         }
 
         certificateRepository.delete(certificateEntity);
         return "Certificate with ID " + id + " was successfully deleted";
+    }
+
+    private List<CommentEntity> processComments(List<CommentDto> commentDtos, CertificateEntity certificateEntity) {
+        return commentDtos.stream()
+                .map(commentDto -> {
+                    CommentEntity commentEntity = commentTransformer.toEntity(commentDto);
+
+                    Set<Long> userIdSet = Collections.singleton(commentDto.getUserId());
+                    UserEntity user = userService.getValidUsers(userIdSet, userRepository).iterator().next();
+
+                    commentEntity.setUser(user);
+                    commentEntity.setCertificate(certificateEntity);
+                    return commentEntity;
+                })
+                .collect(Collectors.toList());
     }
 }

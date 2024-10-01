@@ -1,4 +1,9 @@
-import { CertificateDto, SupplierDto, UserDto } from './certificate.types';
+import {
+  CertificateDto,
+  CertificateType,
+  SupplierDto,
+  UserDto,
+} from './certificate.types';
 import { LookupModalType } from './lookupModal.types';
 
 export type TableHeaderItem = {
@@ -24,9 +29,9 @@ export type TCertificate = {
 
 export const defaultFormData: CertificateDto = {
   id: 0,
-  type: OldCertificateType.OHSAS_18001,
-  validFrom: new Date(),
-  validTo: new Date(),
+  type: CertificateType.OHSAS_18001,
+  validFrom: '',
+  validTo: '',
   supplier: {
     id: 0,
     name: '',
@@ -90,14 +95,14 @@ export type TSupplierLookupTableProps = {
 
 export type TErrors = {
   supplier: string;
-  certificateType: string;
-  dateFrom: string;
-  dateTo: string;
+  type: string;
+  validFrom: string;
+  validTo: string;
 };
 
 export const defaultErrorState: TErrors = {
   supplier: '',
-  certificateType: '',
-  dateFrom: '',
-  dateTo: '',
+  type: '',
+  validFrom: '',
+  validTo: '',
 };

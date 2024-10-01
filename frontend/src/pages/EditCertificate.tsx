@@ -14,7 +14,7 @@ export function EditCertificate() {
   const formRef = useRef<{
     submit: () => void;
     reset: () => void;
-    setValues: (values: any) => void;
+    setValues: (values: CertificateDto) => void;
   }>(null);
 
   useEffect(() => {
@@ -42,19 +42,11 @@ export function EditCertificate() {
     fetchCertificate();
   }, [id]);
 
-  const handleSave = useCallback(async () => {
+  const handleSave = useCallback(() => {
     if (formRef.current) {
-      try {
-        const updatedCertificate = formRef.current.submit();
-        if (certificateId) {
-          await axios.put(`/certificates/${certificateId}`, updatedCertificate);
-          console.log('Certificate updated successfully');
-        }
-      } catch (error) {
-        console.error('Error updating certificate:', error);
-      }
+      formRef.current.submit();
     }
-  }, [certificateId]);
+  }, []);
 
   const handleReset = useCallback(() => {
     if (formRef.current) {

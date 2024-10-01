@@ -4,7 +4,7 @@ import { Button, CertificateForm, FileUpload, Preview } from '@components';
 import { useLanguage } from '@hooks';
 
 export function AddCertificate() {
-  const [pdfDataUrl, setPdfDataUrl] = useState<string | null>(null);
+  const [pdfDataUrl, setPdfDataUrl] = useState<string>('');
   const formRef = useRef<{ submit: () => void; reset: () => void }>(null);
 
   const { translations } = useLanguage();
@@ -18,12 +18,12 @@ export function AddCertificate() {
   const handleReset = useCallback(() => {
     if (formRef.current) {
       formRef.current.reset();
-      setPdfDataUrl(null);
+      setPdfDataUrl('');
     }
   }, []);
 
   const handleResetPdfDataUrl = useCallback(() => {
-    setPdfDataUrl(null);
+    setPdfDataUrl('');
   }, []);
 
   return (
