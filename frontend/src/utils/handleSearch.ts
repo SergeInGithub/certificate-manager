@@ -1,16 +1,14 @@
-import axios from 'axios';
+import { apiClient } from './apiClient';
 
 export const searchSupplier = async (
   name: string,
   supplierIndex: string,
   city: string,
 ) => {
-  const response = await axios.get(`/suppliers/search`, {
-    params: {
-      name,
-      supplierIndex,
-      city,
-    },
+  const response = await apiClient.searchSuppliers({
+    name,
+    supplierIndex,
+    city,
   });
   return response.data.data;
 };
@@ -22,14 +20,12 @@ export const searchUser = async (
   plant: string,
   departmentName: string,
 ) => {
-  const response = await axios.get(`/users/search`, {
-    params: {
-      firstName,
-      lastName,
-      userIndex,
-      plant,
-      departmentName,
-    },
+  const response = await apiClient.searchUsers({
+    firstName,
+    lastName,
+    userIndex,
+    plant,
+    departmentName,
   });
   return response.data.data;
 };

@@ -3,7 +3,7 @@ package dccs.academy.entities;
 import dccs.academy.enums.CertificateType;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,10 +17,10 @@ public class CertificateEntity extends BaseEntity {
     private CertificateType type;
 
     @Column(name = "valid_from", nullable = false)
-    private String validFrom;
+    private LocalDateTime validFrom;
 
     @Column(name = "valid_to", nullable = false)
-    private String validTo;
+    private LocalDateTime validTo;
 
     @ManyToMany
     @JoinTable(
@@ -52,19 +52,19 @@ public class CertificateEntity extends BaseEntity {
         this.type = type;
     }
 
-    public String getValidFrom() {
+    public LocalDateTime getValidFrom() {
         return validFrom;
     }
 
-    public void setValidFrom(String validFrom) {
+    public void setValidFrom(LocalDateTime validFrom) {
         this.validFrom = validFrom;
     }
 
-    public String getValidTo() {
+    public LocalDateTime getValidTo() {
         return validTo;
     }
 
-    public void setValidTo(String validTo) {
+    public void setValidTo(LocalDateTime validTo) {
         this.validTo = validTo;
     }
 

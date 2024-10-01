@@ -23,12 +23,11 @@ import {
   CommentDto,
   SupplierDto,
 } from '@types';
-import { isSupplierValid } from '@utils';
+import { apiClient, isSupplierValid } from '@utils';
 import { useLanguage, useUser } from '@hooks';
 import { SupplierLookupModal, UserLookupModal } from '@components/Modals';
 import { UserLookupTable } from '@components/Tables';
 import { Comment } from '@components';
-import axios from 'axios';
 
 export const CertificateForm = forwardRef(
   (
@@ -82,8 +81,8 @@ export const CertificateForm = forwardRef(
 
         setFormData({
           id: values.id,
-          validFrom: values.validFrom,
-          validTo: values.validTo,
+          validFrom: new Date(values.validFrom),
+          validTo: new Date(values.validTo),
           type: values.type as CertificateType,
           supplier: values.supplier,
           fileUrl: pdfDataUrl || '',
@@ -98,9 +97,11 @@ export const CertificateForm = forwardRef(
     const handleChangeFrom = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
         const dateValue = e.target.value;
+        const dateObject = new Date(dateValue);
+
         setFormData((prev) => ({
           ...prev,
-          validFrom: dateValue,
+          validFrom: dateObject,
         }));
         setErrors((prev) => ({ ...prev, validFrom: '' }));
       },
@@ -110,9 +111,11 @@ export const CertificateForm = forwardRef(
     const handleChangeTo = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
         const dateValue = e.target.value;
+        const dateObject = new Date(dateValue);
+
         setFormData((prev) => ({
           ...prev,
-          validTo: dateValue,
+          validTo: dateObject,
         }));
         setErrors((prev) => ({ ...prev, validTo: '' }));
       },
@@ -160,9 +163,9 @@ export const CertificateForm = forwardRef(
         formData.fileUrl = pdfDataUrl;
         try {
           if (isEdit && certificateId) {
-            await axios.put(`/certificates/${certificateId}`, formData);
+            await apiClient.updateCertificate(certificateId, formData);
           } else {
-            await axios.post('/certificates', formData);
+            await apiClient.createCertificate(formData);
           }
           if (formRef.current) {
             formRef.current.reset();
@@ -320,7 +323,11 @@ export const CertificateForm = forwardRef(
             <Input
               ref={dateFromRef}
               type="date"
-              value={formData.validFrom}
+              value={
+                formData.validFrom
+                  ? formData.validFrom.toISOString().split('T')[0]
+                  : ''
+              }
               onChange={handleChangeFrom}
               placeholder={translations.selectDatePlaceholder}
               className="valid-from-input"
@@ -335,7 +342,11 @@ export const CertificateForm = forwardRef(
             <Input
               ref={dateToRef}
               type="date"
-              value={formData.validTo}
+              value={
+                formData.validTo
+                  ? formData.validTo.toISOString().split('T')[0]
+                  : ''
+              }
               onChange={handleChangeTo}
               placeholder={translations.selectDatePlaceholder}
               className="valid-to-input"

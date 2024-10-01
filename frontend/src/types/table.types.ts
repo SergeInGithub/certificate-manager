@@ -19,7 +19,7 @@ export type TComment = {
 export type TCertificate = {
   id?: number;
   supplier: TSupplier | null;
-  certificateType: OldCertificateType | undefined;
+  certificateType: CertificateType | undefined;
   dateFrom: Date | null;
   dateTo: Date | null;
   pdfDataUrl: string | null;
@@ -30,8 +30,8 @@ export type TCertificate = {
 export const defaultFormData: CertificateDto = {
   id: 0,
   type: CertificateType.OHSAS_18001,
-  validFrom: '',
-  validTo: '',
+  validFrom: new Date(),
+  validTo: new Date(),
   supplier: {
     id: 0,
     name: '',

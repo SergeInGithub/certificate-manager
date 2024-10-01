@@ -3,17 +3,17 @@ package dccs.academy.dtos;
 import dccs.academy.enums.CertificateType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
 public class CertificateDto {
     private Long id;
     private CertificateType type;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private String validFrom;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private String validTo;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private LocalDateTime validFrom;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private LocalDateTime validTo;
     private SupplierDto supplier;
     private String fileUrl;
     private Set<Long> assignedUserIds;
@@ -36,19 +36,19 @@ public class CertificateDto {
         this.type = type;
     }
 
-    public String getValidFrom() {
+    public LocalDateTime getValidFrom() {
         return validFrom;
     }
 
-    public void setValidFrom(String validFrom) {
+    public void setValidFrom(LocalDateTime validFrom) {
         this.validFrom = validFrom;
     }
 
-    public String getValidTo() {
+    public LocalDateTime getValidTo() {
         return validTo;
     }
 
-    public void setValidTo(String validTo) {
+    public void setValidTo(LocalDateTime validTo) {
         this.validTo = validTo;
     }
 

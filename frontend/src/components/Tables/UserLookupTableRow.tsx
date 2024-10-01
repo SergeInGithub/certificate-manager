@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { TableHeaderItem, UserDto, DepartmentDto } from '@types';
 import { Input } from '@components/Input';
-import axios from 'axios';
-import { formatUserName, getDepartmentNameById } from '@utils';
+import { apiClient, formatUserName, getDepartmentNameById } from '@utils';
 
 interface UserLookupTableRowProps {
   item: UserDto;
@@ -24,7 +23,7 @@ export const UserLookupTableRow: React.FC<UserLookupTableRowProps> = ({
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get('/departments');
+        const response = await apiClient.getDepartments();
         setDepartments(response.data.data);
       } catch (error) {
         console.error('Error fetching departments:', error);

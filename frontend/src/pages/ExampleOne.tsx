@@ -5,8 +5,7 @@ import { Button } from '@components';
 import { useNavigate } from 'react-router';
 import { CertificateDto } from '@types';
 import { useLanguage } from '@hooks';
-import axios from 'axios';
-import { handleNavigate } from '@utils';
+import { apiClient, handleNavigate } from '@utils';
 
 export function ExampleOne() {
   const navigate = useNavigate();
@@ -19,7 +18,8 @@ export function ExampleOne() {
 
   const fetchData = useCallback(async () => {
     try {
-      const response = await axios.get('/certificates');
+      const response = await apiClient.getCertificates();
+
       const certificatesFromBackend = response.data;
       setData(certificatesFromBackend.data);
     } catch (error) {
@@ -30,7 +30,7 @@ export function ExampleOne() {
   const handleDelete = useCallback(
     async (id: number) => {
       try {
-        await axios.delete(`/certificates/${id}`);
+        await apiClient.deleteCertificate(id);
         fetchData();
       } catch (error) {
         console.error('Error deleting certificate:', error);

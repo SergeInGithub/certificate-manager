@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import '../assets/styles/pages/addCertificate.css';
 import { Button, CertificateForm, FileUpload, Preview } from '@components';
-import axios from 'axios';
 import { CertificateDto } from '@types';
+import { apiClient } from '@utils';
 
 export function EditCertificate() {
   const { id } = useParams<{ id: string }>();
@@ -24,9 +24,7 @@ export function EditCertificate() {
           const parsedCertificateId = parseInt(id, 10);
           setCertificateId(parsedCertificateId);
 
-          const response = await axios.get(
-            `/certificates/${parsedCertificateId}`,
-          );
+          const response = await apiClient.getCertificate(parsedCertificateId);
           const certificate: CertificateDto = response.data.data;
 
           if (certificate && formRef.current) {

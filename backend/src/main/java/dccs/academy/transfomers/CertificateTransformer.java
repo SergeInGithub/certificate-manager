@@ -31,7 +31,7 @@ public class CertificateTransformer {
         certificateDto.setSupplier(supplierTransformer.toDto(certificateEntity.getSupplier()));
 
         if (certificateEntity.getFileData() != null) {
-            certificateDto.setFileUrl(FileConversionUtil.convertBlobToBase64(certificateEntity.getFileData(), "application/pdf"));
+            certificateDto.setFileUrl(FileConversionUtil.convertToBase64Pdf(certificateEntity.getFileData()));
         }
 
         Set<Long> assignedUserIds = certificateEntity.getAssignedUsers().stream()
@@ -59,7 +59,7 @@ public class CertificateTransformer {
             byte[] fileData = FileConversionUtil.convertBase64ToBlob(certificateDto.getFileUrl());
             certificateEntity.setFileData(fileData);
         }
-        
+
         if (certificateDto.getComments() != null) {
             List<CommentEntity> commentEntities = certificateDto.getComments().stream()
                     .map(commentTransformer::toEntity)

@@ -19,6 +19,7 @@ import jakarta.transaction.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -124,12 +125,18 @@ public class CertificateService {
     }
 
     private List<CommentEntity> processComments(List<CommentDto> commentDtos, CertificateEntity certificateEntity) {
+        Set<Long> userIds = commentDtos.stream()
+                .map(CommentDto::getUserId)
+                .collect(Collectors.toSet());
+
+        Map<Long, UserEntity> userMap = userService.getValidUsers(userIds, userRepository)
+                .stream()
+                .collect(Collectors.toMap(UserEntity::getId, user -> user));
+
         return commentDtos.stream()
                 .map(commentDto -> {
                     CommentEntity commentEntity = commentTransformer.toEntity(commentDto);
-
-                    Set<Long> userIdSet = Collections.singleton(commentDto.getUserId());
-                    UserEntity user = userService.getValidUsers(userIdSet, userRepository).iterator().next();
+                    UserEntity user = userMap.get(commentDto.getUserId());
 
                     commentEntity.setUser(user);
                     commentEntity.setCertificate(certificateEntity);
