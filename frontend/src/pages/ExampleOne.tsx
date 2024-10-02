@@ -2,40 +2,42 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { CertificateTable } from '@components/Tables';
 import '../assets/styles/pages/exampleOne.css';
 import { Button } from '@components';
-import { fetchCertificates, handleNavigate, deleteCertificate } from '@utils';
 import { useNavigate } from 'react-router';
-import { TCertificate } from '@types';
+import { CertificateDto } from '@types';
 import { useLanguage } from '@hooks';
+import { apiClient, handleNavigate } from '@utils';
 
 export function ExampleOne() {
   const navigate = useNavigate();
+  const { translations } = useLanguage();
+  const [data, setData] = useState<CertificateDto[]>([]);
 
   const handleClick = useCallback(() => {
     handleNavigate('/ml/add-certificate', navigate);
   }, [navigate]);
 
-  const { translations } = useLanguage();
-  const [data, setData] = useState<TCertificate[]>([]);
-
   const fetchData = useCallback(async () => {
     try {
-      const storedData = await fetchCertificates('CertificateDb', 1);
-      setData(storedData);
+      const response = await apiClient.getCertificates();
+
+      const certificatesFromBackend = response.data;
+      setData(certificatesFromBackend.data);
     } catch (error) {
       console.error('Error fetching certificates:', error);
     }
   }, []);
 
-  const handleDelete = useCallback(async (id: number) => {
-    try {
-      await deleteCertificate('CertificateDb', 1, id);
-      const updatedData = await fetchCertificates('CertificateDb', 1);
-
-      setData(updatedData);
-    } catch (error) {
-      console.error('Error deleting certificate:', error);
-    }
-  }, []);
+  const handleDelete = useCallback(
+    async (id: number) => {
+      try {
+        await apiClient.deleteCertificate(id);
+        fetchData();
+      } catch (error) {
+        console.error('Error deleting certificate:', error);
+      }
+    },
+    [fetchData],
+  );
 
   useEffect(() => {
     fetchData();
@@ -53,6 +55,7 @@ export function ExampleOne() {
         >
           {translations.newCertificate}
         </Button>
+
         <CertificateTable
           certificates={data}
           onDelete={handleDelete}

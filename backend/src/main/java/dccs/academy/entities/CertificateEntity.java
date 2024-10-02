@@ -3,7 +3,7 @@ package dccs.academy.entities;
 import dccs.academy.enums.CertificateType;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,10 +17,10 @@ public class CertificateEntity extends BaseEntity {
     private CertificateType type;
 
     @Column(name = "valid_from", nullable = false)
-    private LocalDate validFrom;
+    private LocalDateTime validFrom;
 
     @Column(name = "valid_to", nullable = false)
-    private LocalDate validTo;
+    private LocalDateTime validTo;
 
     @ManyToMany
     @JoinTable(
@@ -35,8 +35,9 @@ public class CertificateEntity extends BaseEntity {
     @JoinColumn(name = "supplier_id", nullable = false)
     private SupplierEntity supplier;
 
-    @Column(name = "file_url")
-    private String fileUrl;
+    @Lob
+    @Column(name = "file_data")
+    private byte[] fileData;
 
     @OneToMany(mappedBy = "certificate", cascade = CascadeType.ALL)
     private List<CommentEntity> comments;
@@ -51,19 +52,19 @@ public class CertificateEntity extends BaseEntity {
         this.type = type;
     }
 
-    public LocalDate getValidFrom() {
+    public LocalDateTime getValidFrom() {
         return validFrom;
     }
 
-    public void setValidFrom(LocalDate validFrom) {
+    public void setValidFrom(LocalDateTime validFrom) {
         this.validFrom = validFrom;
     }
 
-    public LocalDate getValidTo() {
+    public LocalDateTime getValidTo() {
         return validTo;
     }
 
-    public void setValidTo(LocalDate validTo) {
+    public void setValidTo(LocalDateTime validTo) {
         this.validTo = validTo;
     }
 
@@ -83,12 +84,12 @@ public class CertificateEntity extends BaseEntity {
         this.supplier = supplier;
     }
 
-    public String getFileUrl() {
-        return fileUrl;
+    public byte[] getFileData() {
+        return fileData;
     }
 
-    public void setFileUrl(String fileUrl) {
-        this.fileUrl = fileUrl;
+    public void setFileData(byte[] fileData) {
+        this.fileData = fileData;
     }
 
     public List<CommentEntity> getComments() {

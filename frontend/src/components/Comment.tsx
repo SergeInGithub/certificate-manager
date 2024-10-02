@@ -2,7 +2,9 @@ import React from 'react';
 import { Button } from './Button';
 import { UserComment } from './UserComponent';
 import { CommentInput } from './CommentInput';
-import { TComment, UserDto } from '@types';
+import { CommentDto, UserDto } from '@types';
+import { useUser } from '@hooks';
+import { getUserName } from '@utils';
 
 type ICommentProps = {
   isComment: boolean;
@@ -10,9 +12,10 @@ type ICommentProps = {
   handleChangeComment: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   comment: string;
   activeUser: UserDto;
-  comments: TComment[];
+  comments: CommentDto[];
   handleCommentSubmit: () => void;
 };
+
 export const Comment: React.FC<ICommentProps> = ({
   isComment,
   toggleComment,
@@ -22,9 +25,10 @@ export const Comment: React.FC<ICommentProps> = ({
   comments,
   handleCommentSubmit,
 }) => {
+  const { users } = useUser();
+
   return (
     <React.Fragment>
-      {' '}
       <Button
         type="button"
         className="new-comment-button"
@@ -32,10 +36,12 @@ export const Comment: React.FC<ICommentProps> = ({
       >
         New comment
       </Button>
+
       {comments.length ? (
         comments.map((comment) => (
           <UserComment
-            name={comment.name}
+            key={comment.id}
+            name={getUserName(comment.userId, users)}
             comment={comment.comment}
           />
         ))
@@ -44,6 +50,7 @@ export const Comment: React.FC<ICommentProps> = ({
           <h4>No comments</h4>
         </div>
       )}
+
       {isComment && (
         <React.Fragment>
           <CommentInput

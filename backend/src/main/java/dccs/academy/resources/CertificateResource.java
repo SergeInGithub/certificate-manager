@@ -33,7 +33,7 @@ public class CertificateResource {
     public Response getCertificate(@PathParam("id") Long id) {
         try {
             CertificateDto certificate = certificateService.getCertificate(id);
-            return ResponseHandler.successResponse("Certificates retrieved successfully", certificate, Response.Status.OK);
+            return ResponseHandler.successResponse("Certificate retrieved successfully", certificate, Response.Status.OK);
         } catch (EntityNotFoundException e) {
             return ResponseHandler.errorResponse(e.getMessage(), Response.Status.NOT_FOUND);
         }
@@ -46,6 +46,8 @@ public class CertificateResource {
             return ResponseHandler.successResponse("Certificate created successfully", createdCertificate, Response.Status.CREATED);
         } catch (EntityNotFoundException e) {
             return ResponseHandler.errorResponse(e.getMessage(), Response.Status.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return ResponseHandler.errorResponse(e.getMessage(), Response.Status.UNSUPPORTED_MEDIA_TYPE);
         } catch (Exception e) {
             return ResponseHandler.errorResponse(e.getMessage(), Response.Status.BAD_REQUEST);
         }
@@ -59,6 +61,8 @@ public class CertificateResource {
             return ResponseHandler.successResponse("Certificate updated successfully", updatedCertificate, Response.Status.OK);
         } catch (EntityNotFoundException e) {
             return ResponseHandler.errorResponse(e.getMessage(), Response.Status.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return ResponseHandler.errorResponse(e.getMessage(), Response.Status.UNSUPPORTED_MEDIA_TYPE);
         } catch (Exception e) {
             return ResponseHandler.errorResponse(e.getMessage(), Response.Status.BAD_REQUEST);
         }

@@ -6,6 +6,7 @@ import dccs.academy.dtos.UserDto;
 import dccs.academy.entities.CertificateEntity;
 import dccs.academy.entities.CommentEntity;
 import dccs.academy.entities.UserEntity;
+import dccs.academy.utils.FileConversionUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -16,7 +17,8 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class CertificateTransformer {
 
-    @Inject CommentTransformer commentTransformer;
+    @Inject
+    CommentTransformer commentTransformer;
 
     public CertificateDto toDto(CertificateEntity certificateEntity) {
         CertificateDto certificateDto = new CertificateDto();
@@ -27,7 +29,10 @@ public class CertificateTransformer {
         certificateDto.setValidFrom(certificateEntity.getValidFrom());
         certificateDto.setValidTo(certificateEntity.getValidTo());
         certificateDto.setSupplier(supplierTransformer.toDto(certificateEntity.getSupplier()));
-        certificateDto.setFileUrl(certificateEntity.getFileUrl());
+
+        if (certificateEntity.getFileData() != null) {
+            certificateDto.setFileUrl(FileConversionUtil.convertToBase64Pdf(certificateEntity.getFileData()));
+        }
 
         Set<Long> assignedUserIds = certificateEntity.getAssignedUsers().stream()
                 .map(UserEntity::getId)
@@ -49,7 +54,11 @@ public class CertificateTransformer {
         certificateEntity.setType(certificateDto.getType());
         certificateEntity.setValidFrom(certificateDto.getValidFrom());
         certificateEntity.setValidTo(certificateDto.getValidTo());
-        certificateEntity.setFileUrl(certificateDto.getFileUrl());
+
+        if (certificateDto.getFileUrl() != null) {
+            byte[] fileData = FileConversionUtil.convertBase64ToBlob(certificateDto.getFileUrl());
+            certificateEntity.setFileData(fileData);
+        }
 
         if (certificateDto.getComments() != null) {
             List<CommentEntity> commentEntities = certificateDto.getComments().stream()

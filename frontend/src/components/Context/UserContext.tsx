@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { UserContext, UserDto } from '@types';
+import { apiClient } from '@utils';
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -11,7 +11,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const initializeUsers = async () => {
       try {
-        const response = await axios.get('/users');
+        const response = await apiClient.getUsers();
         const usersFromBackend = response.data;
 
         setUsers(usersFromBackend.data);

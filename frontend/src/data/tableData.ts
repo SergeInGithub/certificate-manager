@@ -40,7 +40,7 @@ export const certificates: TCertificate[] = [
 ];
 
 export const SupplierLookupTableHeaderItems: TableHeaderItem[] = [
-  { id: 'supplierName', label: 'Supplier name' },
+  { id: 'name', label: 'Supplier name' },
   { id: 'supplierIndex', label: 'Supplier index' },
   { id: 'city', label: 'City' },
 ];
@@ -69,11 +69,11 @@ export const hardcodedSuppliers: TSupplier[] = [
 ];
 
 export const userLookupTableHeaderItems: TableHeaderItem[] = [
-  { id: 'userLookupName', label: 'Name' },
-  { id: 'userLookupFirstName', label: 'First name' },
-  { id: 'userLookupId', label: 'User ID' },
-  { id: 'userLookupDepartment', label: 'Department' },
-  { id: 'userLookupPlant', label: 'Plant' },
+  { id: 'lastName', label: 'Name' },
+  { id: 'firstName', label: 'First name' },
+  { id: 'userIndex', label: 'User ID' },
+  { id: 'departmentName', label: 'Department' },
+  { id: 'plant', label: 'Plant' },
 ];
 
 export const hardcodedUserApplicants: TUserApplicant[] = [
@@ -113,7 +113,7 @@ export const hardcodedUserApplicants: TUserApplicant[] = [
 ];
 
 export const participantTableHeaderItems: TableHeaderItem[] = [
-  { id: 'userLookupName', label: 'Name' },
-  { id: 'userLookupDepartment', label: 'Department' },
-  { id: 'userLookupEmail', label: 'E-mail' },
+  { id: 'firstName', label: 'Name' },
+  { id: 'departmentName', label: 'Department' },
+  { id: 'email', label: 'E-mail' },
 ];

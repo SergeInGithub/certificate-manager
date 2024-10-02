@@ -1,3 +1,4 @@
+import { SupplierDto, UserDto } from './certificate.types';
 import { TSupplier, TUserApplicant } from './table.types';
 
 export enum LookupModalType {
@@ -14,12 +15,12 @@ export type LookupModalProps = {
     value: string;
     setValue: (value: string) => void;
   }>;
-  users?: TUserApplicant[] | TSupplier[];
+  users?: UserDto[] | SupplierDto[];
   modalType: LookupModalType;
-  selectedItems?: TUserApplicant[] | TSupplier[];
-  setSelectedItems?: React.Dispatch<React.SetStateAction<TUserApplicant[]>>;
+  selectedItems?: UserDto[] | SupplierDto[];
+  setSelectedItems?: React.Dispatch<React.SetStateAction<UserDto[]>>;
   cancelSelections?: () => void;
   handleSelectButtonClick: () => void;
-  handleApplicantSelection?: (item: TUserApplicant) => void;
-  handleSupplierSelection?: (item: TSupplier) => void;
+  handleApplicantSelection?: (item: UserDto) => void;
+  handleSupplierSelection?: (item: SupplierDto) => void;
 };

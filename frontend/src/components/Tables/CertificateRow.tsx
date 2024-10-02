@@ -1,12 +1,12 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useFormatDate } from '@hooks';
 import { SvgComponentType, SvgComponent } from '@components/Svg';
-import { TCertificate } from '@types';
+import { CertificateDto } from '@types';
 import { handleNavigate } from '@utils';
 import { useNavigate } from 'react-router-dom';
 
 interface ICertificateRowProps {
-  certificate: TCertificate;
+  certificate: CertificateDto;
   isLastRow: boolean;
   onDelete: (id: number) => void;
 }
@@ -63,10 +63,10 @@ export const CertificateRow: React.FC<ICertificateRowProps> = ({
             </div>
           )}
         </td>
-        <td>{certificate.supplier?.supplierName}</td>
-        <td>{certificate.certificateType}</td>
-        <td>{formatDate(certificate.dateFrom)}</td>
-        <td>{formatDate(certificate.dateTo)}</td>
+        <td>{certificate.supplier?.name}</td>
+        <td>{certificate.type}</td>
+        <td>{formatDate(certificate.validFrom)}</td>
+        <td>{formatDate(certificate.validTo)}</td>
       </tr>
     </React.Fragment>
   );

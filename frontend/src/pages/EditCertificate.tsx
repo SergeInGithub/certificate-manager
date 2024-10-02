@@ -2,56 +2,37 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import '../assets/styles/pages/addCertificate.css';
 import { Button, CertificateForm, FileUpload, Preview } from '@components';
-import { openDB } from '@utils';
-
-interface Certificate {
-  id: number;
-  name: string;
-  pdfDataUrl: string;
-  dateFrom: string;
-  dateTo: string;
-  certificateType: string;
-  supplier: string;
-}
+import { CertificateDto } from '@types';
+import { apiClient } from '@utils';
 
 export function EditCertificate() {
   const { id } = useParams<{ id: string }>();
-  const [pdfDataUrl, setPdfDataUrl] = useState<string | null>(null);
+  const [pdfDataUrl, setPdfDataUrl] = useState<string>('');
   const [certificateId, setCertificateId] = useState<number | undefined>(
     undefined,
   );
   const formRef = useRef<{
     submit: () => void;
     reset: () => void;
-    setValues: (values: any) => void;
+    setValues: (values: CertificateDto) => void;
   }>(null);
 
   useEffect(() => {
     const fetchCertificate = async () => {
       if (id) {
         try {
-          const db = await openDB('CertificateDb', 1);
-          const transaction = db.transaction('certificates', 'readonly');
-          const store = transaction.objectStore('certificates');
           const parsedCertificateId = parseInt(id, 10);
           setCertificateId(parsedCertificateId);
 
-          const request = store.get(parsedCertificateId);
+          const response = await apiClient.getCertificate(parsedCertificateId);
+          const certificate: CertificateDto = response.data.data;
 
-          request.onsuccess = () => {
-            const certificate: Certificate = request.result;
-
-            if (certificate && formRef.current) {
-              formRef.current.setValues(certificate);
-              setPdfDataUrl(certificate.pdfDataUrl);
-            }
-          };
-
-          request.onerror = () => {
-            console.error('Error fetching certificate:', request.error);
-          };
+          if (certificate && formRef.current) {
+            formRef.current.setValues(certificate);
+            setPdfDataUrl(certificate.fileUrl);
+          }
         } catch (error) {
-          console.error('Error opening database:', error);
+          console.error('Error fetching certificate from backend:', error);
         }
       }
     };
@@ -68,7 +49,7 @@ export function EditCertificate() {
   const handleReset = useCallback(() => {
     if (formRef.current) {
       formRef.current.reset();
-      setPdfDataUrl(null);
+      setPdfDataUrl('');
     }
   }, []);
 
@@ -79,7 +60,7 @@ export function EditCertificate() {
           <CertificateForm
             ref={formRef}
             pdfDataUrl={pdfDataUrl}
-            onReset={() => setPdfDataUrl(null)}
+            onReset={() => setPdfDataUrl('')}
             isEdit={true}
             certificateId={certificateId}
           />
