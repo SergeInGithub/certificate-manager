@@ -21,9 +21,10 @@ import {
   CommentDto,
   SupplierDto,
   defaultBooleanState,
+  NotificationType,
 } from '@types';
 import { apiClient, isSupplierValid } from '@utils';
-import { useLanguage, useUser } from '@hooks';
+import { useCertificateType, useLanguage, useUser } from '@hooks';
 import { SupplierLookupModal, UserLookupModal } from '@components/Modals';
 import {
   Comment,
@@ -31,6 +32,9 @@ import {
   ParticipantSection,
   SupplierSection,
 } from '@components';
+import PushNotification from '@components/PushNotification';
+import { AxiosResponse } from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export const CertificateForm = forwardRef(
   (
@@ -42,11 +46,17 @@ export const CertificateForm = forwardRef(
     const [formData, setFormData] = useState<CertificateDto>(defaultFormData);
     const [booleanState, setBooleanState] = useState(defaultBooleanState);
     const [selectedApplicants, setSelectedApplicants] = useState<UserDto[]>([]);
-    const [selectedSuppliers, setSelectedSuppliers] =
+    const [selectedSupplier, setSelectedSupplier] =
       useState<SupplierDto | null>(null);
     const [comment, setComment] = useState('');
     const formRef = useRef<HTMLFormElement | null>(null);
     const [errors, setErrors] = useState<TErrors>(defaultErrorState);
+    const [showNotification, setShowNotification] = useState(false);
+    const [notificationType, setNotificationType] = useState<NotificationType>(
+      NotificationType.CREATED,
+    );
+    const certificateType = useCertificateType();
+    const navigate = useNavigate();
 
     useImperativeHandle(ref, () => ({
       submit: () => {
@@ -63,6 +73,7 @@ export const CertificateForm = forwardRef(
           type: '',
           validFrom: '',
           validTo: '',
+          fileUrl: '',
         });
         if (onReset) {
           onReset();
@@ -85,6 +96,7 @@ export const CertificateForm = forwardRef(
         });
 
         setSelectedApplicants(selectedApplicants);
+        setSelectedSupplier(values.supplier);
       },
     }));
 
@@ -115,19 +127,41 @@ export const CertificateForm = forwardRef(
         supplier: supplier,
       }));
       setErrors((prev) => ({ ...prev, supplier: '' }));
-      setSelectedSuppliers(supplier);
+      setSelectedSupplier(supplier);
       setBooleanState((prev) => ({ ...prev, isModalOpen: false }));
     }, []);
+
+    const handleResponse = (
+      response: AxiosResponse,
+      successType: NotificationType.CREATED | NotificationType.UPDATED,
+    ) => {
+      if (response.status === 200 || response.status === 201) {
+        setShowNotification(true);
+        setNotificationType(successType);
+      } else {
+        setShowNotification(true);
+        setNotificationType(NotificationType.ERROR);
+      }
+    };
 
     const validateForm = () => {
       const newErrors = {
         supplier: isSupplierValid(formData.supplier)
           ? ''
-          : 'Supplier is required and must have valid details',
+          : 'Supplier is required',
         validFrom: formData.validFrom ? '' : 'Valid From date is required',
         validTo: formData.validTo ? '' : 'Valid To date is required',
         type: formData.type ? '' : 'Certificate Type is required',
+        fileUrl: pdfDataUrl ? '' : 'PDF File is required',
       };
+
+      if (formData.validFrom && formData.validTo) {
+        if (new Date(formData.validTo) <= new Date(formData.validFrom)) {
+          newErrors.validTo =
+            'Valid To date must be greater than Valid From date';
+        }
+      }
+
       return newErrors;
     };
 
@@ -139,25 +173,36 @@ export const CertificateForm = forwardRef(
           setErrors(newErrors);
           return;
         }
+        let response;
 
         formData.fileUrl = pdfDataUrl;
         try {
           if (isEdit && certificateId) {
-            await apiClient.updateCertificate(certificateId, formData);
+            response = await apiClient.updateCertificate(
+              certificateId,
+              formData,
+            );
+            handleResponse(response, NotificationType.UPDATED);
+            setTimeout(() => {
+              navigate('/ml/add-certificate');
+            }, 4000);
           } else {
-            await apiClient.createCertificate(formData);
+            response = await apiClient.createCertificate(formData);
+            handleResponse(response, NotificationType.CREATED);
           }
           if (formRef.current) {
             formRef.current.reset();
           }
           setFormData(defaultFormData);
           setSelectedApplicants([]);
-          setSelectedSuppliers(null);
+          setSelectedSupplier(null);
           if (onReset) {
             onReset();
           }
         } catch (error) {
           console.error('Error adding/editing certificate:', error);
+          setShowNotification(true);
+          setNotificationType(NotificationType.ERROR);
         }
       },
       [formData, pdfDataUrl, isEdit, certificateId, onReset],
@@ -173,7 +218,6 @@ export const CertificateForm = forwardRef(
 
     const closeModal = useCallback(() => {
       setBooleanState((prev) => ({ ...prev, isModalOpen: false }));
-      setSelectedSuppliers(null);
     }, []);
 
     const closeUserModal = useCallback(
@@ -238,6 +282,19 @@ export const CertificateForm = forwardRef(
       }
     }, [comment, activeUser]);
 
+    const handleCloseNotification = useCallback(() => {
+      setShowNotification(false);
+    }, []);
+
+    const getCertificateTypeOptions = useCallback((): {
+      value: CertificateType;
+      label: string;
+    }[] => {
+      return Object.values(CertificateType).map((type) => ({
+        value: type,
+        label: certificateType[type],
+      }));
+    }, []);
     return (
       <React.Fragment>
         <form
@@ -259,7 +316,7 @@ export const CertificateForm = forwardRef(
 
             <div className="custom-select-container">
               <Select
-                options={Object.values(CertificateType)}
+                options={getCertificateTypeOptions()}
                 className="certificate-type-select"
                 placeholder="Select your option"
                 value={formData.type}
@@ -287,6 +344,10 @@ export const CertificateForm = forwardRef(
             handleApplicantSelection={handleApplicantSelection}
           />
 
+          {!pdfDataUrl && (
+            <div className="error file-url">{errors.fileUrl}</div>
+          )}
+
           <section className="comments-section">
             <Comment
               comment={comment}
@@ -304,6 +365,8 @@ export const CertificateForm = forwardRef(
           isOpen={booleanState.isModalOpen}
           onClose={closeModal}
           onSelectSupplier={handleSupplierSelect}
+          selectedSupplier={selectedSupplier}
+          setSelectedSupplier={setSelectedSupplier}
         />
         <UserLookupModal
           isOpen={booleanState.isUserModalOpen}
@@ -312,6 +375,21 @@ export const CertificateForm = forwardRef(
           setSelectedItems={setSelectedApplicants}
           cancelSelections={cancelSelections}
         />
+
+        {showNotification && (
+          <PushNotification
+            message={`${
+              notificationType === 'created'
+                ? '✅ Certificate created successfully!'
+                : notificationType === 'updated'
+                  ? '✅ Certificate updated successfully!'
+                  : notificationType === 'error'
+                    ? '❌ Something went wrong'
+                    : ''
+            }`}
+            onClose={handleCloseNotification}
+          />
+        )}
       </React.Fragment>
     );
   },

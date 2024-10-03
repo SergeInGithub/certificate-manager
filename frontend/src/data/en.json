@@ -26,12 +26,16 @@
   "selectPlaceholder": "Select your option",
   "searchForPersons": "Search for persons",
   "personList": "Person List",
-  "lastName": "Name",
+  "lastName": "Last name",
   "firstName": "First name",
+  "fullName": "Full name",
   "userIndex": "User ID",
   "departmentName": "Department",
   "plant": "Plant",
   "addParticipant": "Add Participant",
   "assignedUsers": "Assigned Users",
-  "activeUser": "User"
+  "activeUser": "User",
+  "permissionOfPrinting": "Permission of printing",
+  "ohsas18001": "OHSAS 18001",
+  "cccCertificate": "CCC Certificate"
 }

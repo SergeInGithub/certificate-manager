@@ -11,6 +11,9 @@ export function EditCertificate() {
   const [certificateId, setCertificateId] = useState<number | undefined>(
     undefined,
   );
+  const [initialFormData, setInitialFormData] = useState<CertificateDto | null>(
+    null,
+  );
   const formRef = useRef<{
     submit: () => void;
     reset: () => void;
@@ -30,6 +33,7 @@ export function EditCertificate() {
           if (certificate && formRef.current) {
             formRef.current.setValues(certificate);
             setPdfDataUrl(certificate.fileUrl);
+            setInitialFormData(certificate);
           }
         } catch (error) {
           console.error('Error fetching certificate from backend:', error);
@@ -47,11 +51,11 @@ export function EditCertificate() {
   }, []);
 
   const handleReset = useCallback(() => {
-    if (formRef.current) {
-      formRef.current.reset();
-      setPdfDataUrl('');
+    if (formRef.current && initialFormData) {
+      formRef.current.setValues(initialFormData);
+      setPdfDataUrl(initialFormData.fileUrl);
     }
-  }, []);
+  }, [initialFormData]);
 
   return (
     <div className="add-certificate-page">

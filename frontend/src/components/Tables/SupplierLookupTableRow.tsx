@@ -24,7 +24,7 @@ export const SupplierLookupTableRow: React.FC<SupplierLookupTableRowProps> = ({
     >
       <td className="lookup-table-row-point-container">
         <Input
-          type="checkbox"
+          type="radio"
           checked={isSelected}
           onChange={() => handleSelection(item)}
         />

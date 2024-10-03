@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { useFormatDate } from '@hooks';
+import { useCertificateType, useFormatDate } from '@hooks';
 import { SvgComponentType, SvgComponent } from '@components/Svg';
 import { CertificateDto } from '@types';
 import { handleNavigate } from '@utils';
@@ -25,6 +25,7 @@ export const CertificateRow: React.FC<ICertificateRowProps> = ({
   }, []);
 
   const formatDate = useFormatDate();
+  const certificateType = useCertificateType();
 
   const handleEditClick = useCallback(() => {
     handleNavigate(`/ml/edit-certificate/${certificate.id}`, navigate);
@@ -64,7 +65,7 @@ export const CertificateRow: React.FC<ICertificateRowProps> = ({
           )}
         </td>
         <td>{certificate.supplier?.name}</td>
-        <td>{certificate.type}</td>
+        <td>{certificateType[certificate.type]}</td>
         <td>{formatDate(certificate.validFrom)}</td>
         <td>{formatDate(certificate.validTo)}</td>
       </tr>

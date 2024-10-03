@@ -14,7 +14,7 @@ export const getDepartmentNameById = (
 
 export const getUserName = (userId: number, users: UserDto[]) => {
   const user = users.find((u) => u.userId === userId);
-  return user ? user.firstName : 'Unknown User';
+  return user ? `${user.firstName} ${user?.lastName}` : 'Unknown User';
 };
 
 export const isSupplierValid = (supplier: SupplierDto | null) => {

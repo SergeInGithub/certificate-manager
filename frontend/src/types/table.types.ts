@@ -98,13 +98,21 @@ export type TErrors = {
   type: string;
   validFrom: string;
   validTo: string;
+  fileUrl: string;
 };
+
+export enum NotificationType {
+  CREATED = 'created',
+  UPDATED = 'updated',
+  ERROR = 'error',
+}
 
 export const defaultErrorState: TErrors = {
   supplier: '',
   type: '',
   validFrom: '',
   validTo: '',
+  fileUrl: '',
 };
 
 export const defaultBooleanState = {

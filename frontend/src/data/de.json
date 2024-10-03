@@ -26,12 +26,16 @@
   "selectPlaceholder": "Wählen Sie Ihre Option",
   "searchForPersons": "Lieferanten Personen",
   "personList": "Personenliste",
-  "lastName": "Name",
+  "lastName": "Nachname",
   "firstName": "Vorname",
+  "fullName": "Full name",
   "userIndex": "Benutzer-ID",
   "departmentName": "Abteilung",
   "plant": "Werk",
   "addParticipant": "Teilnehmer hinzufügen",
   "assignedUsers": "Zugewiesene Benutzer",
-  "activeUser": "Benutzer"
+  "activeUser": "Benutzer",
+  "permissionOfPrinting": "Druckgenehmigung",
+  "ohsas18001": "OHSAS 18001",
+  "cccCertificate": "CCC-Zertifikat"
 }

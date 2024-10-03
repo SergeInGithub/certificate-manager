@@ -113,7 +113,7 @@ export const hardcodedUserApplicants: TUserApplicant[] = [
 ];
 
 export const participantTableHeaderItems: TableHeaderItem[] = [
-  { id: 'firstName', label: 'Name' },
+  { id: 'fullName', label: 'Name' },
   { id: 'departmentName', label: 'Department' },
   { id: 'email', label: 'E-mail' },
 ];

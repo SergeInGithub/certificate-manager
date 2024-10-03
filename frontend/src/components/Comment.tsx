@@ -34,7 +34,7 @@ export const Comment: React.FC<ICommentProps> = ({
         className="new-comment-button"
         onClick={toggleComment}
       >
-        New comment
+        {isComment ? 'Cancel' : 'New comment'}
       </Button>
 
       {comments.length ? (

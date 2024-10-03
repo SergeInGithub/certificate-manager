@@ -216,8 +216,102 @@
 
 .error {
   color: red;
-  font-size: x-small;
-  margin-top: 2px;
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+.file-url {
+  margin-top: 15px;
+}
+
+.participant-close-button {
+  display: flex;
+  background-color: transparent;
+  cursor: pointer;
+  border: none;
+}
+
+.participant-close-icon {
+  height: 30px;
+  width: 12px;
+}
+
+.push-notification {
+  position: fixed;
+  z-index: 999999;
+  background-color: #000;
+  border: 2.5px solid #3c9bcb;
+  top: 4rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  border-radius: 14px;
+  min-width: 250px;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+  color: white;
+  text-align: center;
+  padding: 0.1rem;
+  opacity: 0;
+  transition: opacity 0s ease-in-out;
+  transform: translateY(100%);
+}
+
+.push-notification p {
+  font-size: 13px;
+}
+
+@media (min-width: 768px) {
+  .push-notification {
+    max-width: 25%;
+    top: 0.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .push-notification {
+    max-width: 15%;
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+.push-notification {
+  animation:
+    fadeInDown 1s forwards,
+    slideInDown 1s forwards,
+    fadeOutUp 1s 3s forwards;
 }
 
 @media (max-width: 834px) {

@@ -6,6 +6,7 @@ import dccs.academy.dtos.UserDto;
 import dccs.academy.entities.CertificateEntity;
 import dccs.academy.entities.CommentEntity;
 import dccs.academy.entities.UserEntity;
+import dccs.academy.enums.CertificateType;
 import dccs.academy.utils.FileConversionUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

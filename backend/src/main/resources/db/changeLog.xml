@@ -8,4 +8,5 @@
     https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <include file="db/changelog/tables-v1.sql"/>
+    <include file="db/changelog/seed.sql"/>
 </databaseChangeLog>
