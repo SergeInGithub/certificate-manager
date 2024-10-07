@@ -2,10 +2,17 @@
 
 ## 🗞️ About The Project
 
-This is a certificate manager web application. It is built with React and TypeScript. The application has a table that will contain inputted data that will then be used and displayed on the generated certificate.
+This is a certificate manager web application. It's a Maven Multi Module project built with Quarkus on the Backend and
+React on the Frontend. The application has a table that
+will be used to display certificates.
+This application helps users manage and generate certificates based on inputted data. It’s designed to streamline
+certificate creation and store certificate data for future reference.
 
 ## 🔮 Tech Stack
 
+- Maven 🪶
+- Hibernate ⏼
+- Quarkus 🎇
 - React ⚛
 - TypeScript 🦕
 - Webpack 5 📦
@@ -20,8 +27,8 @@ To get a local copy up and running follow these simple steps.
 
 ### 🚨 Prerequisites
 
+- Java (JDK)
 - Node.js
-- Package manager. I'm using [npm](https://www.npmjs.com)
 
 ### 📦 Installation
 
@@ -38,15 +45,19 @@ To get a local copy up and running follow these simple steps.
 2. Install packages 📦.
 
    ```sh
-   npm install
+   mvn clean install
    ```
 
 3. Start your server 🌅
 
-```sh
-# development
-npm run dev
-```
+   ```sh
+   cd backend
+   ```
+
+   ```sh
+   # development
+   mvn quarkus:dev
+   ```
 
 ## 🪪 License
 
@@ -56,4 +67,3 @@ Distributed under the MIT License.
 
 - DCCS
 - Code Of Africa
-- The TaskForce Pro Team
