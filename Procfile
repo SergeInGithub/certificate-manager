@@ -1,0 +1,1 @@
+web: java -jar backend/target/quarkus-app/quarkus-run.jar
