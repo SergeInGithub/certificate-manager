@@ -17,3 +17,4 @@ export * from './Context';
 export * from './CommentInput';
 export * from './Comment';
 export * from './UserComponent';
+export * from './PushNotification';

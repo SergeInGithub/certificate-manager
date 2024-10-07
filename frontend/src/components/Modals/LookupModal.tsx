@@ -42,10 +42,10 @@ export const LookupModal: React.FC<LookupModalProps> = ({
     if (isOpen) {
       if (modalType === LookupModalType.USER_LOOKUP) {
         setUserApplicants(users as UserDto[]);
-        setFilteredUserApplicants(users as UserDto[]);
+        setFilteredUserApplicants(selectedItems as UserDto[]);
       } else if (modalType === LookupModalType.SUPPLIER_LOOKUP) {
         setSuppliers(users as SupplierDto[]);
-        setFilteredSuppliers(users as SupplierDto[]);
+        setFilteredSuppliers(selectedItems as SupplierDto[]);
       }
     }
   }, [isOpen, users, modalType]);

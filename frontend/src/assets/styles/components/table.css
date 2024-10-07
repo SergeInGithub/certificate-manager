@@ -63,11 +63,14 @@ tbody tr:hover {
   flex-direction: column;
   background-color: white;
   box-shadow: -2px 2px 3px 1px rgba(0, 0, 0, 0.1);
-  width: 60px;
+  width: 55px;
   height: 45px;
   margin-left: 30px;
-  margin-top: 25px;
+  margin-top: 22px;
   z-index: 10;
+  border: 1px solid rgb(90, 90, 90);
+  border-radius: 5px;
+  padding-left: 3px;
 }
 
 .gear-menu span {
@@ -75,6 +78,9 @@ tbody tr:hover {
   margin-bottom: 3px;
 }
 
+.gear-menu span:hover {
+  text-decoration: underline;
+}
 .gear-menu.adjust-margin {
   margin-top: -50px;
 }

@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { LookupModal } from './LookupModal';
-import { initializeSuppliers } from '@utils';
-import { hardcodedSuppliers } from '@data';
 import { LookupModalType, SupplierDto } from '@types';
 import { useLanguage } from '@hooks';
 
@@ -9,25 +7,21 @@ interface SupplierLookupModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectSupplier: (supplier: SupplierDto) => void;
+  selectedSupplier: SupplierDto | null;
+  setSelectedSupplier: React.Dispatch<React.SetStateAction<SupplierDto | null>>;
 }
 
 export const SupplierLookupModal: React.FC<SupplierLookupModalProps> = ({
   isOpen,
   onClose,
   onSelectSupplier,
+  selectedSupplier,
+  setSelectedSupplier,
 }) => {
   const [name, setName] = useState('');
   const [index, setIndex] = useState('');
   const [city, setCity] = useState('');
-  const [selectedItem, setSelectedItem] = useState<SupplierDto | null>(null);
-
   const { translations } = useLanguage();
-
-  useEffect(() => {
-    if (isOpen) {
-      initializeSuppliers('CertificateDb', 1, hardcodedSuppliers);
-    }
-  }, [isOpen]);
 
   const criteria = [
     {
@@ -48,14 +42,14 @@ export const SupplierLookupModal: React.FC<SupplierLookupModalProps> = ({
   ];
 
   const handleSelectButtonClick = () => {
-    if (selectedItem) {
-      onSelectSupplier(selectedItem);
+    if (selectedSupplier) {
+      onSelectSupplier(selectedSupplier);
       onClose();
     }
   };
 
   const handleSelection = (supplier: SupplierDto) => {
-    setSelectedItem(supplier);
+    setSelectedSupplier(supplier);
   };
 
   return (
@@ -67,8 +61,8 @@ export const SupplierLookupModal: React.FC<SupplierLookupModalProps> = ({
       modalType={LookupModalType.SUPPLIER_LOOKUP}
       handleSelectButtonClick={handleSelectButtonClick}
       handleSupplierSelection={handleSelection}
-      selectedItems={selectedItem ? [selectedItem] : []}
-      cancelSelections={() => setSelectedItem(null)}
+      selectedItems={selectedSupplier ? [selectedSupplier] : []}
+      cancelSelections={() => setSelectedSupplier(null)}
     />
   );
 };

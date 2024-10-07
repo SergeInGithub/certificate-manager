@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { TableHeaderItem, UserDto, DepartmentDto } from '@types';
 import { Input } from '@components/Input';
 import { apiClient, formatUserName, getDepartmentNameById } from '@utils';
+import { Button } from '@components/Button';
+import { SvgComponent, SvgComponentType } from '@components/Svg';
+import { participantTableHeaderItems } from '@data';
 
 interface UserLookupTableRowProps {
   item: UserDto;
@@ -33,18 +36,40 @@ export const UserLookupTableRow: React.FC<UserLookupTableRowProps> = ({
     fetchDepartments();
   }, []);
 
+  const areColumnsParticipantHeaders = (
+    columns: TableHeaderItem[],
+  ): boolean => {
+    return (
+      JSON.stringify(columns) === JSON.stringify(participantTableHeaderItems)
+    );
+  };
+
   return (
     <tr key={index}>
       <td className="lookup-table-row-point-container">
-        <Input
-          type="checkbox"
-          checked={isSelected}
-          onChange={() => handleSelection(item)}
-        />
+        {areColumnsParticipantHeaders(columns) ? (
+          <Button
+            type="button"
+            children={
+              <SvgComponent
+                type={SvgComponentType.CLOSE}
+                className="participant-close-icon"
+              />
+            }
+            className="participant-close-button"
+            onClick={() => handleSelection(item)}
+          />
+        ) : (
+          <Input
+            type="checkbox"
+            checked={isSelected}
+            onChange={() => handleSelection(item)}
+          />
+        )}
       </td>
       {columns.map((column: TableHeaderItem, colIndex: number) => {
         let value;
-        if (column.id === 'firstName') {
+        if (column.id === 'fullName') {
           value = formatUserName(item);
         } else if (column.id === 'departmentName') {
           value = getDepartmentNameById(item.departmentId, departments);
