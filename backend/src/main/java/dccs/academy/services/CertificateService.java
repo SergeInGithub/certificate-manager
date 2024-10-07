@@ -2,7 +2,6 @@ package dccs.academy.services;
 
 import dccs.academy.dtos.CertificateDto;
 import dccs.academy.dtos.CommentDto;
-import dccs.academy.entities.BaseEntity;
 import dccs.academy.entities.CertificateEntity;
 import dccs.academy.entities.CommentEntity;
 import dccs.academy.entities.UserEntity;
@@ -16,8 +15,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,129 +24,127 @@ import java.util.stream.Collectors;
 @Transactional
 public class CertificateService {
 
-    @Inject
-    CertificateRepository certificateRepository;
+  @Inject CertificateRepository certificateRepository;
 
-    @Inject
-    SupplierRepository supplierRepository;
+  @Inject SupplierRepository supplierRepository;
 
-    @Inject
-    UserRepository userRepository;
+  @Inject UserRepository userRepository;
 
-    @Inject
-    CertificateTransformer certificateTransformer;
+  @Inject CertificateTransformer certificateTransformer;
 
-    @Inject
-    SupplierService supplierService;
+  @Inject SupplierService supplierService;
 
-    @Inject
-    UserService userService;
+  @Inject UserService userService;
 
-    @Inject
-    CommentTransformer commentTransformer;
+  @Inject CommentTransformer commentTransformer;
 
-    public List<CertificateDto> getCertificates() {
-        List<CertificateEntity> certificateEntities = certificateRepository.listAll();
-        return certificateEntities.stream().map(certificateTransformer::toDto).collect(Collectors.toList());
+  public List<CertificateDto> getCertificates() {
+    List<CertificateEntity> certificateEntities = certificateRepository.listAll();
+    return certificateEntities.stream()
+        .map(certificateTransformer::toDto)
+        .collect(Collectors.toList());
+  }
+
+  public CertificateDto createCertificate(CertificateDto certificateDto) {
+    CertificateEntity certificateEntity = certificateTransformer.toEntity(certificateDto);
+    setSupplierAndUsers(certificateDto, certificateEntity);
+
+    if (certificateDto.getComments() != null) {
+      List<CommentEntity> commentEntities =
+          processComments(certificateDto.getComments(), certificateEntity);
+      certificateEntity.setComments(commentEntities);
     }
 
-    public CertificateDto createCertificate(CertificateDto certificateDto) {
-        CertificateEntity certificateEntity = certificateTransformer.toEntity(certificateDto);
-        setSupplierAndUsers(certificateDto, certificateEntity);
+    certificateRepository.persist(certificateEntity);
+    return certificateTransformer.toDto(certificateEntity);
+  }
 
-        if (certificateDto.getComments() != null) {
-            List<CommentEntity> commentEntities = processComments(certificateDto.getComments(), certificateEntity);
-            certificateEntity.setComments(commentEntities);
-        }
-
-        certificateRepository.persist(certificateEntity);
-        return certificateTransformer.toDto(certificateEntity);
+  public CertificateDto updateCertificate(Long id, CertificateDto certificateDto) {
+    CertificateEntity existingCertificate = certificateRepository.findById(id);
+    if (existingCertificate == null) {
+      throw new EntityNotFoundException("Certificate with ID " + id + " not found");
     }
 
-    public CertificateDto updateCertificate(Long id, CertificateDto certificateDto) {
-        CertificateEntity existingCertificate = certificateRepository.findById(id);
-        if (existingCertificate == null) {
-            throw new EntityNotFoundException("Certificate with ID " + id + " not found");
-        }
+    setSupplierAndUsers(certificateDto, existingCertificate);
+    existingCertificate.setType(certificateDto.getType());
+    existingCertificate.setValidFrom(certificateDto.getValidFrom());
+    existingCertificate.setValidTo(certificateDto.getValidTo());
 
-        setSupplierAndUsers(certificateDto, existingCertificate);
-        existingCertificate.setType(certificateDto.getType());
-        existingCertificate.setValidFrom(certificateDto.getValidFrom());
-        existingCertificate.setValidTo(certificateDto.getValidTo());
-
-        if (certificateDto.getFileUrl() != null) {
-            byte[] fileData = FileConversionUtil.convertBase64ToBlob(certificateDto.getFileUrl());
-            existingCertificate.setFileData(fileData);
-        }
-
-        if (certificateDto.getComments() != null) {
-            updateComments(certificateDto, existingCertificate);
-        }
-
-        certificateRepository.persist(existingCertificate);
-        return certificateTransformer.toDto(existingCertificate);
+    if (certificateDto.getFileUrl() != null) {
+      byte[] fileData = FileConversionUtil.convertBase64ToBlob(certificateDto.getFileUrl());
+      existingCertificate.setFileData(fileData);
     }
 
-    public CertificateDto getCertificate(Long id) {
-        CertificateEntity certificateEntity = certificateRepository.findById(id);
-        if (certificateEntity == null) {
-            throw new EntityNotFoundException("Certificate with ID " + id + " not found");
-        }
-        return certificateTransformer.toDto(certificateEntity);
+    if (certificateDto.getComments() != null) {
+      updateComments(certificateDto, existingCertificate);
     }
 
-    public String deleteCertificate(Long id) {
-        CertificateEntity certificateEntity = certificateRepository.findById(id);
-        if (certificateEntity == null) {
-            throw new EntityNotFoundException("Certificate with ID " + id + " not found");
-        }
+    certificateRepository.persist(existingCertificate);
+    return certificateTransformer.toDto(existingCertificate);
+  }
 
-        certificateRepository.delete(certificateEntity);
-        return "Certificate with ID " + id + " was successfully deleted";
+  public CertificateDto getCertificate(Long id) {
+    CertificateEntity certificateEntity = certificateRepository.findById(id);
+    if (certificateEntity == null) {
+      throw new EntityNotFoundException("Certificate with ID " + id + " not found");
+    }
+    return certificateTransformer.toDto(certificateEntity);
+  }
+
+  public String deleteCertificate(Long id) {
+    CertificateEntity certificateEntity = certificateRepository.findById(id);
+    if (certificateEntity == null) {
+      throw new EntityNotFoundException("Certificate with ID " + id + " not found");
     }
 
-    private List<CommentEntity> processComments(List<CommentDto> commentDtos, CertificateEntity certificateEntity) {
-        Set<Long> userIds = commentDtos.stream()
-                .map(CommentDto::getUserId)
-                .collect(Collectors.toSet());
+    certificateRepository.delete(certificateEntity);
+    return "Certificate with ID " + id + " was successfully deleted";
+  }
 
-        Map<Long, UserEntity> userMap = userService.getValidUsers(userIds, userRepository)
-                .stream()
-                .collect(Collectors.toMap(UserEntity::getId, user -> user));
+  private List<CommentEntity> processComments(
+      List<CommentDto> commentDtos, CertificateEntity certificateEntity) {
+    Set<Long> userIds = commentDtos.stream().map(CommentDto::getUserId).collect(Collectors.toSet());
 
-        return commentDtos.stream()
-                .map(commentDto -> {
-                    CommentEntity commentEntity = commentTransformer.toEntity(commentDto);
-                    UserEntity user = userMap.get(commentDto.getUserId());
+    Map<Long, UserEntity> userMap =
+        userService.getValidUsers(userIds, userRepository).stream()
+            .collect(Collectors.toMap(UserEntity::getId, user -> user));
 
-                    commentEntity.setUser(user);
-                    commentEntity.setCertificate(certificateEntity);
-                    return commentEntity;
-                })
-                .collect(Collectors.toList());
-    }
+    return commentDtos.stream()
+        .map(
+            commentDto -> {
+              CommentEntity commentEntity = commentTransformer.toEntity(commentDto);
+              UserEntity user = userMap.get(commentDto.getUserId());
 
-    private void updateComments(CertificateDto certificateDto, CertificateEntity existingCertificate) {
-        List<CommentEntity> existingComments = existingCertificate.getComments();
+              commentEntity.setUser(user);
+              commentEntity.setCertificate(certificateEntity);
+              return commentEntity;
+            })
+        .collect(Collectors.toList());
+  }
 
-        Set<Long> existingCommentIds = existingComments.stream()
-                .map(CommentEntity::getId)
-                .collect(Collectors.toSet());
+  private void updateComments(
+      CertificateDto certificateDto, CertificateEntity existingCertificate) {
+    List<CommentEntity> existingComments = existingCertificate.getComments();
 
-        List<CommentEntity> newComments = processComments(
-                certificateDto.getComments().stream()
-                        .filter(commentDto -> !existingCommentIds.contains(commentDto.getId()))
-                        .collect(Collectors.toList()),
-                existingCertificate
-        );
+    Set<Long> existingCommentIds =
+        existingComments.stream().map(CommentEntity::getId).collect(Collectors.toSet());
 
-        existingComments.addAll(newComments);
-        existingCertificate.setComments(existingComments);
-    }
+    List<CommentEntity> newComments =
+        processComments(
+            certificateDto.getComments().stream()
+                .filter(commentDto -> !existingCommentIds.contains(commentDto.getId()))
+                .collect(Collectors.toList()),
+            existingCertificate);
 
-    private void setSupplierAndUsers(CertificateDto certificateDto, CertificateEntity certificateEntity) {
-        certificateEntity.setSupplier(supplierService.getValidSupplier(certificateDto.getSupplier().getId(), supplierRepository));
-        certificateEntity.setAssignedUsers(userService.getValidUsers(certificateDto.getAssignedUserIds(), userRepository));
-    }
+    existingComments.addAll(newComments);
+    existingCertificate.setComments(existingComments);
+  }
 
+  private void setSupplierAndUsers(
+      CertificateDto certificateDto, CertificateEntity certificateEntity) {
+    certificateEntity.setSupplier(
+        supplierService.getValidSupplier(certificateDto.getSupplier().getId(), supplierRepository));
+    certificateEntity.setAssignedUsers(
+        userService.getValidUsers(certificateDto.getAssignedUserIds(), userRepository));
+  }
 }

@@ -6,10 +6,8 @@ import jakarta.ws.rs.ext.Provider;
 
 @Provider
 public class DuplicateExceptionMapper implements ExceptionMapper<DuplicateException> {
-    @Override
-    public Response toResponse(DuplicateException exception) {
-        return Response.status(Response.Status.CONFLICT)
-                .entity(exception.getMessage())
-                .build();
-    }
+  @Override
+  public Response toResponse(DuplicateException exception) {
+    return Response.status(Response.Status.CONFLICT).entity(exception.getMessage()).build();
+  }
 }

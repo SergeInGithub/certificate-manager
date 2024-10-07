@@ -7,18 +7,18 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class CommentTransformer {
 
-    public CommentDto toDto(CommentEntity commentEntity) {
-        CommentDto commentDto = new CommentDto();
-        commentDto.setId(commentEntity.getId());
-        commentDto.setComment(commentEntity.getComment());
-        commentDto.setUserId(commentEntity.getUser().getId());
-        commentDto.setCertificateId(commentEntity.getCertificate().getId());
-        return commentDto;
-    }
+  public CommentDto toDto(CommentEntity commentEntity) {
+    CommentDto commentDto = new CommentDto();
+    commentDto.setId(commentEntity.getId());
+    commentDto.setComment(commentEntity.getComment());
+    commentDto.setUserId(commentEntity.getUser().getId());
+    commentDto.setCertificateId(commentEntity.getCertificate().getId());
+    return commentDto;
+  }
 
-    public CommentEntity toEntity(CommentDto commentDto) {
-        CommentEntity commentEntity = new CommentEntity();
-        commentEntity.setComment(commentDto.getComment());
-        return commentEntity;
-    }
+  public CommentEntity toEntity(CommentDto commentDto) {
+    CommentEntity commentEntity = new CommentEntity();
+    commentEntity.setComment(commentDto.getComment());
+    return commentEntity;
+  }
 }

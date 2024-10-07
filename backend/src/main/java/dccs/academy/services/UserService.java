@@ -11,7 +11,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,103 +20,111 @@ import java.util.stream.Collectors;
 @Transactional
 public class UserService {
 
-    @Inject
-    UserRepository userRepository;
+  @Inject UserRepository userRepository;
 
-    @Inject
-    DepartmentRepository departmentRepository;
+  @Inject DepartmentRepository departmentRepository;
 
-    @Inject
-    UserTransformer userTransformer;
+  @Inject UserTransformer userTransformer;
 
-    public List<UserDto> getUsers() {
-        List<UserEntity> userEntities = userRepository.listAll();
-        return userEntities.stream().map(userTransformer::toDto).collect(Collectors.toList());
+  public List<UserDto> getUsers() {
+    List<UserEntity> userEntities = userRepository.listAll();
+    return userEntities.stream().map(userTransformer::toDto).collect(Collectors.toList());
+  }
+
+  public List<UserDto> searchUsers(
+      String firstName,
+      String lastName,
+      String userIndex,
+      String email,
+      String plant,
+      String departmentName) {
+    List<UserEntity> userEntities =
+        userRepository.search(firstName, lastName, userIndex, email, plant, departmentName);
+    return userEntities.stream().map(userTransformer::toDto).collect(Collectors.toList());
+  }
+
+  public UserDto createUser(UserDto userDto) {
+    DepartmentEntity department = departmentRepository.findById(userDto.getDepartmentId());
+    if (department == null) {
+      throw new EntityNotFoundException(
+          "Department with ID " + userDto.getDepartmentId() + " not found");
     }
 
-    public List<UserDto> searchUsers(String firstName, String lastName, String userIndex, String email, String plant, String departmentName) {
-        List<UserEntity> userEntities = userRepository.search(firstName, lastName, userIndex, email, plant, departmentName);
-        return userEntities.stream().map(userTransformer::toDto).collect(Collectors.toList());
+    UserEntity existingUser =
+        userRepository.find("userIndex", userDto.getUserIndex()).firstResult();
+    if (existingUser != null) {
+      throw new DuplicateException("User with index " + userDto.getUserIndex() + " already exists");
     }
 
-    public UserDto createUser(UserDto userDto) {
-        DepartmentEntity department = departmentRepository.findById(userDto.getDepartmentId());
-        if (department == null) {
-            throw new EntityNotFoundException("Department with ID " + userDto.getDepartmentId() + " not found");
-        }
-
-        UserEntity existingUser = userRepository.find("userIndex", userDto.getUserIndex()).firstResult();
-        if (existingUser != null) {
-            throw new DuplicateException("User with index " + userDto.getUserIndex() + " already exists");
-        }
-
-        UserEntity existingEmailUser = userRepository.find("email", userDto.getEmail()).firstResult();
-        if (existingEmailUser != null) {
-            throw new DuplicateException("Email " + userDto.getEmail() + " is already in use");
-        }
-
-        UserEntity userEntity = userTransformer.toEntity(userDto);
-        userEntity.setDepartment(department);
-
-        userRepository.persist(userEntity);
-        userDto.setId(userEntity.getId());
-        return userDto;
+    UserEntity existingEmailUser = userRepository.find("email", userDto.getEmail()).firstResult();
+    if (existingEmailUser != null) {
+      throw new DuplicateException("Email " + userDto.getEmail() + " is already in use");
     }
 
-    public UserDto updateUser(Long id, UserDto userDto) {
-        UserEntity userEntity = userRepository.findById(id);
-        if (userEntity == null) {
-            throw new EntityNotFoundException("User with ID " + id + " not found");
-        }
+    UserEntity userEntity = userTransformer.toEntity(userDto);
+    userEntity.setDepartment(department);
 
-        UserEntity existingUser = userRepository.find("userIndex", userDto.getUserIndex()).firstResult();
-        if (existingUser != null) {
-            throw new DuplicateException("User with index " + userDto.getUserIndex() + " already exists");
-        }
+    userRepository.persist(userEntity);
+    userDto.setId(userEntity.getId());
+    return userDto;
+  }
 
-        UserEntity existingEmailUser = userRepository.find("email", userDto.getEmail()).firstResult();
-        if (existingEmailUser != null && !existingEmailUser.getId().equals(id)) {
-            throw new DuplicateException("Email " + userDto.getEmail() + " is already in use");
-        }
-
-        userEntity.setFirstName(userDto.getFirstName());
-        userEntity.setLastName(userDto.getLastName());
-        userEntity.setEmail(userDto.getEmail());
-        userEntity.setUserIndex(userDto.getUserIndex());
-        userEntity.setPlant(userDto.getPlant());
-        userRepository.persist(userEntity);
-
-        return userTransformer.toDto(userEntity);
+  public UserDto updateUser(Long id, UserDto userDto) {
+    UserEntity userEntity = userRepository.findById(id);
+    if (userEntity == null) {
+      throw new EntityNotFoundException("User with ID " + id + " not found");
     }
 
-    public UserDto getUser(Long id) {
-        UserEntity userEntity = userRepository.findById(id);
-        if (userEntity == null) {
-            throw new EntityNotFoundException("User with ID " + id + " not found");
-        }
-        return userTransformer.toDto(userEntity);
+    UserEntity existingUser =
+        userRepository.find("userIndex", userDto.getUserIndex()).firstResult();
+    if (existingUser != null) {
+      throw new DuplicateException("User with index " + userDto.getUserIndex() + " already exists");
     }
 
-    public String deleteUser(Long id) {
-        UserEntity userEntity = userRepository.findById(id);
-        if (userEntity == null) {
-            throw new EntityNotFoundException("User with ID " + id + " not found");
-        }
-        userRepository.delete(userEntity);
-        return "User with ID " + id + " was successfully deleted";
+    UserEntity existingEmailUser = userRepository.find("email", userDto.getEmail()).firstResult();
+    if (existingEmailUser != null && !existingEmailUser.getId().equals(id)) {
+      throw new DuplicateException("Email " + userDto.getEmail() + " is already in use");
     }
 
-    public Set<UserEntity> getValidUsers(Set<Long> userIds, UserRepository userRepository) {
-        if (userIds == null || userIds.isEmpty()) return new HashSet<>();
+    userEntity.setFirstName(userDto.getFirstName());
+    userEntity.setLastName(userDto.getLastName());
+    userEntity.setEmail(userDto.getEmail());
+    userEntity.setUserIndex(userDto.getUserIndex());
+    userEntity.setPlant(userDto.getPlant());
+    userRepository.persist(userEntity);
 
-        return userIds.stream()
-                .map(userId -> {
-                    UserEntity userEntity = userRepository.findById(userId);
-                    if (userEntity == null) {
-                        throw new EntityNotFoundException("User with ID " + userId + " not found");
-                    }
-                    return userEntity;
-                })
-                .collect(Collectors.toSet());
+    return userTransformer.toDto(userEntity);
+  }
+
+  public UserDto getUser(Long id) {
+    UserEntity userEntity = userRepository.findById(id);
+    if (userEntity == null) {
+      throw new EntityNotFoundException("User with ID " + id + " not found");
     }
+    return userTransformer.toDto(userEntity);
+  }
+
+  public String deleteUser(Long id) {
+    UserEntity userEntity = userRepository.findById(id);
+    if (userEntity == null) {
+      throw new EntityNotFoundException("User with ID " + id + " not found");
+    }
+    userRepository.delete(userEntity);
+    return "User with ID " + id + " was successfully deleted";
+  }
+
+  public Set<UserEntity> getValidUsers(Set<Long> userIds, UserRepository userRepository) {
+    if (userIds == null || userIds.isEmpty()) return new HashSet<>();
+
+    return userIds.stream()
+        .map(
+            userId -> {
+              UserEntity userEntity = userRepository.findById(userId);
+              if (userEntity == null) {
+                throw new EntityNotFoundException("User with ID " + userId + " not found");
+              }
+              return userEntity;
+            })
+        .collect(Collectors.toSet());
+  }
 }
