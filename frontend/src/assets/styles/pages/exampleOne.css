@@ -42,6 +42,83 @@
   cursor: pointer;
 }
 
+.alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.alert-content {
+  background: #f5f5f5;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.alert-title {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.alert-message {
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+.alert-actions {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.btn-soft {
+  background-color: rgba(100, 149, 237, 0.1);
+  color: #5f5fc4;
+  border: 1px solid rgba(100, 149, 237, 0.3);
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-soft:hover {
+  background-color: rgba(100, 149, 237, 0.2);
+}
+
+.btn-confirm-soft {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: #4caf50;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.btn-cancel-soft {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+.btn-confirm-soft:hover {
+  background-color: rgba(76, 175, 80, 0.2);
+}
+
+.btn-cancel-soft:hover {
+  background-color: rgba(244, 67, 54, 0.2);
+}
+
 @media (max-width: 834px) {
   .example-one {
     width: 80vw;

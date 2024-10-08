@@ -47,5 +47,7 @@
   "pageNotFound": "Seite nicht gefunden 🙃. Bitte gehen Sie zurück ",
   "home": "Heim",
   "edit": "Bearbeiten",
-  "delete": "Löschen"
+  "delete": "Löschen",
+  "waitASec": "Warte eine Sekunde!",
+  "areYouSure": "Sind Sie sicher, dass Sie dieses Zertifikat löschen möchten?"
 }

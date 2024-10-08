@@ -193,13 +193,13 @@ export const CertificateForm = forwardRef(
             handleResponse(response, NotificationType.UPDATED);
             setTimeout(() => {
               navigate('/ml/certificates');
-            }, 2500);
+            }, 2200);
           } else {
             response = await apiClient.createCertificate(formData);
             handleResponse(response, NotificationType.CREATED);
             setTimeout(() => {
               navigate('/ml/certificates');
-            }, 2500);
+            }, 2200);
           }
           if (formRef.current) {
             formRef.current.reset();
