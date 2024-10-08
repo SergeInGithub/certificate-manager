@@ -24,6 +24,7 @@
 .subItem {
   flex-direction: column;
   margin-left: 65px;
+  gap: 6px;
   cursor: pointer;
 }
 

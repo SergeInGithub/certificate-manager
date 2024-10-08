@@ -3,7 +3,7 @@ import { Button } from './Button';
 import { UserComment } from './UserComponent';
 import { CommentInput } from './CommentInput';
 import { CommentDto, UserDto } from '@types';
-import { useUser } from '@hooks';
+import { useLanguage, useUser } from '@hooks';
 import { getUserName } from '@utils';
 
 type ICommentProps = {
@@ -25,6 +25,7 @@ export const Comment: React.FC<ICommentProps> = ({
   comments,
   handleCommentSubmit,
 }) => {
+  const { translations } = useLanguage();
   const { users } = useUser();
 
   return (
@@ -34,7 +35,7 @@ export const Comment: React.FC<ICommentProps> = ({
         className="new-comment-button"
         onClick={toggleComment}
       >
-        {isComment ? 'Cancel' : 'New comment'}
+        {isComment ? `${translations.cancel}` : `${translations.newComment}`}
       </Button>
 
       {comments.length ? (
@@ -47,7 +48,7 @@ export const Comment: React.FC<ICommentProps> = ({
         ))
       ) : (
         <div>
-          <h4>No comments</h4>
+          <h4>{translations.noComments}</h4>
         </div>
       )}
 
@@ -64,7 +65,7 @@ export const Comment: React.FC<ICommentProps> = ({
             className="send-comment-button"
             onClick={handleCommentSubmit}
           >
-            Send
+            {translations.send}
           </Button>
         </React.Fragment>
       )}

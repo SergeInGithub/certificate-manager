@@ -13,7 +13,7 @@ export const getMenuItems = (translations: Record<string, string>) => [
     name: translations['machineLearning'],
     subItems: [
       {
-        url: '/ml/example-one',
+        url: '/ml/certificates',
         name: translations['example1'],
         content: translations['example1'],
       },

@@ -25,7 +25,7 @@ export const router = createBrowserRouter(
       />
       <Route path="ml">
         <Route
-          path="example-one"
+          path="certificates"
           element={<ExampleOne />}
         />
         <Route

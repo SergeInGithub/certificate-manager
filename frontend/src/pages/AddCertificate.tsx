@@ -6,6 +6,7 @@ import { useLanguage } from '@hooks';
 export function AddCertificate() {
   const [pdfDataUrl, setPdfDataUrl] = useState<string>('');
   const formRef = useRef<{ submit: () => void; reset: () => void }>(null);
+  const [pdfError, setPdfError] = useState('');
 
   const { translations } = useLanguage();
 
@@ -34,13 +35,18 @@ export function AddCertificate() {
             ref={formRef}
             pdfDataUrl={pdfDataUrl}
             onReset={handleResetPdfDataUrl}
+            setPdfError={setPdfError}
           />
         </section>
 
         <section className="add-file-container">
-          <FileUpload setPdfDataUrl={setPdfDataUrl} />
+          <FileUpload
+            setPdfDataUrl={setPdfDataUrl}
+            setPdfError={setPdfError}
+          />
 
           <Preview pdfDataUrl={pdfDataUrl} />
+          {pdfError && <div className="error">{pdfError}</div>}
         </section>
       </div>
 

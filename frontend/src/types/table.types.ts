@@ -47,6 +47,7 @@ export interface CertificateFormProps {
   onReset?: () => void;
   isEdit?: boolean;
   certificateId?: number;
+  setPdfError?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export type CertificateFormValues = {
@@ -98,7 +99,6 @@ export type TErrors = {
   type: string;
   validFrom: string;
   validTo: string;
-  fileUrl: string;
 };
 
 export enum NotificationType {
@@ -112,7 +112,6 @@ export const defaultErrorState: TErrors = {
   type: '',
   validFrom: '',
   validTo: '',
-  fileUrl: '',
 };
 
 export const defaultBooleanState = {

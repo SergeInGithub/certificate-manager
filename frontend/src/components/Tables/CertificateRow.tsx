@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { useCertificateType, useFormatDate } from '@hooks';
+import { useCertificateType, useFormatDate, useLanguage } from '@hooks';
 import { SvgComponentType, SvgComponent } from '@components/Svg';
 import { CertificateDto } from '@types';
 import { handleNavigate } from '@utils';
@@ -19,6 +19,7 @@ export const CertificateRow: React.FC<ICertificateRowProps> = ({
   const [isGearOpen, setIsGearOpen] = useState(false);
   const gearRef = useRef<HTMLTableDataCellElement>(null);
   const navigate = useNavigate();
+  const { translations } = useLanguage();
 
   const handleGearOpen = useCallback(() => {
     setIsGearOpen((prevGear) => !prevGear);
@@ -58,9 +59,9 @@ export const CertificateRow: React.FC<ICertificateRowProps> = ({
                 className="edit-span"
                 onClick={handleEditClick}
               >
-                Edit
+                {translations.edit}
               </span>
-              <span onClick={handleDeleteClick}>Delete</span>
+              <span onClick={handleDeleteClick}>{translations.delete}</span>
             </div>
           )}
         </td>

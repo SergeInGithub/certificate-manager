@@ -22,7 +22,7 @@ export const LookupModal: React.FC<LookupModalProps> = ({
   criteria,
   users,
   modalType,
-  selectedItems,
+  selectedItems = [],
   setSelectedItems,
   cancelSelections,
   handleSelectButtonClick,
@@ -99,6 +99,8 @@ export const LookupModal: React.FC<LookupModalProps> = ({
       handleSupplierSelection(item as SupplierDto);
     }
   };
+
+  const isDisabled = !selectedItems.length;
 
   return (
     <div className="lookup-modal">
@@ -194,7 +196,8 @@ export const LookupModal: React.FC<LookupModalProps> = ({
               type="button"
               onClick={handleSelectButtonClick}
               children={translations.selectButton}
-              className="lookup-save-button"
+              className={`lookup-save-button ${isDisabled ? 'disabled' : ''}`}
+              disabled={isDisabled}
             />
             <Button
               type="button"

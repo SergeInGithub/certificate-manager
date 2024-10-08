@@ -5,6 +5,7 @@ interface IButtonPros {
   className?: string;
   onClick?: () => void;
   children: React.ReactNode;
+  disabled?: boolean;
 }
 
 export const Button: React.FC<IButtonPros> = ({
@@ -12,12 +13,14 @@ export const Button: React.FC<IButtonPros> = ({
   className,
   onClick,
   children,
+  disabled,
 }: IButtonPros) => {
   return (
     <button
       type={type}
       className={className}
       onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </button>

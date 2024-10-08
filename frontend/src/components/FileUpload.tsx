@@ -5,9 +5,13 @@ import { useLanguage } from '@hooks';
 
 interface IFileUploadProps {
   setPdfDataUrl: React.Dispatch<React.SetStateAction<string>>;
+  setPdfError?: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const FileUpload: React.FC<IFileUploadProps> = ({ setPdfDataUrl }) => {
+export const FileUpload: React.FC<IFileUploadProps> = ({
+  setPdfDataUrl,
+  setPdfError,
+}) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { translations } = useLanguage();
@@ -20,6 +24,7 @@ export const FileUpload: React.FC<IFileUploadProps> = ({ setPdfDataUrl }) => {
         reader.onload = () => {
           if (reader.result) {
             setPdfDataUrl(reader.result as string);
+            setPdfError?.('');
           }
         };
         reader.readAsDataURL(file);
