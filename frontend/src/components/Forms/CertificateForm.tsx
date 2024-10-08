@@ -38,7 +38,13 @@ import { useNavigate } from 'react-router-dom';
 
 export const CertificateForm = forwardRef(
   (
-    { pdfDataUrl, onReset, isEdit, certificateId }: CertificateFormProps,
+    {
+      pdfDataUrl,
+      onReset,
+      isEdit,
+      certificateId,
+      setPdfError,
+    }: CertificateFormProps,
     ref,
   ) => {
     const { translations } = useLanguage();
@@ -73,7 +79,6 @@ export const CertificateForm = forwardRef(
           type: '',
           validFrom: '',
           validTo: '',
-          fileUrl: '',
         });
         if (onReset) {
           onReset();
@@ -152,8 +157,11 @@ export const CertificateForm = forwardRef(
         validFrom: formData.validFrom ? '' : 'Valid From date is required',
         validTo: formData.validTo ? '' : 'Valid To date is required',
         type: formData.type ? '' : 'Certificate Type is required',
-        fileUrl: pdfDataUrl ? '' : 'PDF File is required',
       };
+
+      if (!pdfDataUrl) {
+        setPdfError?.('PDF File is required');
+      }
 
       if (formData.validFrom && formData.validTo) {
         if (new Date(formData.validTo) <= new Date(formData.validFrom)) {
@@ -184,11 +192,14 @@ export const CertificateForm = forwardRef(
             );
             handleResponse(response, NotificationType.UPDATED);
             setTimeout(() => {
-              navigate('/ml/add-certificate');
-            }, 4000);
+              navigate('/ml/certificates');
+            }, 2500);
           } else {
             response = await apiClient.createCertificate(formData);
             handleResponse(response, NotificationType.CREATED);
+            setTimeout(() => {
+              navigate('/ml/certificates');
+            }, 2500);
           }
           if (formRef.current) {
             formRef.current.reset();
@@ -343,10 +354,6 @@ export const CertificateForm = forwardRef(
             openUserModal={openUserModal}
             handleApplicantSelection={handleApplicantSelection}
           />
-
-          {!pdfDataUrl && (
-            <div className="error file-url">{errors.fileUrl}</div>
-          )}
 
           <section className="comments-section">
             <Comment
