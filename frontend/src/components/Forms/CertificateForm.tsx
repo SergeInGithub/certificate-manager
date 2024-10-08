@@ -290,6 +290,7 @@ export const CertificateForm = forwardRef(
           ],
         }));
         setComment('');
+        setBooleanState((prev) => ({ ...prev, isComment: !prev.isComment }));
       }
     }, [comment, activeUser]);
 
