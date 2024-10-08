@@ -46,7 +46,7 @@ export function ExampleOne() {
   return (
     <div className="example-one">
       <div className="table-container">
-        <h1>Example 1</h1>
+        <h1>{translations.example1}</h1>
 
         <Button
           type="button"

@@ -1,3 +1,4 @@
+import { useLanguage } from '@hooks';
 import React from 'react';
 
 type TUserComment = {
@@ -6,14 +7,16 @@ type TUserComment = {
 };
 
 export const UserComment: React.FC<TUserComment> = ({ name, comment }) => {
+  const { translations } = useLanguage();
+
   return (
     <div className="user-comment-container">
       <section className="user-comment-name-section">
-        <strong>User:&nbsp;</strong>
+        <strong>{translations.activeUser}:&nbsp;</strong>
         <span className="userComment-name">{name}</span>
       </section>
       <section className="user-comment-comment-section">
-        <strong>Comment:&nbsp;</strong>
+        <strong>{translations.comment}:&nbsp;</strong>
         <p className="comment-paragraph">{comment}</p>
       </section>
     </div>

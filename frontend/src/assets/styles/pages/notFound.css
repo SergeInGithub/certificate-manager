@@ -1,9 +1,8 @@
 .notFound {
   display: flex;
   flex-direction: row;
-  margin-top: 20px;
+  margin-top: 70px;
   margin-left: 20px;
-  margin-top: 20%;
 }
 
 button.not-found {

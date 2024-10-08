@@ -2,7 +2,7 @@
   "start": "Start",
   "machineLearning": "Machine Learning",
   "newCertificate": "New Certificate",
-  "example1": "Example 1",
+  "example1": "Certificates",
   "example2": "Example 2",
   "example3": "Example 3",
   "language": "Language",
@@ -37,5 +37,15 @@
   "activeUser": "User",
   "permissionOfPrinting": "Permission of printing",
   "ohsas18001": "OHSAS 18001",
-  "cccCertificate": "CCC Certificate"
+  "cccCertificate": "CCC Certificate",
+  "noApplicants": "No applicants found 😢",
+  "noComments": "No comments",
+  "newComment": "New Comment",
+  "cancel": "Cancel",
+  "send": "Send",
+  "comment": "Comment",
+  "pageNotFound": "Page Not Found 🙃. Please head back ",
+  "home": "Home",
+  "edit": "Edit",
+  "delete": "Delete"
 }

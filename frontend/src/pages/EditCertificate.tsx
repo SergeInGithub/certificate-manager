@@ -4,6 +4,7 @@ import '../assets/styles/pages/addCertificate.css';
 import { Button, CertificateForm, FileUpload, Preview } from '@components';
 import { CertificateDto } from '@types';
 import { apiClient } from '@utils';
+import { useLanguage } from '@hooks';
 
 export function EditCertificate() {
   const { id } = useParams<{ id: string }>();
@@ -14,6 +15,7 @@ export function EditCertificate() {
   const [initialFormData, setInitialFormData] = useState<CertificateDto | null>(
     null,
   );
+  const { translations } = useLanguage();
   const formRef = useRef<{
     submit: () => void;
     reset: () => void;
@@ -83,14 +85,14 @@ export function EditCertificate() {
           onClick={handleSave}
           className="save-form-button"
         >
-          Save
+          {translations.saveButton}
         </Button>
         <Button
           type="button"
           onClick={handleReset}
           className="reset-form-button"
         >
-          Reset
+          {translations.resetButton}
         </Button>
       </section>
     </div>

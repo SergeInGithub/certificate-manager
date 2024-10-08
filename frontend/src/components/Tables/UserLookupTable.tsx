@@ -3,6 +3,7 @@ import { TUserLookupTableProps, LookupModalType } from '@types';
 import { participantTableHeaderItems, userLookupTableHeaderItems } from '@data';
 import { UserLookupTableBody } from './UserLookupTableBody';
 import { LookupTableHeader } from './LookupTableHeader';
+import { useLanguage } from '@hooks';
 
 export const UserLookupTable: React.FC<TUserLookupTableProps> = ({
   selectedApplicants,
@@ -10,6 +11,8 @@ export const UserLookupTable: React.FC<TUserLookupTableProps> = ({
   modalType,
   selectedItems,
 }) => {
+  const { translations } = useLanguage();
+
   const columns =
     modalType === LookupModalType.USER_LOOKUP
       ? userLookupTableHeaderItems
@@ -28,7 +31,7 @@ export const UserLookupTable: React.FC<TUserLookupTableProps> = ({
       </table>
       {!selectedApplicants?.length && (
         <div>
-          <h1>No applicants found 😢</h1>
+          <h1>{translations.noApplicants}</h1>
         </div>
       )}
     </section>
