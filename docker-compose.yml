@@ -3,8 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
+    #    ports:
+    #      - "8080:8080"
     environment:
       QUARKUS_DATASOURCE_DB_KIND: "postgresql"
       QUARKUS_DATASOURCE_JDBC_URL: "${DATABASE_URL}"
@@ -14,16 +14,18 @@ services:
     depends_on:
       - db
 
-  db:
-    image: postgres:16
-    environment:
-      POSTGRES_USER: "${POSTGRES_USER}"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
-      POSTGRES_DB: "${POSTGRES_DB}"
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+# ONLY FOR LOCAL ENVIRONMENT
 
-volumes:
-  postgres_data:
+#  db:
+#    image: postgres:16
+#    environment:
+#      POSTGRES_USER: "${POSTGRES_USER}"
+#      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+#      POSTGRES_DB: "${POSTGRES_DB}"
+#    ports:
+#      - "5432:5432"
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#
+#volumes:
+#  postgres_data:
