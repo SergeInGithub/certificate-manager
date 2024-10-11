@@ -3,6 +3,7 @@ import { CertificateDto } from '@types';
 import TableHeader from './TableHeader';
 import { TableBody } from './TableBody';
 import '../../assets/styles/components/table.css';
+import { useLanguage } from '@hooks';
 
 export type CertificateTableProps = {
   certificates: CertificateDto[] | undefined;
@@ -13,6 +14,8 @@ export const CertificateTable: React.FC<CertificateTableProps> = ({
   certificates,
   onDelete,
 }) => {
+  const { translations } = useLanguage();
+
   return (
     <section className="tableContainer">
       <table>
@@ -24,7 +27,7 @@ export const CertificateTable: React.FC<CertificateTableProps> = ({
       </table>
       {!certificates?.length && (
         <div>
-          <h1>No certificates 😢</h1>
+          <h1>{translations.noCertificates}</h1>
         </div>
       )}
     </section>

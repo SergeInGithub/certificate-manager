@@ -49,5 +49,6 @@
   "edit": "Bearbeiten",
   "delete": "Löschen",
   "waitASec": "Warte eine Sekunde!",
-  "areYouSure": "Sind Sie sicher, dass Sie dieses Zertifikat löschen möchten?"
+  "areYouSure": "Sind Sie sicher, dass Sie dieses Zertifikat löschen möchten?",
+  "noCertificates": "Keine Zertifikat 😢"
 }

@@ -49,5 +49,6 @@
   "edit": "Edit",
   "delete": "Delete",
   "waitASec": "Hang On a Sec!",
-  "areYouSure": "Are you sure you want to delete this certificate?"
+  "areYouSure": "Are you sure you want to delete this certificate?",
+  "noCertificates": "No certificates 😢"
 }
